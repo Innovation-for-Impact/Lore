@@ -1,0 +1,21 @@
+##[pylyzer] failed /home/aasmart/development/Projects/Lore/backend/api/settings.py 1738884856 3255
+
+.___v_desugar_1: Never
+.Path: Never
+.BASE_DIR: Never
+.SECRET_KEY: {"django-insecure-_tc_qe)*pb@cy&8y@gmh4^1ly703rdlo&)n+v7ae5rType__zii88w"}
+.DEBUG: {True}
+.ALLOWED_HOSTS: Never
+.INSTALLED_APPS: Never
+.MIDDLEWARE: Never
+.ROOT_URLCONF: {"api.urls"}
+.TEMPLATES: Never
+.WSGI_APPLICATION: {"api.wsgi.application"}
+.DATABASES: Never
+.AUTH_PASSWORD_VALIDATORS: Never
+.LANGUAGE_CODE: {"en-us"}
+.TIME_ZONE: {"UTC"}
+.USE_I18N: {True}
+.USE_TZ: {True}
+.STATIC_URL: {"static."}
+.DEFAULT_AUTO_FIELD: {"django.db.models.BigAutoField"}

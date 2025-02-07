@@ -1,0 +1,17 @@
+##[pylyzer] failed /home/aasmart/development/Projects/Lore/backend/lore/views.py 1738886099 369
+.___v_desugar_1 = pyimport "shortcuts"
+.shortcuts = pyimport "shortcuts"
+.render: (request: Obj, template_name: Obj, context: Obj := Obj, content_type: Obj := Obj, status: Obj := Obj, using: Obj := Obj) -> Never
+.___v_desugar_2 = pyimport "views"
+.views = pyimport "views"
+.GoogleOAuth2Adapter: {views.GoogleOAuth2Adapter}
+.___v_desugar_3 = pyimport "client"
+.client = pyimport "client"
+.OAuth2Client: {client.OAuth2Client}
+.___v_desugar_4 = pyimport "views"
+
+.SocialLoginView: {views.SocialLoginView}
+.GoogleLogin: ClassType
+.GoogleLogin <: .SocialLoginView
+.GoogleLogin.adapter_class: {views.GoogleOAuth2Adapter}
+
