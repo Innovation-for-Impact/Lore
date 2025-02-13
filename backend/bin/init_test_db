@@ -6,9 +6,6 @@ echo "====================="
 echo "This script initializes a test Postgresql database with a privledge 'myuser' with password 'mypass'"
 echo "====================="
 
-sudo apt-get install postgresql postgresql-contrib
-sudo apt-get install libpq-dev python3-dev
-
 sudo -u postgres psql <<EOF
 \x
 CREATE DATABASE mydb;
@@ -18,3 +15,6 @@ ALTER ROLE myuser SET default_transaction_isolation TO 'read committed';
 ALTER ROLE myuser SET timezone TO 'UTC';
 GRANT postgres TO myuser;
 EOF
+
+python3 manage.py migrate
+python3 manage.py makemigrations
