@@ -1,4 +1,26 @@
-# Setup
+# Lore Backend
+
+## Technologies
+
+**Django and Python**
+
+We will be using Python with Django for the backend and PostgreSQL for the database. If
+you have not used Django before, you should follow [this quickstart guide](https://docs.djangoproject.com/en/5.1/)
+in a separate directory (i.e. don't do this in the Lore repository).
+
+**PostgreSQL**
+
+We will interact with PostgreSQL through [Django's interface](https://docs.djangoproject.com/en/5.1/topics/db/queries/).
+In other words, you most likely wont need to use PostgreSQL's interface. However,
+Django does support raw SQL Queries
+
+## Clone the repository
+
+If you don't have an SSH key setup with Github, follow the [EECS 280 Guide](https://eecs280staff.github.io/tutorials/setup_git.html).
+
+Once you have that setup, clone the repository `$ git clone git@github.com:Innovation-for-Impact/Lore.git` if you have not done so already.
+
+## Development Environment Setup
 
 ### Install Python
 
@@ -151,3 +173,15 @@ This is the authentication input. All specifications are [here](https://django-r
 ## Conclusion
 
 If anything about this document is unclear, please make an issue on Github or bring it up in the Slack.
+
+## Additional Resources
+
+- <https://pypi.org/project/django-cors-headers/>
+
+- <https://docs.djangoproject.com/en/5.1/ref/databases/#postgresql-notes>
+
+- <https://docs.allauth.org/en/latest/installation/quickstart.html>
+
+- <https://dj-rest-auth.readthedocs.io/en/latest/index.html>
+
+- <https://www.django-rest-framework.org/>
