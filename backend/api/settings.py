@@ -20,7 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_tc_qe)*pb@cy&8y@gmh4^1ly703rdlo&)n+v7ae5r%_zii88w"
+SECRET_KEY = (
+    "django-insecure-_tc_qe)*pb@cy&8y@gmh4^1ly703rdlo&)n+v7ae5r%_zii88w"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # user installed
+    "lore",  # makes Django aware of this
     "django.contrib.sites",
     "allauth",
     "allauth.account",
@@ -149,7 +152,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ==============
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("dj_rest_auth.jwt_auth.JWTCookieAuthentication",)
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    )
 }
 
 ACCOUNT_LOGIN_METHOD = {"email"}
@@ -161,3 +166,6 @@ REST_AUTH = {
     "JWT_AUTH_COOKIE": "jwt-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
 }
+
+AUTH_USER_MODEL = "lore.LoreUser"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

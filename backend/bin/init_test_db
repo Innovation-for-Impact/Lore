@@ -16,5 +16,5 @@ ALTER ROLE myuser SET timezone TO 'UTC';
 GRANT postgres TO myuser;
 EOF
 
-python3 manage.py migrate
 python3 manage.py makemigrations
+python3 manage.py migrate
