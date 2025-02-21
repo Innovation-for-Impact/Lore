@@ -1,0 +1,13 @@
+{
+    "__meta__": {
+        "about": "HTTPie session file",
+        "help": "https://httpie.io/docs#sessions",
+        "httpie": "3.2.4"
+    },
+    "auth": {
+        "raw_auth": "aasmart@umich.edu:password",
+        "type": "basic"
+    },
+    "cookies": [],
+    "headers": []
+}

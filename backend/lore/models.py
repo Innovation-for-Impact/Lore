@@ -1,5 +1,6 @@
 from operator import mod
 from typing import ClassVar
+import uuid
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.db import models
@@ -73,14 +74,34 @@ class LoreUser(AbstractUser):
         return self.email
 
 
+class LoreGroupManager(models.Manager):
+    """The manager for lore groups."""
+
+    def create_group(self, name: str, owner: "LoreUser") -> "LoreGroup":
+        """Create a Lore group with the given name and the specified owner."""
+        join_code = uuid.uuid4().hex[:6]
+
+        group = self.model(
+            name=name,
+            join_code=join_code,
+        )
+
+        group.save(using=self._db)
+        group.members.add(owner.pk)
+
+        return group
+
+
 class LoreGroup(models.Model):
     """The model representing a lore group."""
 
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=32, unique=True)
     join_code = models.CharField(max_length=8, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     # Django creates intermediate rep for us
     members = models.ManyToManyField(LoreUser)
+
+    groups = LoreGroupManager()
 
     def __str__(self) -> str:
         """Return."""
