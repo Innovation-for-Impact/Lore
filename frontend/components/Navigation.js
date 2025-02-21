@@ -40,7 +40,7 @@ function Navigation() {
                 }} */}
                 {children}
             </Text>),
-            tabBarStyle: styles.bottomNavigation,
+            // tabBarStyle: styles.bottomNavigation,
         })}
     >
         <Tab.Screen name="Community" component={CommunityScreen} />
