@@ -1,9 +1,10 @@
-from operator import mod
 from typing import ClassVar
 import uuid
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
-from django.db import models
+from django.db import models, IntegrityError
+from django.http import Http404
+from rest_framework.fields import ObjectDoesNotExist
 
 
 class LoreUserManager(BaseUserManager["LoreUser"]):
@@ -79,7 +80,9 @@ class LoreGroupManager(models.Manager):
 
     def create_group(self, name: str, owner: "LoreUser") -> "LoreGroup":
         """Create a Lore group with the given name and the specified owner."""
-        join_code = uuid.uuid4().hex[:6]
+        join_code = uuid.uuid4().hex[:8]
+        while self.get(created=join_code) is not None:
+            join_code = uuid.uuid4().hex[:8]
 
         group = self.model(
             name=name,
@@ -90,6 +93,15 @@ class LoreGroupManager(models.Manager):
         group.members.add(owner.pk)
 
         return group
+
+    def join_group(self, join_code: str, user: "LoreUser"):
+        """Attempt to join the group with thte given join code."""
+
+        try:
+            group: LoreGroup = self.get(join_code=join_code)
+            group.members.add(user.pk)
+        except ObjectDoesNotExist:
+            raise Http404
 
 
 class LoreGroup(models.Model):
