@@ -204,7 +204,7 @@ class LoreGroup(models.Model):
 
     def has_member(self, user: LoreUser) -> bool:
         """Return true if the user is a member of the group."""
-        return self.members.filter(user_id=user.pk).exists()
+        return self.members.filter(id=user.pk).exists()
 
 
 class QuoteManager(models.Manager):
@@ -277,8 +277,8 @@ class Image(models.Model):
     """Represents an image sent by a group.
 
     Requires an image url with max length 256,
-    a descrption with a max length of 128,
-    and a group foreign key
+    a description with a max length of 128,
+    ans a group foreign key
     """
 
     image_url = models.ImageField(upload_to=PathAndRename("group_images"))
@@ -293,7 +293,7 @@ class Achievement(models.Model):
     """Represents a groups achievements.
 
     Requires a title with max length 128,
-    a descrption with max length 1024,
+    a description with max length 1024,
     an image url with max length 128,
     and a group foreign key
     """

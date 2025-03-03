@@ -1,12 +1,18 @@
-from typing import Any, ClassVar, Type, cast
+"""Describes the viewsets for Lore Users."""
+
+from typing import TYPE_CHECKING, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated
 from django.http import HttpRequest
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from rest_framework.views import Response
 
 from lore import serializers
 from lore.models import LoreGroup, LoreUser
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 
 class MutualUserPermission(permissions.BasePermission):
@@ -14,7 +20,8 @@ class MutualUserPermission(permissions.BasePermission):
 
     def has_object_permission(
         self, request: HttpRequest, view: viewsets.ViewSet, obj: LoreUser
-    ):
+    ) -> bool:
+        """Return true if accessing user shares a group with the object."""
         user: LoreUser = cast(LoreUser, request.user)
         mutual_users = user.get_mutual_users()
         return mutual_users.filter(pk=obj.pk).exists()
@@ -46,7 +53,13 @@ def create_is_owner_permission(
     return IsOwner
 
 
-class LoreUserViewSet(viewsets.ModelViewSet):
+class LoreUserViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     """Viewset for lore users."""
 
     queryset = LoreUser.users.all()
@@ -58,9 +71,35 @@ class LoreUserViewSet(viewsets.ModelViewSet):
     ]
 
     def list(self, request: HttpRequest) -> Response:
-        """List users that the logged in user shares a group with."""
+        """List users that the logged in user shares a group with.
+
+        Supports an optional `group_id` field to filter users by the given
+        group.
+        """
         user: LoreUser = cast(LoreUser, request.user)
-        users = user.get_mutual_users()
+        group_id = request.GET.get("group_id", None)
+
+        users: QuerySet[LoreUser, LoreUser] | None
+        if group_id is None:
+            users = user.get_mutual_users()
+        else:
+            group: LoreGroup | None = LoreGroup.groups.filter(
+                pk=group_id,
+            ).first()
+
+            if group is None:
+                return Response(
+                    "Group does not exist",
+                    status=HTTP_404_NOT_FOUND,
+                )
+
+            if not group.has_member(user):
+                return Response(
+                    "You are not in this group",
+                    status=HTTP_401_UNAUTHORIZED,
+                )
+
+            users = group.members
 
         context = {"request": request}
         serializer = self.serializer_class(users, many=True, context=context)
