@@ -2,17 +2,23 @@
 
 from typing import Any, ClassVar, Literal, cast
 
-from django.http import HttpRequest
+from django.http import Http404, HttpRequest
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
-from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
+from rest_framework.status import (
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_401_UNAUTHORIZED,
+)
 from rest_framework.views import Response
 
 from lore import models, serializers
 
 
 class GroupMemberPermission(permissions.BasePermission):
+    """Permission to only allow user to view a group they are in."""
+
     def has_object_permission(
         self, request: HttpRequest, view, obj: models.LoreGroup
     ):
@@ -65,6 +71,35 @@ class GroupViewSet(viewsets.ModelViewSet):
             context=context,
         )
         return Response(group_serialize.data)
+
+    def update(self, request: HttpRequest, pk: int | None = None) -> Response:
+        """Unimplemented."""
+        raise Http404
+
+    def partial_update(
+        self, request: HttpRequest, pk: int | None = None
+    ) -> Response:
+        """Unimplemented."""
+        raise Http404
+
+    def destroy(self, _: HttpRequest, pk: int | None = None) -> Response:
+        """Destroy the group if it exists and there is at most 1 member."""
+        group: models.LoreGroup | None = cast(
+            models.LoreGroup | None,
+            models.LoreGroup.groups.filter(pk=pk).first(),
+        )
+        if group is None:
+            msg = "Group does not exist"
+            raise Http404(msg)
+        num_members = group.members.count()
+        if num_members > 1:
+            return Response(
+                HTTP_401_UNAUTHORIZED,
+                "Cannot delete the group as there is more than 1 member",
+            )
+        group.delete()
+
+        return Response(HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,
