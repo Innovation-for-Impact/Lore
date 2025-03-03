@@ -1,10 +1,30 @@
+import pathlib
 import uuid
 from typing import ClassVar, cast
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.core.files import File
 from django.db import models
 from django.http import Http404
+from django.utils.deconstruct import deconstructible
 from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
+
+
+# https://stackoverflow.com/questions/25767787/django-cannot-create-migrations-for-imagefield-with-dynamic-upload-to-value
+@deconstructible
+class PathAndRename:
+    """Generate a uuid for the uploaded file and store it in the given path."""
+
+    def __init__(self, sub_path: str) -> None:
+        """Take the sub path to store."""
+        self.path = sub_path
+
+    def __call__(self, _: File, filename: str) -> pathlib.Path:
+        """Generate the unique file path."""
+        stem = uuid.uuid4().hex
+        ext = pathlib.Path(filename).suffix.lower()
+        filename = f"{stem}{ext}"
+        return pathlib.Path(self.path) / filename
 
 
 class LoreUserManager(BaseUserManager["LoreUser"]):
@@ -67,7 +87,10 @@ class LoreUser(AbstractUser):
     last_name = models.CharField(max_length=32)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    avatar = models.ImageField(upload_to="avatars", null=True)
+    avatar = models.ImageField(
+        upload_to=PathAndRename("avatars"),
+        null=True,
+    )
 
     REQUIRED_FIELDS: ClassVar[list[str]] = ["first_name", "last_name"]
     USERNAME_FIELD = "email"
@@ -148,7 +171,10 @@ class LoreGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     # Django creates intermediate rep for us
     members = models.ManyToManyField(LoreUser)
-    avatar = models.ImageField(upload_to="group_avatar", null=True)
+    avatar = models.ImageField(
+        upload_to=PathAndRename("group_avatars"),
+        null=True,
+    )
 
     groups = LoreGroupManager()
 
@@ -239,7 +265,7 @@ class Image(models.Model):
     and a group foreign key
     """
 
-    image_url = models.ImageField(upload_to="group_images")
+    image_url = models.ImageField(upload_to=PathAndRename("group_images"))
     descrption = models.CharField(max_length=128)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -258,7 +284,10 @@ class Achievement(models.Model):
 
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=1024)
-    image_url = models.ImageField(upload_to="achievement_images", null=True)
+    image_url = models.ImageField(
+        upload_to=PathAndRename("achievement_images"),
+        null=True,
+    )
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     achieved_by = models.ManyToManyField(LoreUser)
     created = models.DateTimeField(auto_now_add=True)
