@@ -9,11 +9,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["id", "first_name", "last_name"]
 
 
-# TODO: Fix serializer referencing said_by w/ url
 class QuoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Quote
-        fields = ["id", "text", "said_by", "url"]
+        fields = ["id", "text", "said_by_id", "said_by", "url"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
