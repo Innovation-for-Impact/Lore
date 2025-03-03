@@ -94,14 +94,31 @@ class LoreGroupManager(models.Manager):
 
         return group
 
-    def join_group(self, join_code: str, user: "LoreUser"):
-        """Attempt to join the group with thte given join code."""
+    def join_group(self, join_code: str, user: "LoreUser") -> None:
+        """Attempt to join the group with thte given join code.
 
+        If no group with the given join_code exists, raises a 404 error
+        """
         try:
             group: LoreGroup = self.get(join_code=join_code)
             group.members.add(user.pk)
-        except ObjectDoesNotExist:
-            raise Http404
+        except ObjectDoesNotExist as e:
+            raise Http404 from e
+
+    def leave_group(self, group_id: int, user: "LoreUser") -> None:
+        """Attempt to leave the group with the given group id.
+
+        Will 404 if the user is not in the group, or the group does not exist
+        """
+        group: LoreGroup = self.filter(pk=group_id).first()
+        if group is None:
+            msg = "Group does not exist"
+            raise Http404(msg)
+
+        if not group.members.contains(user):
+            msg = "User not in group"
+            raise Http404(msg)
+        group.members.remove(user.pk)
 
 
 class LoreGroup(models.Model):
