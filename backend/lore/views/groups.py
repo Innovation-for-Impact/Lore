@@ -1,29 +1,40 @@
 """The view for the groups."""
 
-from typing import cast, ClassVar, Any
-from django.contrib.auth.models import AnonymousUser
-from django.http import HttpRequest, HttpResponseBadRequest
-from rest_framework import viewsets, permissions
-from rest_framework.exceptions import NotAuthenticated, ParseError
+from typing import Any, ClassVar, cast
+
+from django.http import HttpRequest
+from rest_framework import permissions, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ParseError
 from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from rest_framework.views import Response
-from rest_framework.decorators import action
 
-import lore.models as models
-import lore.serializers as serializers
+from lore import models, serializers
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    """Queryset for groups"""
+    """Queryset for groups."""
 
     queryset = models.LoreGroup.groups.all()
     serializer_class = serializers.GroupSerializer
-    permission_classes: ClassVar[list[Any]] = [permissions.IsAdminUser]
+    permission_classes: ClassVar[list[Any]] = [permissions.IsAuthenticated]
 
-    @permission_classes(permissions.IsAuthenticated)
+    def list(self, request: HttpRequest) -> Response:
+        """List the groups that the user is currently in."""
+        user: models.LoreUser = cast(models.LoreUser, request.user)
+        groups = models.LoreGroup.groups.get_groups_with_user(user)
+
+        context = {"request": request}
+        group_serializer = self.serializer_class(
+            groups,
+            many=True,
+            context=context,
+        )
+        return Response(group_serializer.data)
+
     def create(self, request: HttpRequest) -> Response:
         """Route to create a group with the name and the logged in user."""
-        name = request.POST["name"]
+        name = request.POST.get("name", None)
         if name is None:
             msg = "Expected group name"
             raise ParseError(msg)
@@ -31,7 +42,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         user: models.LoreUser = cast(models.LoreUser, request.user)
         group = models.LoreGroup.groups.create_group(name=name, owner=user)
 
-        group_serialize = serializers.GroupSerializer(group, many=False)
+        context = {"request": request}
+        group_serialize = self.serializer_class(
+            group,
+            many=False,
+            context=context,
+        )
         return Response(group_serialize.data)
 
     @action(
@@ -39,7 +55,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         methods=["post"],
         permission_classes=[permissions.IsAuthenticated],
     )
-    def join(self, request):
+    def join(self, request: HttpRequest) -> Response:
         """Route for the logged in user to join a group.
 
         Expects a "join_code" in the post request
@@ -58,11 +74,10 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["delete"],
-        permissions=[permissions.IsAuthenticated],
+        permission_classes=[permissions.IsAuthenticated],
     )
-    def leave(self, request):
-        """Cause the user to leave the group with the given group_id"""
-
+    def leave(self, request: HttpRequest) -> Response:
+        """Cause the user to leave the group with the given group_id."""
         user: models.LoreUser = cast(models.LoreUser, request.user)
         group_id = request.POST.get("group_id", None)
         if group_id is None:

@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, List, cast
 import uuid
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
@@ -78,10 +78,14 @@ class LoreUser(AbstractUser):
 class LoreGroupManager(models.Manager):
     """The manager for lore groups."""
 
+    def get_groups_with_user(self, user: LoreUser) -> list["LoreGroup"]:
+        """Get a list of all the groups the user is in."""
+        return cast(list["LoreGroup"], self.filter(members=user))
+
     def create_group(self, name: str, owner: "LoreUser") -> "LoreGroup":
         """Create a Lore group with the given name and the specified owner."""
         join_code = uuid.uuid4().hex[:8]
-        while self.get(created=join_code) is not None:
+        while self.filter(join_code=join_code).exists():
             join_code = uuid.uuid4().hex[:8]
 
         group = self.model(
@@ -105,12 +109,12 @@ class LoreGroupManager(models.Manager):
         except ObjectDoesNotExist as e:
             raise Http404 from e
 
-    def leave_group(self, group_id: int, user: "LoreUser") -> None:
+    def leave_group(self, group_id: str, user: "LoreUser") -> None:
         """Attempt to leave the group with the given group id.
 
         Will 404 if the user is not in the group, or the group does not exist
         """
-        group: LoreGroup = self.filter(pk=group_id).first()
+        group: LoreGroup = cast(LoreGroup, self.filter(pk=group_id).first())
         if group is None:
             msg = "Group does not exist"
             raise Http404(msg)
@@ -119,6 +123,8 @@ class LoreGroupManager(models.Manager):
             msg = "User not in group"
             raise Http404(msg)
         group.members.remove(user.pk)
+
+        # TODO: handle last user leaving
 
 
 class LoreGroup(models.Model):
