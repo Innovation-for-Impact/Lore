@@ -67,6 +67,7 @@ class LoreUser(AbstractUser):
     last_name = models.CharField(max_length=32)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to="avatars", null=True)
 
     REQUIRED_FIELDS: ClassVar[list[str]] = ["first_name", "last_name"]
     USERNAME_FIELD = "email"
@@ -147,6 +148,7 @@ class LoreGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     # Django creates intermediate rep for us
     members = models.ManyToManyField(LoreUser)
+    avatar = models.ImageField(upload_to="group_avatar", null=True)
 
     groups = LoreGroupManager()
 
@@ -237,7 +239,7 @@ class Image(models.Model):
     and a group foreign key
     """
 
-    image_url = models.URLField(max_length=256)
+    image_url = models.ImageField(upload_to="group_images")
     descrption = models.CharField(max_length=128)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -256,7 +258,7 @@ class Achievement(models.Model):
 
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=1024)
-    image_url = models.URLField(max_length=128)
+    image_url = models.ImageField(upload_to="achievement_images", null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     achieved_by = models.ManyToManyField(LoreUser)
     created = models.DateTimeField(auto_now_add=True)
