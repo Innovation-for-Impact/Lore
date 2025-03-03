@@ -94,12 +94,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         num_members = group.members.count()
         if num_members > 1:
             return Response(
-                HTTP_401_UNAUTHORIZED,
-                "Cannot delete the group as there is more than 1 member",
+                status=HTTP_401_UNAUTHORIZED,
+                data="Cannot delete the group as there is more than 1 member",
             )
         group.delete()
 
-        return Response(HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,

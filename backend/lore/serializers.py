@@ -1,5 +1,6 @@
 from rest_framework import serializers
-import lore.models as models
+
+from lore import models
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -11,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class QuoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Quote
-        fields = ["id", "text", "said_by"]
+        fields = ["id", "text", "said_by", "url"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

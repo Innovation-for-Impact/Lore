@@ -1,10 +1,10 @@
-from typing import ClassVar, List, cast
 import uuid
+from typing import ClassVar, cast
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
-from django.db import models, IntegrityError
+from django.db import models
 from django.http import Http404
-from rest_framework.fields import ObjectDoesNotExist
+from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
 
 
 class LoreUserManager(BaseUserManager["LoreUser"]):
@@ -19,9 +19,11 @@ class LoreUserManager(BaseUserManager["LoreUser"]):
     ) -> "LoreUser":
         """Commit a User with the given email, first name and password."""
         if not email:
-            raise ValueError("Users must have an email address")
+            msg = "Users must have an email address"
+            raise ValueError(msg)
         if not first_name:
-            raise ValueError("Users must have a first name")
+            msg = "Users must have a first name"
+            raise ValueError(msg)
 
         user = self.model(
             email=self.normalize_email(email),
@@ -134,7 +136,13 @@ class LoreGroupManager(models.Manager):
 class LoreGroup(models.Model):
     """The model representing a lore group."""
 
-    name = models.CharField(max_length=32, unique=True)
+    name = models.CharField(
+        max_length=32,
+        unique=True,
+        validators=[
+            MinLengthValidator(1),
+        ],
+    )
     join_code = models.CharField(max_length=8, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     # Django creates intermediate rep for us
@@ -143,8 +151,62 @@ class LoreGroup(models.Model):
     groups = LoreGroupManager()
 
     def __str__(self) -> str:
-        """Return."""
-        return "e"
+        """Output a string with the name and join code."""
+        return f"{self.name} {self.join_code}"
+
+    def get_quotes(self) -> list["Quote"]:
+        """Get all the quotes related to this group."""
+        return Quote.quotes.get_group_quotes(self)
+
+    def has_member(self, user: LoreUser) -> bool:
+        """Return true if the user is a member of the group."""
+        return self.members.filter(user_id=user.pk).exists()
+
+
+class QuoteManager(models.Manager):
+    """The Manager for quotes."""
+
+    def create_quote(
+        self,
+        text: str,
+        said_by_pk: int,
+        group_pk: int,
+    ) -> "Quote":
+        """Create a quote with the text, in the given group, said by the user.
+
+        All fields are required and obey the rules of the Quote model
+        """
+        if not text:
+            msg = "Must have text"
+            raise ValueError(msg)
+        if not said_by_pk:
+            msg = "Must have a user that said the quote"
+            raise ValueError(msg)
+        if not group_pk:
+            msg = "Must have a group"
+            raise ValueError(msg)
+
+        group: LoreGroup | None = LoreGroup.groups.filter(pk=group_pk).first()
+        if group is None:
+            msg = "Group does not exist"
+            raise Http404(msg)
+        said_by: LoreUser | None = LoreUser.users.filter(pk=said_by_pk).first()
+        if said_by is None:
+            msg = "Said by user does not exist"
+            raise Http404(msg)
+
+        quote = self.model(
+            text=text,
+            said_by=said_by,
+            group_id=group.pk,
+        )
+
+        quote.save(using=self._db)
+        return quote
+
+    def get_group_quotes(self, group: LoreGroup) -> list["Quote"]:
+        """Get all quotes in the given group."""
+        return cast(list["Quote"], self.filter(group_id=group.pk))
 
 
 class Quote(models.Model):
@@ -154,12 +216,17 @@ class Quote(models.Model):
     with the user that said the quote
     """
 
-    text = models.CharField(max_length=2048)
+    text = models.TextField(
+        max_length=2048,
+        validators=[MinLengthValidator(1)],
+    )
     said_by = models.ForeignKey(LoreUser, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
+
+    quotes = QuoteManager()
 
 
 class Image(models.Model):
