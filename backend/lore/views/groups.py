@@ -1,6 +1,6 @@
 """The view for the groups."""
 
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar, Literal, cast
 
 from django.http import HttpRequest
 from rest_framework import permissions, viewsets
@@ -12,12 +12,28 @@ from rest_framework.views import Response
 from lore import models, serializers
 
 
+class GroupMemberPermission(permissions.BasePermission):
+    def has_object_permission(
+        self, request: HttpRequest, view, obj: models.LoreGroup
+    ):
+        """Return true if the user can view the object.
+
+        The user may view the group if they are staff, or are a member
+        of the group
+        """
+        user: models.LoreUser = cast(models.LoreUser, request.user)
+        return user.is_in_group(obj.pk)
+
+
 class GroupViewSet(viewsets.ModelViewSet):
     """Queryset for groups."""
 
     queryset = models.LoreGroup.groups.all()
     serializer_class = serializers.GroupSerializer
-    permission_classes: ClassVar[list[Any]] = [permissions.IsAuthenticated]
+    permission_classes: ClassVar[list[Any]] = [
+        permissions.IsAuthenticated,
+        GroupMemberPermission,
+    ]
 
     def list(self, request: HttpRequest) -> Response:
         """List the groups that the user is currently in."""

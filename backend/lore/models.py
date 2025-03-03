@@ -70,6 +70,10 @@ class LoreUser(AbstractUser):
     USERNAME_FIELD = "email"
     users = LoreUserManager()
 
+    def is_in_group(self, group_pk: int) -> bool:
+        """Return true if the user is in the group with the given pk."""
+        return LoreGroup.groups.filter(members=self, pk=group_pk).exists()
+
     def __str__(self) -> str:
         """Get the user's email."""
         return self.email
