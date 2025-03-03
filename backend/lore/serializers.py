@@ -19,6 +19,7 @@ class QuoteSerializer(serializers.HyperlinkedModelSerializer):
             "said_by",
             "group_id",
             "group",
+            "created",
             "url",
         ]
 
@@ -26,4 +27,4 @@ class QuoteSerializer(serializers.HyperlinkedModelSerializer):
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.LoreGroup
-        fields = ["id", "name", "join_code", "avatar", "url"]
+        fields = ["id", "name", "join_code", "avatar", "created", "url"]
