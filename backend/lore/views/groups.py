@@ -36,7 +36,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     queryset = models.LoreGroup.groups.all()
     serializer_class = serializers.GroupSerializer
-    permission_classes: ClassVar[list[Any]] = [
+    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         permissions.IsAuthenticated,
         GroupMemberPermission,
     ]

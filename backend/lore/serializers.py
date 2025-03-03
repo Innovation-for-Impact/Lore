@@ -12,7 +12,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class QuoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Quote
-        fields = ["id", "text", "said_by_id", "said_by", "url"]
+        fields = [
+            "id",
+            "text",
+            "said_by_id",
+            "said_by",
+            "group_id",
+            "group",
+            "url",
+        ]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

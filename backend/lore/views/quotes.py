@@ -3,6 +3,7 @@
 from typing import Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated, Response
+from django.db.models import QuerySet
 from django.http import HttpRequest
 from rest_framework import permissions, viewsets
 from rest_framework.status import (
@@ -24,7 +25,7 @@ class GroupMemberPermission(permissions.BasePermission):
         view: viewsets.ModelViewSet,
     ):
         """Return true if the user can interact with the resource."""
-        if view.action not in ["list", "create"]:
+        if view.action not in ["create"]:
             return True
         user: LoreUser = cast(LoreUser, request.user)
         group_id = request.GET.get("group_id", None)
@@ -56,32 +57,36 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
     queryset = Quote.quotes.all()
     serializer_class = serializers.QuoteSerializer
-    permission_classes: ClassVar[list[Any]] = [
+    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         GroupMemberPermission,
     ]
 
     def list(self, request: HttpRequest) -> Response:
-        """List quotes for the given group.
+        """List quotes for all groups the user is in.
 
-        The group is specified with the `group_id` query parameter
+        Takes an optional `group_id` field to filter by a specific group
         """
         group_id: str | None = request.GET.get("group_id", None)
-        if group_id is None:
-            return Response(
-                status=HTTP_400_BAD_REQUEST,
-                data="Must specify a group id",
-            )
+        user: LoreUser = cast(LoreUser, request.user)
 
-        group: LoreGroup | None = LoreGroup.groups.filter(pk=group_id).first()
-        if group is None:
-            return Response(
-                status=HTTP_404_NOT_FOUND,
-                data="Group does not exist",
-            )
+        quotes: QuerySet[Quote, Quote] | None = None
+        if group_id is None:
+            user_groups = LoreGroup.groups.get_groups_with_user(user)
+            quotes = Quote.quotes.filter(group__in=user_groups).order_by("pk")
+        else:
+            group: LoreGroup | None = LoreGroup.groups.filter(
+                pk=group_id,
+            ).first()
+
+            if group is None:
+                return Response(
+                    status=HTTP_404_NOT_FOUND,
+                    data="Group does not exist",
+                )
+            quotes = group.get_quotes()
 
         context = {"request": request}
-        quotes = group.get_quotes()
         serialized_quotes = self.serializer_class(
             quotes,
             many=True,
