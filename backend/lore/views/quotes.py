@@ -87,6 +87,12 @@ class QuoteViewSet(viewsets.ModelViewSet):
             quotes = group.get_quotes()
 
         context = {"request": request}
+        page = self.paginate_queryset(quotes)
+        if page is not None:
+            return self.get_paginated_response(
+                self.get_serializer(page, many=True, context=context).data,
+            )
+
         serialized_quotes = self.serializer_class(
             quotes,
             many=True,

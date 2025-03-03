@@ -102,5 +102,11 @@ class LoreUserViewSet(
             users = group.members
 
         context = {"request": request}
+        page = self.paginate_queryset(users)
+        if page is not None:
+            return self.get_paginated_response(
+                self.get_serializer(page, many=True, context=context).data,
+            )
+
         serializer = self.serializer_class(users, many=True, context=context)
         return Response(serializer.data)

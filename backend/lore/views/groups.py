@@ -47,6 +47,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         groups = models.LoreGroup.groups.get_groups_with_user(user)
 
         context = {"request": request}
+        page = self.paginate_queryset(groups)
+        if page is not None:
+            return self.get_paginated_response(
+                self.get_serializer(page, many=True, context=context).data,
+            )
+
         group_serializer = self.serializer_class(
             groups,
             many=True,
