@@ -100,6 +100,19 @@ class LoreUser(AbstractUser):
         """Return true if the user is in the group with the given pk."""
         return LoreGroup.groups.filter(members=self, pk=group_pk).exists()
 
+    def get_mutual_users(self) -> models.QuerySet["LoreUser", "LoreUser"]:
+        """Retrieve users that share groups with this user.
+
+        The query will return this user as well
+        """
+        groups = LoreGroup.groups.get_groups_with_user(self)
+        group_ids = [group.pk for group in groups]
+        return (
+            LoreUser.users.filter(loregroup__in=group_ids)
+            .order_by("pk")
+            .distinct("pk")
+        )
+
     def __str__(self) -> str:
         """Get the user's email."""
         return self.email
@@ -108,9 +121,12 @@ class LoreUser(AbstractUser):
 class LoreGroupManager(models.Manager):
     """The manager for lore groups."""
 
-    def get_groups_with_user(self, user: LoreUser) -> list["LoreGroup"]:
+    def get_groups_with_user(
+        self,
+        user: LoreUser,
+    ) -> models.QuerySet["LoreGroup", "LoreGroup"]:
         """Get a list of all the groups the user is in."""
-        return cast(list["LoreGroup"], self.filter(members=user))
+        return self.filter(members=user)
 
     def create_group(self, name: str, owner: "LoreUser") -> "LoreGroup":
         """Create a Lore group with the given name and the specified owner."""
