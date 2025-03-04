@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "allauth.socialaccount.providers.google",
     "corsheaders",
+    "django_filters",
 ]
 
 SITE_ID = 1
@@ -162,6 +163,9 @@ REST_FRAMEWORK = {
         "rest_framework.pagination.PageNumberPagination"
     ),
     "PAGE_SIZE": 20,
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
 }
 
 # Following is added to enable registration with email instead of username
