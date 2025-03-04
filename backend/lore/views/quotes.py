@@ -10,6 +10,7 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from lore import serializers
@@ -66,6 +67,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
         """List quotes for all groups the user is in.
 
         Takes an optional `group_id` field to filter by a specific group
+        Takes an optional 'said_by_id' field to filter by who said the quote
         """
         group_id: str | None = request.GET.get("group_id", None)
         user: LoreUser = cast(LoreUser, request.user)
@@ -85,6 +87,18 @@ class QuoteViewSet(viewsets.ModelViewSet):
                     data="Group does not exist",
                 )
             quotes = group.get_quotes()
+
+        if quotes is None:
+            return Response(
+                "Failed to fetch quotes",
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        quotes = quotes.order_by("pk")
+
+        # limit by said_by_id if it exists
+        said_by_id: str | None = request.GET.get("said_by_id", None)
+        if quotes is not None and said_by_id is not None:
+            quotes = quotes.filter(said_by=said_by_id)
 
         context = {"request": request}
         page = self.paginate_queryset(quotes)
