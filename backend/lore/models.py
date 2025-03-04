@@ -5,6 +5,7 @@ from typing import ClassVar, cast
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.core.files import File
 from django.db import models
+from django.forms import ValidationError
 from django.http import Http404
 from django.utils.deconstruct import deconstructible
 from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
@@ -271,6 +272,13 @@ class Quote(models.Model):
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
 
     quotes = QuoteManager()
+
+    def clean(self) -> None:
+        """Validate that said_by is in the same group as the quote."""
+        if not self.group.has_member(self.said_by):
+            msg = """The person that said a quote must be in
+            the same group as the created quote"""
+            raise ValidationError(msg)
 
 
 class Image(models.Model):

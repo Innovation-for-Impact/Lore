@@ -4,6 +4,7 @@ from typing import Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated, Response
 from django.http import HttpRequest
+from rest_framework.exceptions import ParseError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 from rest_framework.status import (
@@ -52,7 +53,14 @@ class GroupMemberPermission(permissions.BasePermission):
 
 
 class QuoteViewSet(viewsets.ModelViewSet):
-    """Viewset for quotes."""
+    """Viewset for quotes.
+
+    Supports filtering by group_id and said_by_id, and also searching by text
+    Quotes can only be created when querying by a specific group.
+
+    To create a quote, it expects a `text` and `said_by` field. The group
+    is automatically set by the query parameters.
+    """
 
     serializer_class = serializers.QuoteSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
@@ -72,42 +80,11 @@ class QuoteViewSet(viewsets.ModelViewSet):
         user_groups = LoreGroup.groups.get_groups_with_user(user)
         return Quote.quotes.filter(group__in=user_groups).order_by("pk")
 
-    def create(self, request: HttpRequest) -> Response:
-        """Create a quote in the given group.
-
-        Expects:
-        - `text`, the contents of the quote
-        - `said_by_id`, the id of the user that said the quote
-        - 'group_id', the group to create the quote in
-        """
-        text = request.POST.get("text", None)
-        said_by_id = request.POST.get("said_by_id", None)
-        group_id: str | None = request.GET.get("group_id", None)
-
-        if text is None:
-            return Response(
-                data="Expected text field",
-                status=HTTP_400_BAD_REQUEST,
-            )
-        if said_by_id is None:
-            return Response(
-                data="Expected said_by_id field",
-                status=HTTP_400_BAD_REQUEST,
-            )
+    def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
+        """Create the item in the database."""
+        # Extract the group_id from query parameters
+        group_id: str | None = self.request.GET.get("group_id", None)
         if group_id is None:
-            return Response(
-                data="Expected group_id field",
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        quote = Quote.quotes.create_quote(
-            text=text,
-            said_by_pk=int(said_by_id),
-            group_pk=int(group_id),
-        )
-
-        context = {"request": request}
-        return Response(
-            self.serializer_class(quote, context=context, many=False).data,
-            status=HTTP_201_CREATED,
-        )
+            msg = "Expected a group id"
+            raise ParseError(msg)
+        serializer.save(group=LoreGroup.groups.filter(pk=group_id).first())
