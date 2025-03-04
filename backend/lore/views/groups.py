@@ -1,9 +1,10 @@
 """The view for the groups."""
 
-from typing import Any, ClassVar, Literal, cast
+from typing import Any, ClassVar, cast
 
 from django.http import Http404, HttpRequest
-from rest_framework import permissions, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.status import (
@@ -20,7 +21,10 @@ class GroupMemberPermission(permissions.BasePermission):
     """Permission to only allow user to view a group they are in."""
 
     def has_object_permission(
-        self, request: HttpRequest, view, obj: models.LoreGroup
+        self,
+        request: HttpRequest,
+        view,
+        obj: models.LoreGroup,
     ):
         """Return true if the user can view the object.
 
@@ -34,31 +38,20 @@ class GroupMemberPermission(permissions.BasePermission):
 class GroupViewSet(viewsets.ModelViewSet):
     """Queryset for groups."""
 
-    queryset = models.LoreGroup.groups.all()
     serializer_class = serializers.GroupSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         permissions.IsAuthenticated,
         GroupMemberPermission,
     ]
+    filter_backends: ClassVar[list[type[Any]]] = [
+        filters.SearchFilter,
+    ]
+    search_fields: ClassVar[list[str]] = ["name"]
 
-    def list(self, request: HttpRequest) -> Response:
-        """List the groups that the user is currently in."""
-        user: models.LoreUser = cast(models.LoreUser, request.user)
-        groups = models.LoreGroup.groups.get_groups_with_user(user)
-
-        context = {"request": request}
-        page = self.paginate_queryset(groups)
-        if page is not None:
-            return self.get_paginated_response(
-                self.get_serializer(page, many=True, context=context).data,
-            )
-
-        group_serializer = self.serializer_class(
-            groups,
-            many=True,
-            context=context,
-        )
-        return Response(group_serializer.data)
+    def get_queryset(self):
+        """List all groups that the user is in."""
+        user: models.LoreUser = cast(models.LoreUser, self.request.user)
+        return models.LoreGroup.groups.get_groups_with_user(user)
 
     def create(self, request: HttpRequest) -> Response:
         """Route to create a group with the name and the logged in user."""
@@ -83,7 +76,9 @@ class GroupViewSet(viewsets.ModelViewSet):
         raise Http404
 
     def partial_update(
-        self, request: HttpRequest, pk: int | None = None
+        self,
+        request: HttpRequest,
+        pk: int | None = None,
     ) -> Response:
         """Unimplemented."""
         raise Http404

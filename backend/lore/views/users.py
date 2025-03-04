@@ -1,10 +1,10 @@
 """Describes the viewsets for Lore Users."""
 
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated
 from django.http import HttpRequest
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
 from rest_framework.views import Response
 
@@ -62,22 +62,21 @@ class LoreUserViewSet(
 ):
     """Viewset for lore users."""
 
-    queryset = LoreUser.users.all()
     serializer_class = serializers.UserSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         MutualUserPermission,
         create_is_owner_permission(["destroy", "update", "partial_update"]),
     ]
+    filter_backends: ClassVar[list[type[Any]]] = [
+        filters.SearchFilter,
+    ]
+    search_fields: ClassVar[list[str]] = ["first_name", "last_name"]
 
-    def list(self, request: HttpRequest) -> Response:
-        """List users that the logged in user shares a group with.
-
-        Supports an optional `group_id` field to filter users by the given
-        group.
-        """
-        user: LoreUser = cast(LoreUser, request.user)
-        group_id = request.GET.get("group_id", None)
+    def get_queryset(self):
+        """List all the users the logged in user shares a group with."""
+        user: LoreUser = cast(LoreUser, self.request.user)
+        group_id = self.request.GET.get("group_id", None)
 
         users: QuerySet[LoreUser, LoreUser] | None
         if group_id is None:
@@ -88,25 +87,10 @@ class LoreUserViewSet(
             ).first()
 
             if group is None:
-                return Response(
-                    "Group does not exist",
-                    status=HTTP_404_NOT_FOUND,
-                )
+                return []
 
             if not group.has_member(user):
-                return Response(
-                    "You are not in this group",
-                    status=HTTP_401_UNAUTHORIZED,
-                )
+                return []
 
-            users = group.members
-
-        context = {"request": request}
-        page = self.paginate_queryset(users)
-        if page is not None:
-            return self.get_paginated_response(
-                self.get_serializer(page, many=True, context=context).data,
-            )
-
-        serializer = self.serializer_class(users, many=True, context=context)
-        return Response(serializer.data)
+            users = group.members.all()
+        return users

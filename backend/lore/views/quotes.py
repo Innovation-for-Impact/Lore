@@ -5,8 +5,8 @@ from typing import Any, ClassVar, cast
 from dj_rest_auth.views import IsAuthenticated, Response
 from django.db.models import QuerySet
 from django.http import HttpRequest
-from rest_framework import filters, permissions, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, viewsets
 from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
