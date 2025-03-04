@@ -3,15 +3,12 @@
 from typing import Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated, Response
-from django.db.models import QuerySet
 from django.http import HttpRequest
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from lore import serializers
@@ -70,6 +67,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
     search_fields: ClassVar[list[str]] = ["text"]
 
     def get_queryset(self):
+        """Get all the quotes for the groups the user is in."""
         user: LoreUser = cast(LoreUser, self.request.user)
         user_groups = LoreGroup.groups.get_groups_with_user(user)
         return Quote.quotes.filter(group__in=user_groups).order_by("pk")

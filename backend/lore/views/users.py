@@ -5,8 +5,6 @@ from typing import TYPE_CHECKING, Any, ClassVar, cast
 from dj_rest_auth.views import IsAuthenticated
 from django.http import HttpRequest
 from rest_framework import filters, mixins, permissions, viewsets
-from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
-from rest_framework.views import Response
 
 from lore import serializers
 from lore.models import LoreGroup, LoreUser

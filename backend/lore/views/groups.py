@@ -3,7 +3,6 @@
 from typing import Any, ClassVar, cast
 
 from django.http import Http404, HttpRequest
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
