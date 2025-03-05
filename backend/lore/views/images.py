@@ -15,11 +15,11 @@ from lore.utils import GroupMemberItemPermission
 class ImageViewSet(viewsets.ModelViewSet):
     """Viewset for quotes.
 
-    Supports filtering by group_id and said_by_id, and also searching by text
-    Quotes can only be created when querying by a specific group.
+    Supports filtering by group_id and searching by description
+    Images can only be created when querying by a specific group.
 
-    To create a quote, it expects a `text` and `said_by` field. The group
-    is automatically set by the query parameters.
+    To create an image, it expects a `image` and an optional `description` field
+    . The group is automatically set by the query parameters.
     """
 
     serializer_class = serializers.ImageSerializer
@@ -31,7 +31,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         DjangoFilterBackend,
     ]
-    filterset_fields: ClassVar[list[str]] = []
+    filterset_fields: ClassVar[list[str]] = ["group_id"]
     search_fields: ClassVar[list[str]] = ["description"]
 
     def get_queryset(self):
