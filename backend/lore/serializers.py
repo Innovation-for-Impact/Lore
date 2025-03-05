@@ -61,6 +61,14 @@ class QuoteSerializer(serializers.ModelSerializer):
         except KeyError:
             pass
 
+    def create(self, validated_data: dict[Any, Any]) -> models.Quote:
+        """Create an instane of an Quote."""
+        return models.Quote.quotes.create_quote(
+            text=validated_data["text"],
+            said_by_pk=validated_data["said_by"].pk,
+            group_pk=validated_data["group"].pk,
+        )
+
     class Meta:
         model = models.Quote
         fields: ClassVar[list[str]] = [
