@@ -18,8 +18,8 @@ class ImageViewSet(viewsets.ModelViewSet):
     Supports filtering by group_id and searching by description
     Images can only be created when querying by a specific group.
 
-    To create an image, it expects a `image` and an optional `description` field
-    . The group is automatically set by the query parameters.
+    To create an image, it expects an `image` and optional `description` field.
+    The group is automatically set by the query parameters.
     """
 
     serializer_class = serializers.ImageSerializer
