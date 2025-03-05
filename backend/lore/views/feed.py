@@ -38,24 +38,27 @@ class FeedView(APIView, PageNumberPagination):
             queryset: QuerySet[Model, Model],
             type_name: str,
         ) -> QuerySet[Model, Model]:
+            """Annotate the object with an extra 'type' column."""
             return queryset.annotate(
                 type=Value(type_name, output_field=CharField()),
             )
 
+        # get item ids ordered by descending timestamp
+        # adds an additional type field
         item_ordering = list(
-            (
-                annotate_type(quotes, "quote")
-                .annotate(updated_at=F("created"))
-                .values("id", "type", "updated_at")
-                .union(
-                    annotate_type(images, "image").annotate(
-                        updated_at=F("created"),
-                    ),
-                )
-            ).order_by("-updated_at"),
+            annotate_type(quotes, "quote")
+            .annotate(timestamp=F("created"))
+            .union(
+                annotate_type(images, "image").annotate(
+                    timestamp=F("created"),
+                ),
+            )
+            .values("id", "type", "timestamp")
+            .order_by("-timestamp"),
         )
 
         def update_item(item: dict[str, Any]) -> dict[str, Any]:
+            """Attach the item's url and remove the id field."""
             item["url"] = request.build_absolute_uri(
                 reverse(
                     f"{item['type']}-detail",
@@ -75,6 +78,6 @@ class FeedView(APIView, PageNumberPagination):
                 "Failed to paginate data",
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        linked_items = [update_item(item) for item in paginated_item_ordering]
 
+        linked_items = [update_item(item) for item in paginated_item_ordering]
         return self.get_paginated_response(linked_items)
