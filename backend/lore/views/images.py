@@ -1,19 +1,18 @@
-"""View for quotes."""
+"""View for images."""
 
 from typing import Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated
-from django.http import HttpRequest
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, viewsets
 from rest_framework.exceptions import ParseError
 
 from lore import serializers
-from lore.models import LoreGroup, LoreUser, Quote
+from lore.models import Image, LoreGroup, LoreUser
 from lore.utils import GroupMemberItemPermission
 
 
-class QuoteViewSet(viewsets.ModelViewSet):
+class ImageViewSet(viewsets.ModelViewSet):
     """Viewset for quotes.
 
     Supports filtering by group_id and said_by_id, and also searching by text
@@ -23,7 +22,7 @@ class QuoteViewSet(viewsets.ModelViewSet):
     is automatically set by the query parameters.
     """
 
-    serializer_class = serializers.QuoteSerializer
+    serializer_class = serializers.ImageSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         GroupMemberItemPermission,
@@ -32,14 +31,14 @@ class QuoteViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         DjangoFilterBackend,
     ]
-    filterset_fields: ClassVar[list[str]] = ["group_id", "said_by_id"]
-    search_fields: ClassVar[list[str]] = ["text"]
+    filterset_fields: ClassVar[list[str]] = []
+    search_fields: ClassVar[list[str]] = ["description"]
 
     def get_queryset(self):
         """Get all the quotes for the groups the user is in."""
         user: LoreUser = cast(LoreUser, self.request.user)
         user_groups = LoreGroup.groups.get_groups_with_user(user)
-        return Quote.quotes.filter(group__in=user_groups).order_by("pk")
+        return Image.images.filter(group__in=user_groups).order_by("pk")
 
     def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
         """Create the item in the database."""

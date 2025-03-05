@@ -1,6 +1,7 @@
-from typing import Any, ClassVar, Unpack, cast
-from django.db.models import QuerySet
-from rest_framework import serializers, views
+import contextlib
+from typing import Any, ClassVar, cast
+
+from rest_framework import serializers
 
 from lore import models
 
@@ -12,6 +13,19 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class QuoteSerializer(serializers.ModelSerializer):
+    """Serializer for the quote detail.
+
+    Serializes the quote's:
+      - id
+      - text
+      - said_by
+      - said_by_url
+      - group
+      - group_url
+      - created
+      - url
+    """
+
     said_by_url = serializers.HyperlinkedRelatedField(
         view_name="loreuser-detail",
         lookup_field="pk",
@@ -54,6 +68,57 @@ class QuoteSerializer(serializers.ModelSerializer):
             "text",
             "said_by",
             "said_by_url",
+            "group",
+            "group_url",
+            "created",
+            "url",
+        ]
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    """Serializer for the image detail.
+
+    Serializes the images's:
+      - id
+      - image_url
+      - description
+      - group
+      - group_url
+      - created
+      - url
+    """
+
+    group_url = serializers.HyperlinkedRelatedField(
+        view_name="loregroup-detail",
+        lookup_field="pk",
+        many=False,
+        read_only=True,
+        source="group",
+    )
+    description = serializers.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        with contextlib.suppress(KeyError):
+            self.fields["group"] = serializers.PrimaryKeyRelatedField(
+                read_only=True,
+            )
+
+    def create(self, validated_data: dict[Any, Any]) -> models.Image:
+        """Create an instane of an Image."""
+        return models.Image.images.create_image(
+            image=validated_data["image"],
+            description=validated_data.get("description"),
+            group_pk=validated_data["group"].pk,
+        )
+
+    class Meta:
+        model = models.Image
+        fields: ClassVar[list[str]] = [
+            "id",
+            "image",
+            "description",
             "group",
             "group_url",
             "created",

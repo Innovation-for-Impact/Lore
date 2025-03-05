@@ -254,7 +254,18 @@ class QuoteManager(models.Manager):
         return cast(list["Quote"], self.filter(group_id=group.pk))
 
 
-class Quote(models.Model):
+class GroupItem(models.Model):
+    """Represents an item that belongs to a LoreGroup."""
+
+    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
+
+    class Meta:
+        """Configuration for this model."""
+
+        abstract = True
+
+
+class Quote(GroupItem):
     """Represents a quote that someone said.
 
     Takes a text field with at most 2048 characters and a 'saidby' field
@@ -266,7 +277,6 @@ class Quote(models.Model):
         validators=[MinLengthValidator(1)],
     )
     said_by = models.ForeignKey(LoreUser, on_delete=models.CASCADE)
-    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
@@ -281,7 +291,49 @@ class Quote(models.Model):
             raise ValidationError(msg)
 
 
-class Image(models.Model):
+class ImageManager(models.Manager):
+    """The Manager for images."""
+
+    def create_image(
+        self,
+        image: File,
+        description: str | None,
+        group_pk: int,
+    ) -> "Image":
+        """Create an image with the given image, description, and group.
+
+        All fields are required and obey the rules of the Quote model
+        """
+        if not image:
+            msg = "Must have image"
+            raise ValueError(msg)
+        if not group_pk:
+            msg = "Must have a group"
+            raise ValueError(msg)
+
+        group: LoreGroup | None = LoreGroup.groups.filter(pk=group_pk).first()
+        if group is None:
+            msg = "Group does not exist"
+            raise Http404(msg)
+
+        if description is None:
+            description = ""
+
+        image_model = self.model(
+            image=image,
+            description=description,
+            group_id=group.pk,
+        )
+
+        image_model.save(using=self._db)
+        return image_model
+
+    def get_group_images(self, group: LoreGroup) -> list["Image"]:
+        """Get all image in the given group."""
+        return cast(list["Image"], self.filter(group_id=group.pk))
+
+
+class Image(GroupItem):
     """Represents an image sent by a group.
 
     Requires an image url with max length 256,
@@ -289,15 +341,17 @@ class Image(models.Model):
     ans a group foreign key
     """
 
-    image_url = models.ImageField(upload_to=PathAndRename("group_images"))
-    descrption = models.CharField(max_length=128)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=PathAndRename("group_images"))
+    description = models.CharField(max_length=128, default="")
+    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
-    REQUIRED_FIELDS: ClassVar[list[str]] = ["image_url", "descrption"]
+    REQUIRED_FIELDS: ClassVar[list[str]] = ["image"]
+
+    images = ImageManager()
 
 
-class Achievement(models.Model):
+class Achievement(GroupItem):
     """Represents a groups achievements.
 
     Requires a title with max length 128,
