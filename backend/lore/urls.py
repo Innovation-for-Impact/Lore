@@ -10,5 +10,6 @@ router.register(r"users", views.LoreUserViewSet, basename="loreuser")
 router.register(r"images", views.ImageViewSet, basename="image")
 urlpatterns = [
     path("auth/google/", views.GoogleLogin.as_view(), name="google_login"),
+    path("feed/", views.FeedView.as_view(), name="feed"),
     path("", include(router.urls)),
 ]
