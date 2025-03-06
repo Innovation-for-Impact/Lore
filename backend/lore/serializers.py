@@ -1,15 +1,12 @@
 import contextlib
 from typing import Any, ClassVar, cast
 
+from django.db.models import QuerySet
+from django.urls import reverse
 from rest_framework import serializers
+from rest_framework.relations import HyperlinkedRelatedField
 
 from lore import models
-
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = models.LoreUser
-        fields = ["id", "first_name", "last_name", "avatar"]
 
 
 class QuoteSerializer(serializers.ModelSerializer):
@@ -66,7 +63,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
             said_by_pk=validated_data["said_by"].pk,
-            group_pk=validated_data["group"].pk,
+            group=validated_data["group"],
         )
 
     class Meta:
@@ -88,7 +85,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
     Serializes the images's:
       - id
-      - image_url
+      - image
       - description
       - group
       - group_url
@@ -118,7 +115,7 @@ class ImageSerializer(serializers.ModelSerializer):
         return models.Image.images.create_image(
             image=validated_data["image"],
             description=validated_data.get("description"),
-            group_pk=validated_data["group"].pk,
+            group=validated_data["group"],
         )
 
     class Meta:
@@ -134,7 +131,80 @@ class ImageSerializer(serializers.ModelSerializer):
         ]
 
 
+class AchievementSerializer(serializers.ModelSerializer):
+    """Serializer for the achievement detail.
+
+    Serializes the images's:
+      - id
+      - title
+      - image
+      - description
+      - achieved_by
+      - group
+      - group_url
+      - created
+      - url
+    """
+
+    group_url = serializers.HyperlinkedRelatedField(
+        view_name="loregroup-detail",
+        lookup_field="pk",
+        many=False,
+        read_only=True,
+        source="group",
+    )
+    image = serializers.ImageField(required=False)
+    achieved_by_url = serializers.SerializerMethodField()
+    num_achieved = serializers.ReadOnlyField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        with contextlib.suppress(KeyError):
+            self.fields["group"] = serializers.PrimaryKeyRelatedField(
+                read_only=True,
+            )
+
+    def create(self, validated_data: dict[Any, Any]) -> models.Achievement:
+        """Create an instane of an Image."""
+        return models.Achievement.achievements.create_achievement(
+            title=validated_data["title"],
+            image=validated_data.get("image"),
+            description=validated_data["description"],
+            achieved_by=validated_data.get("achieved_by", []),
+            group=validated_data["group"],
+        )
+
+    def get_achieved_by_url(self, obj: models.Achievement) -> str:
+        """Create a url resource to the users that achieved this."""
+        url = self.context["request"].build_absolute_uri(
+            reverse("loreuser-list"),
+        )
+        return f"{url}?achievement={obj.pk}"
+
+    class Meta:
+        model = models.Achievement
+        fields: ClassVar[list[str]] = [
+            "id",
+            "title",
+            "image",
+            "description",
+            "achieved_by_url",
+            "num_achieved",
+            "group",
+            "group_url",
+            "created",
+            "url",
+        ]
+
+
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.LoreGroup
         fields = ["id", "name", "join_code", "avatar", "created", "url"]
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.LoreUser
+        fields = ["id", "first_name", "last_name", "avatar", "url"]

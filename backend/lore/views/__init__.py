@@ -6,3 +6,4 @@ from lore.views.groups import GroupViewSet
 from lore.views.images import ImageViewSet
 from lore.views.quotes import QuoteViewSet
 from lore.views.users import LoreUserViewSet
+from lore.views.achievements import AchievementViewSet

@@ -1,4 +1,4 @@
-"""View for images."""
+"""View for achievements."""
 
 from typing import Any, ClassVar, cast
 
@@ -8,21 +8,21 @@ from rest_framework import filters, permissions, viewsets
 from rest_framework.exceptions import ParseError
 
 from lore import serializers
-from lore.models import Image, LoreGroup, LoreUser
+from lore.models import Achievement, LoreGroup, LoreUser
 from lore.utils import GroupMemberItemPermission
 
 
-class ImageViewSet(viewsets.ModelViewSet):
-    """Viewset for quotes.
+class AchievementViewSet(viewsets.ModelViewSet):
+    """Viewset for achievements.
 
-    Supports filtering by group_id and searching by description
-    Images can only be created when querying by a specific group.
+    Supports filtering by group_id and searching by description and title
+    Achievements can only be created when querying by a specific group.
 
-    To create an image, it expects an `image` and optional `description` field.
-    The group is automatically set by the query parameters.
+    To create an achievemet, it expects an `image`, 'description', and 'title'
+    fields. The group is automatically set by the query parameters.
     """
 
-    serializer_class = serializers.ImageSerializer
+    serializer_class = serializers.AchievementSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         GroupMemberItemPermission,
@@ -31,14 +31,16 @@ class ImageViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         DjangoFilterBackend,
     ]
-    filterset_fields: ClassVar[list[str]] = ["group_id"]
-    search_fields: ClassVar[list[str]] = ["description"]
+    filterset_fields: ClassVar[list[str]] = ["group_id", "achieved_by"]
+    search_fields: ClassVar[list[str]] = ["description", "title"]
 
     def get_queryset(self):
-        """Get all the images for the groups the user is in."""
+        """Get all the achievements for the groups the user is in."""
         user: LoreUser = cast(LoreUser, self.request.user)
         user_groups = LoreGroup.groups.get_groups_with_user(user)
-        return Image.images.filter(group__in=user_groups).order_by("pk")
+        return Achievement.achievements.filter(group__in=user_groups).order_by(
+            "pk",
+        )
 
     def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
         """Create the item in the database."""

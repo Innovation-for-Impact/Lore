@@ -1,20 +1,55 @@
 """Describes the viewsets for Lore Users."""
 
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast, overload
 
 from dj_rest_auth.views import IsAuthenticated
+from django.db.models import QuerySet
 from django.http import HttpRequest
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, viewsets
 
 from lore import serializers
-from lore.models import LoreGroup, LoreUser
-
-if TYPE_CHECKING:
-    from django.db.models import QuerySet
+from lore.models import Achievement, LoreGroup, LoreUser
 
 
-class MutualUserPermission(permissions.BasePermission):
+class MutualPermission(permissions.BasePermission):
     """Restricts object permissions to users that are in the same group."""
+
+    def has_permission(self, request, view) -> bool:
+        """Restricts high level permissions to shared groups.
+
+        A specific field can only be queried on if that object is actually
+        known by the user. For example, if the user is not in a group, they
+        cannot filter by it.
+        """
+        user: LoreUser = cast(LoreUser, request.user)
+        group_id = request.GET.get("member_of")
+        if group_id is not None:
+            group: LoreGroup | None = cast(
+                LoreGroup | None,
+                LoreGroup.groups.filter(pk=group_id).first(),
+            )
+            if group and not group.has_member(user):
+                return False
+
+        # user must be in the same group as the achievement
+        achievement_id = request.GET.get("achievement")
+        if achievement_id is not None:
+            achievement: Achievement = cast(
+                Achievement,
+                Achievement.achievements.filter(
+                    pk=achievement_id,
+                ).first(),
+            )
+            if achievement:
+                group: LoreGroup | None = cast(
+                    LoreGroup | None,
+                    LoreGroup.groups.filter(pk=achievement.group.pk).first(),
+                )
+                if group and not group.has_member(user):
+                    return False
+
+        return True
 
     def has_object_permission(
         self, request: HttpRequest, view: viewsets.ViewSet, obj: LoreUser
@@ -58,37 +93,24 @@ class LoreUserViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-    """Viewset for lore users."""
+    """Viewset for all lore users.
 
+    Can be searched by first and last name
+    Filter for what group a user is in with `member_of`
+    Filter for who accomplished an achievement with `achievement`
+    """
+
+    queryset = LoreUser.users.all()
     serializer_class = serializers.UserSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
-        MutualUserPermission,
+        MutualPermission,
         create_is_owner_permission(["destroy", "update", "partial_update"]),
     ]
     filter_backends: ClassVar[list[type[Any]]] = [
+        DjangoFilterBackend,
         filters.SearchFilter,
     ]
     search_fields: ClassVar[list[str]] = ["first_name", "last_name"]
-
-    def get_queryset(self):
-        """List all the users the logged in user shares a group with."""
-        user: LoreUser = cast(LoreUser, self.request.user)
-        group_id = self.request.GET.get("group_id", None)
-
-        users: QuerySet[LoreUser, LoreUser] | None
-        if group_id is None:
-            users = user.get_mutual_users()
-        else:
-            group: LoreGroup | None = LoreGroup.groups.filter(
-                pk=group_id,
-            ).first()
-
-            if group is None:
-                return []
-
-            if not group.has_member(user):
-                return []
-
-            users = group.members.all()
-        return users
+    # currently, any additional fields need to be added to the MutualPermission
+    filterset_fields: ClassVar[list[str]] = ["member_of", "achievement"]

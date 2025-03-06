@@ -109,7 +109,7 @@ class LoreUser(AbstractUser):
         groups = LoreGroup.groups.get_groups_with_user(self)
         group_ids = [group.pk for group in groups]
         return (
-            LoreUser.users.filter(loregroup__in=group_ids)
+            LoreUser.users.filter(member_of__in=group_ids)
             .order_by("pk")
             .distinct("pk")
         )
@@ -187,7 +187,7 @@ class LoreGroup(models.Model):
     join_code = models.CharField(max_length=8, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     # Django creates intermediate rep for us
-    members = models.ManyToManyField(LoreUser)
+    members = models.ManyToManyField(LoreUser, related_name="member_of")
     avatar = models.ImageField(
         upload_to=PathAndRename("group_avatars"),
         null=True,
@@ -215,7 +215,7 @@ class QuoteManager(models.Manager):
         self,
         text: str,
         said_by_pk: int,
-        group_pk: int,
+        group: LoreGroup,
     ) -> "Quote":
         """Create a quote with the text, in the given group, said by the user.
 
@@ -227,14 +227,7 @@ class QuoteManager(models.Manager):
         if not said_by_pk:
             msg = "Must have a user that said the quote"
             raise ValueError(msg)
-        if not group_pk:
-            msg = "Must have a group"
-            raise ValueError(msg)
 
-        group: LoreGroup | None = LoreGroup.groups.filter(pk=group_pk).first()
-        if group is None:
-            msg = "Group does not exist"
-            raise Http404(msg)
         said_by: LoreUser | None = LoreUser.users.filter(pk=said_by_pk).first()
         if said_by is None:
             msg = "Said by user does not exist"
@@ -295,10 +288,7 @@ class ImageManager(models.Manager):
     """The Manager for images."""
 
     def create_image(
-        self,
-        image: File,
-        description: str | None,
-        group_pk: int,
+        self, image: File, description: str | None, group: LoreGroup
     ) -> "Image":
         """Create an image with the given image, description, and group.
 
@@ -307,14 +297,6 @@ class ImageManager(models.Manager):
         if not image:
             msg = "Must have image"
             raise ValueError(msg)
-        if not group_pk:
-            msg = "Must have a group"
-            raise ValueError(msg)
-
-        group: LoreGroup | None = LoreGroup.groups.filter(pk=group_pk).first()
-        if group is None:
-            msg = "Group does not exist"
-            raise Http404(msg)
 
         if description is None:
             description = ""
@@ -351,6 +333,39 @@ class Image(GroupItem):
     images = ImageManager()
 
 
+class AchievementManager(models.Manager):
+    """Manager for handling achievement model functionalities."""
+
+    def create_achievement(
+        self,
+        title: str,
+        description: str,
+        image: File | None,
+        achieved_by: list[LoreUser],
+        group: LoreGroup,
+    ) -> "Achievement":
+        """Create an achievement object.
+
+        The achievement is attached to the given group.
+        """
+        achievement_model = self.model(
+            title=title,
+            image=image,
+            description=description,
+            group=group,
+        )
+
+        achievement_model.save(using=self._db)
+        achievement_model.achieved_by.set(achieved_by)
+        return achievement_model
+
+    def get_group_achievements(
+        self, group: LoreGroup
+    ) -> models.QuerySet["Achievement", "Achievement"]:
+        """Retrieve all achievements in the given group."""
+        return self.filter(group=group)
+
+
 class Achievement(GroupItem):
     """Represents a groups achievements.
 
@@ -362,16 +377,23 @@ class Achievement(GroupItem):
 
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=1024)
-    image_url = models.ImageField(
+    image = models.ImageField(
         upload_to=PathAndRename("achievement_images"),
         null=True,
     )
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
     achieved_by = models.ManyToManyField(LoreUser)
     created = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def num_achieved(self) -> int:
+        """Get the number of users that achieved this."""
+        return self.achieved_by.count()
+
     REQUIRED_FIELDS: ClassVar[list[str]] = [
-        "image_url",
+        "image",
         "descrption",
         "title",
     ]
+
+    achievements = AchievementManager()

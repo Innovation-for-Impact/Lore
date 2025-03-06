@@ -8,6 +8,11 @@ router.register(r"groups", views.GroupViewSet, basename="loregroup")
 router.register(r"quotes", views.QuoteViewSet, basename="quote")
 router.register(r"users", views.LoreUserViewSet, basename="loreuser")
 router.register(r"images", views.ImageViewSet, basename="image")
+router.register(
+    r"achievements",
+    views.AchievementViewSet,
+    basename="achievement",
+)
 urlpatterns = [
     path("auth/google/", views.GoogleLogin.as_view(), name="google_login"),
     path("feed/", views.FeedView.as_view(), name="feed"),
