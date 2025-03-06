@@ -198,10 +198,56 @@ class AchievementSerializer(serializers.ModelSerializer):
         ]
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
+    """Serializes a group.
+
+    Provides the following fields:
+    - id (read only)
+    - name
+    - members_url (read only)
+    - join_code (read only)
+    - avatar
+    - created (read only)
+    - url (read only)
+    - members (write only)
+    """
+
+    members_url = serializers.SerializerMethodField()
+
+    def get_members_url(self, obj: models.LoreGroup) -> str:
+        """Create a url resource to the members in the group."""
+        base_url = self.context["request"].build_absolute_uri(
+            reverse("loreuser-list"),
+        )
+        return f"{base_url}?member_of={obj.pk}"
+
+    def create(self, validated_data: dict[Any, Any]) -> models.LoreGroup:
+        """Create an instane of an Group."""
+        return models.LoreGroup.groups.create_group(
+            name=validated_data["name"],
+            owner=self.context["request"].user,
+            avatar=validated_data.get("avatar"),
+            members=validated_data.get("members", []),
+        )
+
     class Meta:
+        """Describes the serializer."""
+
         model = models.LoreGroup
-        fields = ["id", "name", "join_code", "avatar", "created", "url"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "name",
+            "members",
+            "members_url",
+            "join_code",
+            "avatar",
+            "created",
+            "url",
+        ]
+        read_only_fields: ClassVar[list[str]] = ["join_code"]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
+            "members": {"write_only": True},
+        }
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

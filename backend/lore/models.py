@@ -1,3 +1,4 @@
+from os import abort
 import pathlib
 import uuid
 from typing import ClassVar, cast
@@ -122,6 +123,8 @@ class LoreUser(AbstractUser):
 class LoreGroupManager(models.Manager):
     """The manager for lore groups."""
 
+    MAX_QUICK_ADD_USERS = 10
+
     def get_groups_with_user(
         self,
         user: LoreUser,
@@ -129,19 +132,32 @@ class LoreGroupManager(models.Manager):
         """Get a list of all the groups the user is in."""
         return self.filter(members=user)
 
-    def create_group(self, name: str, owner: "LoreUser") -> "LoreGroup":
-        """Create a Lore group with the given name and the specified owner."""
+    def create_group(
+        self,
+        name: str,
+        owner: "LoreUser",
+        avatar: File | None,
+        members: list[LoreUser],
+    ) -> "LoreGroup":
+        """Create a Lore group.
+
+        At most MAX_QUICK_ADD_USERS members may be added to the group
+        upon creaton; this is to prevent spam.
+        """
+        if len(members) > self.MAX_QUICK_ADD_USERS:
+            msg = f"""You may not create a group with
+            more than {self.MAX_QUICK_ADD_USERS} members."""
+            raise ValueError(msg)
+
         join_code = uuid.uuid4().hex[:8]
         while self.filter(join_code=join_code).exists():
             join_code = uuid.uuid4().hex[:8]
 
-        group = self.model(
-            name=name,
-            join_code=join_code,
-        )
+        group = self.model(name=name, join_code=join_code, avatar=avatar)
 
         group.save(using=self._db)
         group.members.add(owner.pk)
+        group.members.add(*[m.pk for m in members])
 
         return group
 

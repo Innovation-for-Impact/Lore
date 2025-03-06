@@ -52,24 +52,6 @@ class GroupViewSet(viewsets.ModelViewSet):
         user: models.LoreUser = cast(models.LoreUser, self.request.user)
         return models.LoreGroup.groups.get_groups_with_user(user)
 
-    def create(self, request: HttpRequest) -> Response:
-        """Route to create a group with the name and the logged in user."""
-        name = request.POST.get("name", None)
-        if name is None:
-            msg = "Expected group name"
-            raise ParseError(msg)
-
-        user: models.LoreUser = cast(models.LoreUser, request.user)
-        group = models.LoreGroup.groups.create_group(name=name, owner=user)
-
-        context = {"request": request}
-        group_serialize = self.serializer_class(
-            group,
-            many=False,
-            context=context,
-        )
-        return Response(group_serialize.data)
-
     def update(self, request: HttpRequest, pk: int | None = None) -> Response:
         """Unimplemented."""
         raise Http404
