@@ -135,15 +135,16 @@ class AchievementSerializer(serializers.ModelSerializer):
     """Serializer for the achievement detail.
 
     Serializes the images's:
-      - id
+      - id (read only)
       - title
       - image
       - description
-      - achieved_by
-      - group
-      - group_url
-      - created
-      - url
+      - achieved_by (write only)
+      - achieved_by_url (read only)
+      - group (read only)
+      - group_url (read only)
+      - created (read only)
+      - url (read only)
     """
 
     group_url = serializers.HyperlinkedRelatedField(
@@ -157,7 +158,7 @@ class AchievementSerializer(serializers.ModelSerializer):
     achieved_by_url = serializers.SerializerMethodField()
     num_achieved = serializers.ReadOnlyField()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         with contextlib.suppress(KeyError):
@@ -189,6 +190,7 @@ class AchievementSerializer(serializers.ModelSerializer):
             "title",
             "image",
             "description",
+            "achieved_by",
             "achieved_by_url",
             "num_achieved",
             "group",
@@ -196,6 +198,9 @@ class AchievementSerializer(serializers.ModelSerializer):
             "created",
             "url",
         ]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
+            "achieved_by": {"write_only": True},
+        }
 
 
 class GroupSerializer(serializers.ModelSerializer):
