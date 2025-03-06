@@ -7,30 +7,68 @@ from django.db.models import CharField, F, Model, QuerySet, Value
 from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import status
+from rest_framework import permissions
+from rest_framework.exceptions import ParseError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import BasePermission
-from rest_framework.views import APIView, Response
+from rest_framework.views import APIView, Response, View
 
 from lore.models import Image, LoreGroup, LoreUser, Quote
+from lore.views import groups
+
+
+class GroupMemberPermission(permissions.BasePermission):
+    """Permission to only allow user to view a group they are in."""
+
+    def has_permission(
+        self,
+        request: HttpRequest,
+        view: View,
+    ):
+        """Return true if the user can view the group.
+
+        The user may view the group if they are a member
+        of the group
+        """
+        group_id = request.GET.get("group_id")
+        if group_id is None:
+            return True
+        user: LoreUser = cast(LoreUser, request.user)
+        try:
+            return user.is_in_group(int(group_id))
+        except ValueError as e:
+            msg = "Expected an integer group id."
+            raise ParseError(msg) from e
 
 
 class FeedView(APIView, PageNumberPagination):
     """Display info about recent events.
 
-    Supports the GET path, whichr retrieves a list of data ordered by timestamp.
+    Supports the GET path, which retrieves a list of data ordered by timestamp.
     This list rreturns urls and types, so the requester must retrieve the items
     involved in the events themselves.
     """
 
     permission_classes: ClassVar[list[type[BasePermission]]] = [
         IsAuthenticated,
+        GroupMemberPermission,
     ]
 
     def get(self, request: HttpRequest) -> Response:
-        """Retrieve an ordererd list by timestamp of recent actions."""
+        """Retrieve an ordererd list by timestamp of recent actions.
+
+        Query can be limited to a specific group by specifying the group_id
+        query parameter.
+        """
         user = cast(LoreUser, request.user)
 
-        user_groups = LoreGroup.groups.get_groups_with_user(user).all()
+        user_groups: QuerySet[LoreGroup, LoreGroup] | None = None
+        group_id = request.GET.get("group_id")
+        if group_id is None:
+            user_groups = LoreGroup.groups.get_groups_with_user(user).all()
+        else:
+            user_groups = LoreGroup.groups.filter(pk=group_id)
+
         quotes = Quote.quotes.filter(group__in=user_groups)
         images = Image.images.filter(group__in=user_groups)
 

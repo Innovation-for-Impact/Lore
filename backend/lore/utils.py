@@ -2,6 +2,7 @@ from typing import cast
 
 from django.http import HttpRequest
 from rest_framework import permissions, viewsets
+from rest_framework.exceptions import ParseError
 
 from lore.models import GroupItem, LoreUser
 
@@ -15,6 +16,7 @@ class GroupMemberItemPermission(permissions.BasePermission):
         view: viewsets.ModelViewSet,
     ):
         """Return true if the user can interact with the resource."""
+        # allows user to interact with list
         if view.action not in ["create"]:
             return True
         user: LoreUser = cast(LoreUser, request.user)
@@ -24,8 +26,11 @@ class GroupMemberItemPermission(permissions.BasePermission):
             Try specifying a group_id query paremeter
             """
             return False
-        # TODO: proper parse error handling
-        return user.is_in_group(int(group_id))
+        try:
+            return user.is_in_group(int(group_id))
+        except ValueError as e:
+            msg = "Expected an integer group id."
+            raise ParseError(msg) from e
 
     def has_object_permission(
         self,
