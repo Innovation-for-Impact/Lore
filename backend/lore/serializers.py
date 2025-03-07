@@ -1,4 +1,5 @@
 import contextlib
+from operator import mod
 from typing import Any, ClassVar, cast
 
 from django.db.models import QuerySet
@@ -253,6 +254,23 @@ class GroupSerializer(serializers.ModelSerializer):
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
             "members": {"write_only": True},
         }
+
+
+class GroupUpdateSerializer(GroupSerializer):
+    """Serializer that limits what group fields can be updated.
+
+    Members cannot be updated
+    """
+
+    class Meta(GroupSerializer.Meta):
+        """Overwrite behavior on the orignal Meta."""
+
+        model = models.LoreGroup
+        fields: ClassVar[list[str]] = [
+            f for f in GroupSerializer.Meta.fields if f not in ["members"]
+        ]
+        read_only_fields: ClassVar[list[str]] = ["join_code", "members"]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

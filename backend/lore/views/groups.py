@@ -3,9 +3,10 @@
 from typing import Any, ClassVar, cast
 
 from django.http import Http404, HttpRequest
-from rest_framework import filters, permissions, viewsets
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
+from rest_framework.serializers import BaseSerializer
 from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
@@ -47,22 +48,20 @@ class GroupViewSet(viewsets.ModelViewSet):
     ]
     search_fields: ClassVar[list[str]] = ["name"]
 
+    def get_serializer_class(self) -> type[BaseSerializer]:
+        """Choose serializer class based on action.
+
+        If the action is an update route, choose the update serializer.
+        Otherwise, use the standard serializer.
+        """
+        if self.action in ["update", "partial_update"]:
+            return serializers.GroupUpdateSerializer
+        return serializers.GroupSerializer
+
     def get_queryset(self):
         """List all groups that the user is in."""
         user: models.LoreUser = cast(models.LoreUser, self.request.user)
         return models.LoreGroup.groups.get_groups_with_user(user)
-
-    def update(self, request: HttpRequest, pk: int | None = None) -> Response:
-        """Unimplemented."""
-        raise Http404
-
-    def partial_update(
-        self,
-        request: HttpRequest,
-        pk: int | None = None,
-    ) -> Response:
-        """Unimplemented."""
-        raise Http404
 
     def destroy(self, _: HttpRequest, pk: int | None = None) -> Response:
         """Destroy the group if it exists and there is at most 1 member."""
