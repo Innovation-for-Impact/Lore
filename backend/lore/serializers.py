@@ -200,8 +200,24 @@ class AchievementSerializer(serializers.ModelSerializer):
             "url",
         ]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
-            "achieved_by": {"write_only": True},
+            "achieved_by": {"write_only": True, "allow_empty": True},
         }
+
+
+class AchievementUpdateSerializer(AchievementSerializer):
+    """Limits what achievement fields can be updated.
+
+    Achieved_by is read only
+    """
+
+    class Meta(AchievementSerializer.Meta):
+        fields: ClassVar[list[str]] = [
+            f
+            for f in AchievementSerializer.Meta.fields
+            if f not in ["achieved_by"]
+        ]
+        read_only_fields: ClassVar[list[str]] = ["achieved_by"]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -252,7 +268,7 @@ class GroupSerializer(serializers.ModelSerializer):
         ]
         read_only_fields: ClassVar[list[str]] = ["join_code"]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
-            "members": {"write_only": True},
+            "members": {"write_only": True, "allow_empty": True},
         }
 
 
