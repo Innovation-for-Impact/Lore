@@ -61,7 +61,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """List all groups that the user is in."""
         user: models.LoreUser = cast(models.LoreUser, self.request.user)
-        return models.LoreGroup.groups.get_groups_with_user(user)
+        return models.LoreGroup.groups.get_groups_with_user(user).order_by(
+            "pk",
+        )
 
     def destroy(self, _: HttpRequest, pk: int | None = None) -> Response:
         """Destroy the group if it exists and there is at most 1 member."""
