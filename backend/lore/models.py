@@ -413,3 +413,39 @@ class Achievement(GroupItem):
     ]
 
     achievements = AchievementManager()
+
+    def add_achiever(self, user: LoreUser) -> bool:
+        """Add the user to the achieved list.
+
+        Return true if the user was added successfully
+        Will return false if the group doesn't exist, or the
+        user already achieved this.
+        """
+        if not self.group.has_member(user):
+            return False
+        if self.has_achiever(user):
+            return False
+        self.achieved_by.add(user)
+
+        return True
+
+    def remove_achiever(self, user: LoreUser) -> bool:
+        """Remove the user from the achieved list.
+
+        Returns true if the user was successfully removed.
+        Returns false if the user is not in the group, or if
+        they're not on the achieved list.
+        """
+        if not self.group.has_member(user):
+            return False
+        if not self.has_achiever(user):
+            return False
+        self.achieved_by.remove(user)
+        return True
+
+    def has_achiever(self, user: LoreUser) -> bool:
+        """Check if the user already achieved this.
+
+        Returns True if the user has achieved this
+        """
+        return self.achieved_by.contains(user)
