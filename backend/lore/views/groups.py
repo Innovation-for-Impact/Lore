@@ -106,17 +106,12 @@ class GroupViewSet(viewsets.ModelViewSet):
         return Response(status=HTTP_201_CREATED)
 
     @action(
-        detail=False,
+        detail=True,
         methods=["delete"],
         permission_classes=[permissions.IsAuthenticated],
     )
-    def leave(self, request: HttpRequest) -> Response:
+    def leave(self, request: HttpRequest, pk: int) -> Response:
         """Cause the user to leave the group with the given group_id."""
         user: models.LoreUser = cast(models.LoreUser, request.user)
-        group_id = request.POST.get("group_id", None)
-        if group_id is None:
-            msg = "Expected group"
-            raise ParseError(msg)
-
-        models.LoreGroup.groups.leave_group(group_id, user)
+        models.LoreGroup.groups.leave_group(str(pk), user)
         return Response(status=HTTP_204_NO_CONTENT)

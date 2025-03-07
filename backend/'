@@ -1,6 +1,5 @@
 import contextlib
-from os import link
-from typing import Any, ClassVar, cast, override
+from typing import Any, ClassVar, Protocol, cast
 
 from django.urls import reverse
 from rest_framework import serializers
@@ -8,34 +7,80 @@ from rest_framework import serializers
 from lore import models
 
 
-class DataLinksSerializerMixin(serializers.Serializer):
-    """A mixin to partition a serializers's info into data and links.
+class HALSerializerMixin(serializers.Serializer):
+    """A mixin to extend a serializer with the HAL guidelines.
 
-    Will automatically group any fields ending in "_url" into a "links"
-    group. Any mention of these urls will be removed elsewhere. All
-    other data is grouped into "data".
+    To use, first add the `_links` field to the Meta `fields`.
+    Then, specify `include_urls` in the Meta class. Each item in this
+    iterable specifies a url that will be included in `_links`.
+
+    The `self` can be included in `include_urls` without neeeding to
+    implement anything else. Any additional fields will require an
+    attribute declared in the base serializer class (outside of Meta)
+    following the naming convention `get_<include_url_item_name>_url`.
+
+    The current implementation expects these to be the full urls.
     """
 
-    @override
-    def to_representation(self, instance: serializers.Serializer) -> dict:
-        res = super().to_representation(instance)
+    _links = serializers.SerializerMethodField()
 
-        links = {}
-        data = {}
-        for key, value in res.items():
-            if key == getattr(self, "url_field_name", None):
-                links["self"] = value
-                continue
-            if not key.endswith("_url"):
-                data[key] = value
-                continue
+    class SerializerProtocol(Protocol):
+        """Enforces specific properties to use this mixin.
 
-            name = key.rstrip("_url")
-            links[name] = value
-        return {"data": data, "links": links}
+        This can be satisfied by deriving from model serializer
+        """
+
+        url_field_name: str  # Required for type checking
+
+        def build_url_field(
+            self,
+            field_name: str,
+            field_class: type,
+        ) -> tuple[type, dict]:
+            """Build url class specified on the ModelSerializer."""
+            ...
+
+    def get_self_url(
+        self: SerializerProtocol,
+        obj: models.LoreGroup,
+    ) -> serializers.Hyperlink:
+        """Create the url referencing this object."""
+        # This is about an hour of reverse engineering DRF's system.
+        # I wanted to isolate just the url without doing anything special, and
+        # here we are.
+        #
+        # Some behavior on the orignal parser is ommited. More specifically,
+        # the extra_kwargs. If you need those for the url... you shouldn't
+        field_class, field_kwargs = self.build_url_field(
+            self.url_field_name,
+            obj.__class__,
+        )
+        url_field = field_class(**field_kwargs)
+        url_field.bind(self.url_field_name, self)
+        return cast(serializers.Hyperlink, url_field.to_representation(obj))
+
+    def get__links(self: SerializerProtocol, obj: models.LoreGroup) -> dict:
+        """Build link mapping from specified `include_urls`.
+
+        If `include_urls` is not specified, then nothing is included.
+        Expects attributes of the name `get_{include_url[i]_url}`.
+        """
+        urls = {}
+        meta = getattr(self, "Meta", None)
+        if meta is None:
+            return {}
+        for url in getattr(meta, "include_urls", []):
+            get_url = getattr(self, f"get_{url}_url", None)
+            if get_url is not None:
+                urls[url] = {"href": get_url(obj)}
+            else:
+                url_field = getattr(self, f"{url}_url")
+                url_field.bind(f"{url}_url", self)
+                print(url_field.to_representation(obj.related))
+        return urls
 
 
-class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
+class QuoteSerializer(serializers.ModelSerializer, HALSerializerMixin):
     """Serializer for the quote detail.
 
     Serializes the quote's:
@@ -49,6 +94,7 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
       - url
     """
 
+    _links = serializers.SerializerMethodField()
     said_by_url = serializers.HyperlinkedRelatedField(
         view_name="loreuser-detail",
         lookup_field="pk",
@@ -95,6 +141,7 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
     class Meta:
         model = models.Quote
         fields: ClassVar[list[str]] = [
+            "_links",
             "id",
             "text",
             "said_by",
@@ -102,11 +149,11 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
             "group_url",
             "group",
             "created",
-            "url",
         ]
+        include_urls = ["self", "group"]
 
 
-class ImageSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
+class ImageSerializer(serializers.ModelSerializer):
     """Serializer for the image detail.
 
     Serializes the images's:
@@ -151,16 +198,14 @@ class ImageSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
             "image",
             "description",
             "group",
+            "group_url",
             "created",
             "url",
-            "group_url",
         ]
 
 
 # TODO : add achieved urls to serializer
-class AchievementSerializer(
-    DataLinksSerializerMixin, serializers.ModelSerializer
-):
+class AchievementSerializer(serializers.ModelSerializer, HALSerializerMixin):
     """Serializer for the achievement detail.
 
     Serializes the images's:
@@ -185,13 +230,12 @@ class AchievementSerializer(
     )
     image = serializers.ImageField(required=False)
     achieved_by_url = serializers.SerializerMethodField()
-    achieve_url = serializers.SerializerMethodField()
-    unachieve_url = serializers.SerializerMethodField()
     num_achieved = serializers.ReadOnlyField()
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        print(dir(self))
         with contextlib.suppress(KeyError):
             self.fields["group"] = serializers.PrimaryKeyRelatedField(
                 read_only=True,
@@ -214,40 +258,26 @@ class AchievementSerializer(
         )
         return f"{url}?achievement={obj.pk}"
 
-    def get_achieve_url(self, obj: models.Achievement) -> str:
-        """Get the url to achieve the achievement."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("achievement-achieve", args=[obj.pk]),
-        )
-        return f"{base_url}"
-
-    def get_unachieve_url(self, obj: models.Achievement) -> str:
-        """Get the url to unachieve the achievement."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("achievement-unachieve", args=[obj.pk]),
-        )
-        return f"{base_url}"
-
     class Meta:
         model = models.Achievement
         fields: ClassVar[list[str]] = [
+            "_links",
             "id",
             "title",
             "image",
             "description",
             "achieved_by",
+            "achieved_by_url",
             "num_achieved",
             "group",
+            "group_url",
             "created",
             "url",
-            "achieved_by_url",
-            "group_url",
-            "achieve_url",
-            "unachieve_url",
         ]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
             "achieved_by": {"write_only": True, "allow_empty": True},
         }
+        include_urls = ["self", "group"]
 
 
 class AchievementUpdateSerializer(AchievementSerializer):
@@ -266,9 +296,10 @@ class AchievementUpdateSerializer(AchievementSerializer):
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
+# TODO: add leave url to group
 class GroupSerializer(
     serializers.ModelSerializer,
-    DataLinksSerializerMixin,
+    HALSerializerMixin,
 ):
     """Serializes a group.
 
@@ -282,12 +313,6 @@ class GroupSerializer(
     - url (read only)
     - members (write only)
     """
-
-    members_url = serializers.SerializerMethodField()
-    achievements_url = serializers.SerializerMethodField()
-    quotes_url = serializers.SerializerMethodField()
-    images_url = serializers.SerializerMethodField()
-    leave_url = serializers.SerializerMethodField()
 
     def get_members_url(self, obj: models.LoreGroup) -> str:
         """Create a url resource to the members in the group."""
@@ -318,7 +343,6 @@ class GroupSerializer(
         return f"{base_url}?group_id={obj.pk}"
 
     def get_leave_url(self, obj: models.LoreGroup) -> str:
-        """Get the url to leave the group"""
         base_url = self.context["request"].build_absolute_uri(
             reverse("loregroup-leave", args=[obj.pk]),
         )
@@ -338,6 +362,7 @@ class GroupSerializer(
 
         model = models.LoreGroup
         fields: ClassVar[list[str]] = [
+            "_links",
             "id",
             "name",
             "members",
@@ -345,17 +370,18 @@ class GroupSerializer(
             "join_code",
             "avatar",
             "created",
-            "url",
-            "achievements_url",
-            "quotes_url",
-            "images_url",
-            "members_url",
-            "leave_url",
         ]
         read_only_fields: ClassVar[list[str]] = ["join_code"]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
             "members": {"write_only": True, "allow_empty": True},
         }
+        include_urls: ClassVar[list[str]] = [
+            "self",
+            "quotes",
+            "images",
+            "members",
+            "leave",
+        ]
 
 
 class GroupUpdateSerializer(GroupSerializer):
@@ -375,10 +401,7 @@ class GroupUpdateSerializer(GroupSerializer):
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
-class UserSerializer(
-    serializers.HyperlinkedModelSerializer,
-    DataLinksSerializerMixin,
-):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.LoreUser
         fields = ["id", "first_name", "last_name", "avatar", "url"]
