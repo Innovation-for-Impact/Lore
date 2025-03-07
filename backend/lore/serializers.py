@@ -235,6 +235,9 @@ class GroupSerializer(serializers.ModelSerializer):
     """
 
     members_url = serializers.SerializerMethodField()
+    achievements_url = serializers.SerializerMethodField()
+    quotes_url = serializers.SerializerMethodField()
+    images_url = serializers.SerializerMethodField()
 
     def get_members_url(self, obj: models.LoreGroup) -> str:
         """Create a url resource to the members in the group."""
@@ -242,6 +245,27 @@ class GroupSerializer(serializers.ModelSerializer):
             reverse("loreuser-list"),
         )
         return f"{base_url}?member_of={obj.pk}"
+
+    def get_achievements_url(self, obj: models.LoreGroup) -> str:
+        """Create a url resource to the achievements in the group."""
+        base_url = self.context["request"].build_absolute_uri(
+            reverse("achievement-list"),
+        )
+        return f"{base_url}?group_id={obj.pk}"
+
+    def get_quotes_url(self, obj: models.LoreGroup) -> str:
+        """Create a url resource to the quotes in the group."""
+        base_url = self.context["request"].build_absolute_uri(
+            reverse("quote-list"),
+        )
+        return f"{base_url}?group_id={obj.pk}"
+
+    def get_images_url(self, obj: models.LoreGroup) -> str:
+        """Create a url resource to the images in the group."""
+        base_url = self.context["request"].build_absolute_uri(
+            reverse("image-list"),
+        )
+        return f"{base_url}?group_id={obj.pk}"
 
     def create(self, validated_data: dict[Any, Any]) -> models.LoreGroup:
         """Create an instane of an Group."""
@@ -260,11 +284,14 @@ class GroupSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "members",
-            "members_url",
             "join_code",
             "avatar",
-            "created",
+            "members_url",
+            "achievements_url",
+            "quotes_url",
+            "images_url",
             "url",
+            "created",
         ]
         read_only_fields: ClassVar[list[str]] = ["join_code"]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
