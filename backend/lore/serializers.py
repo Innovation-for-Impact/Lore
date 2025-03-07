@@ -1,5 +1,4 @@
 import contextlib
-from os import link
 from typing import Any, ClassVar, cast, override
 
 from django.urls import reverse
@@ -89,6 +88,7 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
             said_by_pk=validated_data["said_by"].pk,
+            pinned=validated_data["pinned"],
             group=validated_data["group"],
         )
 
@@ -98,6 +98,7 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
             "id",
             "text",
             "said_by",
+            "pinned",
             "said_by_url",
             "group_url",
             "group",

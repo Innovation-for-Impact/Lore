@@ -32,7 +32,11 @@ class QuoteViewSet(viewsets.ModelViewSet):
         filters.SearchFilter,
         DjangoFilterBackend,
     ]
-    filterset_fields: ClassVar[list[str]] = ["group_id", "said_by_id"]
+    filterset_fields: ClassVar[list[str]] = [
+        "group_id",
+        "said_by_id",
+        "pinned",
+    ]
     search_fields: ClassVar[list[str]] = ["text"]
 
     def get_queryset(self):

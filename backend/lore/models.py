@@ -236,6 +236,7 @@ class QuoteManager(models.Manager):
         self,
         text: str,
         said_by_pk: int,
+        pinned: bool,
         group: LoreGroup,
     ) -> "Quote":
         """Create a quote with the text, in the given group, said by the user.
@@ -257,6 +258,7 @@ class QuoteManager(models.Manager):
         quote = self.model(
             text=text,
             said_by=said_by,
+            pinned=pinned,
             group_id=group.pk,
         )
 
@@ -291,6 +293,7 @@ class Quote(GroupItem):
         validators=[MinLengthValidator(1)],
     )
     said_by = models.ForeignKey(LoreUser, on_delete=models.CASCADE)
+    pinned = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
