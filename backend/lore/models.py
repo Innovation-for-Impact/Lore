@@ -223,6 +223,11 @@ class LoreGroup(models.Model):
         """Return true if the user is a member of the group."""
         return self.members.filter(id=user.pk).exists()
 
+    @property
+    def num_members(self) -> int:
+        """Get the number of members in the group."""
+        return self.members.count()
+
 
 class QuoteManager(models.Manager):
     """The Manager for quotes."""
