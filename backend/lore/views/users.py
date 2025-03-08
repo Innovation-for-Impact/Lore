@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, viewsets
 
 from lore import serializers
-from lore.models import Achievement, LoreGroup, LoreUser
+from lore.models import Achievement, LoreGroup, LoreUser, Quote
 
 
 class MutualPermission(permissions.BasePermission):
@@ -45,6 +45,22 @@ class MutualPermission(permissions.BasePermission):
                 group: LoreGroup | None = cast(
                     LoreGroup | None,
                     LoreGroup.groups.filter(pk=achievement.group.pk).first(),
+                )
+                if group and not group.has_member(user):
+                    return False
+
+        quote_id = request.GET.get("quote")
+        if quote_id is not None:
+            quote: Quote = cast(
+                Quote,
+                Quote.quotes.filter(
+                    pk=quote_id,
+                ).first(),
+            )
+            if quote:
+                group: LoreGroup | None = cast(
+                    LoreGroup | None,
+                    LoreGroup.groups.filter(pk=quote.group.pk).first(),
                 )
                 if group and not group.has_member(user):
                     return False
@@ -113,4 +129,8 @@ class LoreUserViewSet(
     ]
     search_fields: ClassVar[list[str]] = ["first_name", "last_name"]
     # currently, any additional fields need to be added to the MutualPermission
-    filterset_fields: ClassVar[list[str]] = ["member_of", "achievement"]
+    filterset_fields: ClassVar[list[str]] = [
+        "member_of",
+        "achievement",
+        "quote",
+    ]
