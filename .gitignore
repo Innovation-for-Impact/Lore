@@ -5,5 +5,6 @@ env
 __pycache__
 db.sqlite3
 media
+.env
 
 backend/cookies.txt
