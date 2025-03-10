@@ -1,51 +1,32 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 // Navigation Styling
+const navigationStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+  contentContainer: {
+      flex: 1,
+  },
+});
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#36528F', // TBD
-        justifyContent: 'center',
-      
-    },
-  
-    searchBar: {
-        borderRadius: 20,
-        textAlign: 'center'
-    },
-  
-    settingsIcon: {
-      
-    },
-    
-    bottomNavigation: {
-      position: 'absolute',
-      backgroundColor: '#FFFFFF',
-      bottom: 20,
-      alignSelf: 'center',
-      width: 320, //modify
-      height: 57, //modify
-      borderRadius: 12,
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'center',
+const getTabBarStyle = (insets, tabBarWidth) => ({
+  position: 'absolute',
+  bottom: insets.bottom + 10,
+  width: tabBarWidth,
+  marginLeft: (width - tabBarWidth) / 2,
+  borderRadius: 15,
+  paddingTop: 10,
+  height: 60,
+  backgroundColor: 'white',
+  shadowColor: '#000', // shadow for iOS
+  elevation: 5, // shadow for Android
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+});
 
-
-
-
-      //For IOS:
-      shadowColor: '#000', 
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 5 //for android
-      
-
-
-
-    }
-  });
-
-  export default styles;
+export { navigationStyles, getTabBarStyle };
