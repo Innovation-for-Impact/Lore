@@ -3,6 +3,8 @@ from typing import Any, ClassVar, cast, override
 
 from django.urls import reverse
 from rest_framework import serializers
+from rest_framework.views import Request
+from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 from lore import models
 
@@ -29,7 +31,7 @@ class DataLinksSerializerMixin(serializers.Serializer):
                 data[key] = value
                 continue
 
-            name = key.rstrip("_url")
+            name = key[:-4]
             links[name] = value
         return {"data": data, "links": links}
 
@@ -185,9 +187,14 @@ class AchievementSerializer(
         source="group",
     )
     image = serializers.ImageField(required=False)
-    achieved_by_url = serializers.SerializerMethodField()
-    achieve_url = serializers.SerializerMethodField()
-    unachieve_url = serializers.SerializerMethodField()
+    achievers_url = serializers.HyperlinkedIdentityField(
+        view_name="achievement-loreuser-list",
+        lookup_field="pk",
+        lookup_url_kwarg="achievement_pk",
+        many=False,
+    )
+    logged_in_user_url = serializers.SerializerMethodField()
+
     num_achieved = serializers.ReadOnlyField()
 
     def __init__(self, *args, **kwargs) -> None:
@@ -208,24 +215,15 @@ class AchievementSerializer(
             group=validated_data["group"],
         )
 
-    def get_achieved_by_url(self, obj: models.Achievement) -> str:
-        """Create a url resource to the users that achieved this."""
-        url = self.context["request"].build_absolute_uri(
-            reverse("loreuser-list"),
-        )
-        return f"{url}?achievement={obj.pk}"
-
-    def get_achieve_url(self, obj: models.Achievement) -> str:
-        """Get the url to achieve the achievement."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("achievement-achieve", args=[obj.pk]),
-        )
-        return f"{base_url}"
-
-    def get_unachieve_url(self, obj: models.Achievement) -> str:
-        """Get the url to unachieve the achievement."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("achievement-unachieve", args=[obj.pk]),
+    def get_logged_in_user_url(self, obj: models.Achievement) -> str | None:
+        """Get the url for the authenticated user."""
+        request: Request = self.context["request"]
+        if not obj.has_achiever(request.user):
+            return None
+        base_url = request.build_absolute_uri(
+            reverse(
+                "achievement-loreuser-detail", args=[obj.pk, request.user.pk]
+            ),
         )
         return f"{base_url}"
 
@@ -241,10 +239,9 @@ class AchievementSerializer(
             "group",
             "created",
             "url",
-            "achieved_by_url",
+            "achievers_url",
             "group_url",
-            "achieve_url",
-            "unachieve_url",
+            "logged_in_user_url",
         ]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
             "achieved_by": {"write_only": True, "allow_empty": True},
@@ -284,44 +281,39 @@ class GroupSerializer(
     - members (write only)
     """
 
-    members_url = serializers.SerializerMethodField()
-    achievements_url = serializers.SerializerMethodField()
-    quotes_url = serializers.SerializerMethodField()
-    images_url = serializers.SerializerMethodField()
-    leave_url = serializers.SerializerMethodField()
+    members_url = serializers.HyperlinkedIdentityField(
+        view_name="loregroup-loreuser-list",
+        lookup_field="pk",
+        lookup_url_kwarg="loregroup_pk",
+        many=False,
+    )
+    quotes_url = serializers.HyperlinkedIdentityField(
+        view_name="loregroup-quote-list",
+        lookup_field="pk",
+        lookup_url_kwarg="loregroup_pk",
+        many=False,
+    )
+    achievements_url = serializers.HyperlinkedIdentityField(
+        view_name="loregroup-achievement-list",
+        lookup_field="pk",
+        lookup_url_kwarg="loregroup_pk",
+        many=False,
+    )
+    images_url = serializers.HyperlinkedIdentityField(
+        view_name="loregroup-image-list",
+        lookup_field="pk",
+        lookup_url_kwarg="loregroup_pk",
+        many=False,
+    )
+    logged_in_member_url = serializers.SerializerMethodField()
 
-    def get_members_url(self, obj: models.LoreGroup) -> str:
-        """Create a url resource to the members in the group."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("loreuser-list"),
-        )
-        return f"{base_url}?member_of={obj.pk}"
-
-    def get_achievements_url(self, obj: models.LoreGroup) -> str:
-        """Create a url resource to the achievements in the group."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("achievement-list"),
-        )
-        return f"{base_url}?group_id={obj.pk}"
-
-    def get_quotes_url(self, obj: models.LoreGroup) -> str:
-        """Create a url resource to the quotes in the group."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("quote-list"),
-        )
-        return f"{base_url}?group_id={obj.pk}"
-
-    def get_images_url(self, obj: models.LoreGroup) -> str:
-        """Create a url resource to the images in the group."""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("image-list"),
-        )
-        return f"{base_url}?group_id={obj.pk}"
-
-    def get_leave_url(self, obj: models.LoreGroup) -> str:
+    def get_logged_in_member_url(self, obj: models.LoreGroup) -> str:
         """Get the url to leave the group"""
-        base_url = self.context["request"].build_absolute_uri(
-            reverse("loregroup-leave", args=[obj.pk]),
+        request: Request = self.context["request"]
+        base_url = request.build_absolute_uri(
+            reverse(
+                "loregroup-loreuser-detail", args=[obj.pk, request.user.pk]
+            ),
         )
         return f"{base_url}"
 
@@ -351,7 +343,7 @@ class GroupSerializer(
             "quotes_url",
             "images_url",
             "members_url",
-            "leave_url",
+            "logged_in_member_url",
         ]
         read_only_fields: ClassVar[list[str]] = ["join_code"]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
@@ -374,6 +366,10 @@ class GroupUpdateSerializer(GroupSerializer):
         ]
         read_only_fields: ClassVar[list[str]] = ["join_code", "members"]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
+
+
+class JoinSerializer(serializers.Serializer):
+    join_code = serializers.CharField()
 
 
 class UserSerializer(

@@ -20,14 +20,14 @@ class GroupMemberItemPermission(permissions.BasePermission):
         if view.action not in ["create"]:
             return True
         user: LoreUser = cast(LoreUser, request.user)
-        group_id = request.GET.get("group_id", None)
-        if group_id is None:
+        group_pk = view.kwargs.get("group_pk", None)
+        if group_pk is None:
             self.message = """You do not have permissions.
             Try specifying a group_id query paremeter
             """
             return False
         try:
-            return user.is_in_group(int(group_id))
+            return user.is_in_group(int(group_pk))
         except ValueError as e:
             msg = "Expected an integer group id."
             raise ParseError(msg) from e
