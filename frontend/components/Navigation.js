@@ -2,9 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import HomeScreen from '../screens/HomeScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HomeStack from '../components/HomeStack';
 import { navigationStyles, getTabBarStyle } from '../styles/global';
 
 const Tab = createBottomTabNavigator();
@@ -16,7 +16,6 @@ function Navigation() {
 
     return (
         <View style={navigationStyles.container}>
-            {/* Main Content */}
             <View style={navigationStyles.contentContainer}>
                 <Tab.Navigator
                     screenOptions={({ route }) => ({
@@ -45,7 +44,7 @@ function Navigation() {
                     })}
                 >
                     <Tab.Screen name="Community" component={CommunityScreen} />
-                    <Tab.Screen name="Home" component={HomeScreen} />
+                    <Tab.Screen name="Home" component={HomeStack} />
                     <Tab.Screen name="Profile" component={ProfileScreen} />
                 </Tab.Navigator>
             </View>
