@@ -9,14 +9,35 @@ function JoinGroup() {
     const [failureModalVisible, setFailureModalVisible] = useState(false);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [groupCode, setGroupCode] = useState('');
-    const correctCode = '12345'; // temporary code, will need to grab code from database
+    // const correctCode = '12345'; // temporary code, will need to grab code from database
 
+    // api post request using fetch 
+    // api/v1/groups/join/ w/ join_code
     const handleJoinGroup = () => {
-        if (groupCode === correctCode) { // fix later
+        fetch(`/api/v1/groups/join/`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ join_code: groupCode }),
+        })
+        .then((response) => {
+            if (!response.ok) throw Error(response.statusText);
+            return response.json();
+        })
+        .then(() => {
             setSuccessModalVisible(true);
-        } else {
+        })
+        .catch((error) => {
+            console.error(error);
             setFailureModalVisible(true);
-        }
+        })
+        // if (groupCode === correctCode) { // fix later
+        //     setSuccessModalVisible(true);
+        // } else {
+        //     setFailureModalVisible(true);
+        // }
         setModalVisible(false);
         setGroupCode('');
     };
