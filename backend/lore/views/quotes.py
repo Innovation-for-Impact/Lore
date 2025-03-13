@@ -33,22 +33,29 @@ class QuoteViewSet(viewsets.ModelViewSet):
         DjangoFilterBackend,
     ]
     filterset_fields: ClassVar[list[str]] = [
-        "group_id",
         "said_by_id",
         "pinned",
     ]
     search_fields: ClassVar[list[str]] = ["text"]
 
     def get_queryset(self):
-        """Get all the quotes for the groups the user is in."""
+        """Get all the quotes for the user's groups or the route's group."""
         user: LoreUser = cast(LoreUser, self.request.user)
-        user_groups = LoreGroup.groups.get_groups_with_user(user)
-        return Quote.quotes.filter(group__in=user_groups).order_by("pk")
+        queryset = Quote.quotes
+        if self.kwargs.get("loregroup_pk") is not None:
+            queryset = queryset.filter(
+                group_id=self.kwargs["loregroup_pk"],
+            )
+        else:
+            user_groups = LoreGroup.groups.get_groups_with_user(user)
+            queryset = queryset.filter(group__in=user_groups)
+
+        return queryset.order_by("pk")
 
     def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
         """Create the item in the database."""
         # Extract the group_id from query parameters
-        group_id: str | None = self.request.GET.get("group_id", None)
+        group_id: str | None = self.kwargs.get("loregroup_pk")
         if group_id is None:
             msg = "Expected a group id"
             raise ParseError(msg)

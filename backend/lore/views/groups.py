@@ -56,6 +56,8 @@ class GroupViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["update", "partial_update"]:
             return serializers.GroupUpdateSerializer
+        if self.action == "join":
+            return serializers.JoinSerializer
         return serializers.GroupSerializer
 
     def get_queryset(self):
@@ -95,6 +97,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         Expects a "join_code" in the post request
         Raises a 401 error if the join code is missing
         Raises a 404 error if there is no group with the join code
+        Raises a 409 error if the user is already in the group
         """
         user: models.LoreUser = cast(models.LoreUser, request.user)
         join_code = request.POST.get("join_code", None)
@@ -102,16 +105,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             msg = "Expected join code"
             raise ParseError(msg)
 
-        models.LoreGroup.groups.join_group(join_code, user)
-        return Response(status=HTTP_201_CREATED)
-
-    @action(
-        detail=True,
-        methods=["delete"],
-        permission_classes=[permissions.IsAuthenticated],
-    )
-    def leave(self, request: HttpRequest, pk: int) -> Response:
-        """Cause the user to leave the group with the given group_id."""
-        user: models.LoreUser = cast(models.LoreUser, request.user)
-        models.LoreGroup.groups.leave_group(str(pk), user)
-        return Response(status=HTTP_204_NO_CONTENT)
+        group = models.LoreGroup.groups.join_group(join_code, user)
+        context = {"request": request}
+        serializer = self.serializer_class(group, many=False, context=context)
+        return Response(serializer.data, status=HTTP_201_CREATED)

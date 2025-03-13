@@ -1,12 +1,20 @@
 """Describes the viewsets for Lore Users."""
 
-from typing import TYPE_CHECKING, Any, ClassVar, cast, overload
+from typing import Any, ClassVar, cast
 
-from dj_rest_auth.views import IsAuthenticated
-from django.db.models import QuerySet
-from django.http import HttpRequest
-from django_filters.rest_framework import DjangoFilterBackend
+from dj_rest_auth.views import IsAuthenticated, Response
+from django.http import Http404, HttpRequest
 from rest_framework import filters, mixins, permissions, viewsets
+from rest_framework.response import Serializer
+from rest_framework.serializers import BaseSerializer
+from rest_framework.status import (
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_404_NOT_FOUND,
+    HTTP_409_CONFLICT,
+    HTTP_500_INTERNAL_SERVER_ERROR,
+)
+from rest_framework.views import Request
 
 from lore import serializers
 from lore.models import Achievement, LoreGroup, LoreUser, Quote
@@ -68,7 +76,10 @@ class MutualPermission(permissions.BasePermission):
         return True
 
     def has_object_permission(
-        self, request: HttpRequest, view: viewsets.ViewSet, obj: LoreUser
+        self,
+        request: HttpRequest,
+        view: viewsets.ViewSet,
+        obj: LoreUser,
     ) -> bool:
         """Return true if accessing user shares a group with the object."""
         user: LoreUser = cast(LoreUser, request.user)
@@ -102,9 +113,8 @@ def create_is_owner_permission(
     return IsOwner
 
 
-class LoreUserViewSet(
+class BaseLoreUserViewSet(
     mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
@@ -124,13 +134,155 @@ class LoreUserViewSet(
         create_is_owner_permission(["destroy", "update", "partial_update"]),
     ]
     filter_backends: ClassVar[list[type[Any]]] = [
-        DjangoFilterBackend,
         filters.SearchFilter,
     ]
     search_fields: ClassVar[list[str]] = ["first_name", "last_name"]
     # currently, any additional fields need to be added to the MutualPermission
-    filterset_fields: ClassVar[list[str]] = [
-        "member_of",
-        "achievement",
-        "quote",
-    ]
+
+
+class LoreUserViewSet(
+    BaseLoreUserViewSet,
+    mixins.UpdateModelMixin,
+):
+    """Viewset for all lore users.
+
+    Can be searched by first and last name
+    Filter for what group a user is in with `member_of`
+    Filter for who accomplished an achievement with `achievement`
+    """
+
+    # currently, any additional fields need to be added to the MutualPermission
+
+
+class MemberViewSet(BaseLoreUserViewSet):
+    """Viewset for group members.
+
+    Supports listing, retrieving, and deleting members
+    """
+
+    def get_queryset(self):
+        """Get all the users based on the url."""
+        queryset = LoreUser.users
+        if self.kwargs.get("loregroup_pk") is not None:
+            queryset = queryset.filter(
+                member_of=self.kwargs["loregroup_pk"],
+            ).order_by("pk")
+
+        return queryset
+
+    def destroy(self, request: Request, loregroup_pk: int, pk: int):
+        """Remove the user from the group.
+
+        Raises a 404 if the membership doesn't exist.
+        """
+        user: LoreUser | None = cast(
+            LoreUser | None,
+            self.get_queryset().filter(pk=pk).first(),
+        )
+        if user is None:
+            msg = "No user found"
+            raise Http404(msg)
+
+        group: LoreGroup | None = cast(
+            LoreGroup | None,
+            LoreGroup.groups.filter(pk=loregroup_pk).first(),
+        )
+        if group is None:
+            msg = "Group does not exist"
+            raise Http404(msg)
+
+        group.leave_group(user)
+        return Response(status=HTTP_204_NO_CONTENT)
+
+
+class AchievedViewSet(BaseLoreUserViewSet, mixins.CreateModelMixin):
+    def get_queryset(self):
+        """Get all the users based on the url."""
+        queryset = LoreUser.users
+        if self.kwargs.get("achievement_pk") is not None:
+            queryset = queryset.filter(
+                achievement=self.kwargs["achievement_pk"],
+            ).order_by("pk")
+
+        return queryset
+
+    def get_serializer_class(self) -> type[BaseSerializer]:
+        if self.action in ["create", "delete"]:
+            return Serializer
+        return self.serializer_class
+
+    def create(self, request: Request, achievement_pk: int) -> Response:
+        """Add or delete the authenticated user to the list of achievers.
+
+        Returns the authenticated user on success
+        """
+        user = cast(LoreUser, request.user)
+        achievement = cast(
+            Achievement | None,
+            Achievement.achievements.filter(pk=achievement_pk).first(),
+        )
+
+        if achievement is None:
+            return Response(
+                {"message": "Achievement does not exist"},
+                status=HTTP_404_NOT_FOUND,
+            )
+
+        if achievement.has_achiever(user):
+            return Response(
+                {"message": "Already achieved"},
+                status=HTTP_409_CONFLICT,
+            )
+
+        # permissions should not allow this to be false
+        if not achievement.add_achiever(user):
+            return Response(
+                {"message": "Not allowed to access item"},
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        context = {"request": request}
+        serializer = self.serializer_class(
+            user,
+            many=False,
+            context=context,
+        )
+        return Response(serializer.data, status=HTTP_201_CREATED)
+
+    def destroy(
+        self,
+        request: Request,
+        achievement_pk: int,
+        pk: int,
+    ) -> Response:
+        """Remove the authenticated user from the achievement.
+
+        Returns no content on success
+        Raises a 404 if the membership doesn't exist.
+        """
+        user = cast(LoreUser, self.get_queryset().filter(pk=pk).first())
+        achievement = cast(
+            Achievement | None,
+            Achievement.achievements.filter(pk=achievement_pk).first(),
+        )
+
+        if achievement is None:
+            return Response(
+                {"message": "Achievement does not exist"},
+                status=HTTP_404_NOT_FOUND,
+            )
+
+        if not achievement.has_achiever(user):
+            return Response(
+                {"message": "Not achieved"},
+                status=HTTP_404_NOT_FOUND,
+            )
+
+        # permissions should not allow this to be false
+        if not achievement.remove_achiever(user):
+            return Response(
+                {"message": "Not allowed to access item"},
+                status=HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(status=HTTP_204_NO_CONTENT)

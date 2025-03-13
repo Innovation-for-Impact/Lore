@@ -1,15 +1,18 @@
-from os import abort
 import pathlib
 import uuid
 from typing import ClassVar, cast
 
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.files import File
 from django.db import models
 from django.forms import ValidationError
 from django.http import Http404
 from django.utils.deconstruct import deconstructible
 from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
+
+
+class Http409Error(Exception):
+    """HTTP conflict exception."""
 
 
 # https://stackoverflow.com/questions/25767787/django-cannot-create-migrations-for-imagefield-with-dynamic-upload-to-value
@@ -161,33 +164,21 @@ class LoreGroupManager(models.Manager):
 
         return group
 
-    def join_group(self, join_code: str, user: "LoreUser") -> None:
-        """Attempt to join the group with thte given join code.
+    def join_group(self, join_code: str, user: "LoreUser") -> "LoreGroup":
+        """Attempt to join the group with the given join code.
 
         If no group with the given join_code exists, raises a 404 error
+        If the user is already in the group, will raise a 409 error
         """
         try:
             group: LoreGroup = self.get(join_code=join_code)
+            if group.has_member(user):
+                msg = "Already in group"
+                raise Http409Error(msg)
             group.members.add(user.pk)
+            return group
         except ObjectDoesNotExist as e:
             raise Http404 from e
-
-    def leave_group(self, group_id: str, user: "LoreUser") -> None:
-        """Attempt to leave the group with the given group id.
-
-        Will 404 if the user is not in the group, or the group does not exist
-        """
-        group: LoreGroup = cast(LoreGroup, self.filter(pk=group_id).first())
-        if group is None:
-            msg = "Group does not exist"
-            raise Http404(msg)
-
-        if not group.members.contains(user):
-            msg = "User not in group"
-            raise Http404(msg)
-        group.members.remove(user.pk)
-
-        # TODO: handle last user leaving
 
 
 class LoreGroup(models.Model):
@@ -227,6 +218,18 @@ class LoreGroup(models.Model):
     def num_members(self) -> int:
         """Get the number of members in the group."""
         return self.members.count()
+
+    def leave_group(self, user: "LoreUser") -> None:
+        """Attempt to remove the user from the group.
+
+        Will 404 if the user is not in the group
+        """
+        if not self.members.contains(user):
+            msg = "User not in group"
+            raise Http404(msg)
+        self.members.remove(user.pk)
+
+        # TODO: handle last user leaving
 
 
 class QuoteManager(models.Manager):
@@ -312,7 +315,10 @@ class ImageManager(models.Manager):
     """The Manager for images."""
 
     def create_image(
-        self, image: File, description: str | None, group: LoreGroup
+        self,
+        image: File,
+        description: str | None,
+        group: LoreGroup,
     ) -> "Image":
         """Create an image with the given image, description, and group.
 
@@ -384,7 +390,8 @@ class AchievementManager(models.Manager):
         return achievement_model
 
     def get_group_achievements(
-        self, group: LoreGroup
+        self,
+        group: LoreGroup,
     ) -> models.QuerySet["Achievement", "Achievement"]:
         """Retrieve all achievements in the given group."""
         return self.filter(group=group)
