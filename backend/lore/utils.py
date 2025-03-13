@@ -17,10 +17,8 @@ class GroupMemberItemPermission(permissions.BasePermission):
     ):
         """Return true if the user can interact with the resource."""
         # allows user to interact with list
-        if view.action not in ["create"]:
-            return True
         user: LoreUser = cast(LoreUser, request.user)
-        group_pk = view.kwargs.get("group_pk", None)
+        group_pk = view.kwargs.get("loregroup_pk", None)
         if group_pk is None:
             self.message = """You do not have permissions.
             Try specifying a group_id query paremeter
