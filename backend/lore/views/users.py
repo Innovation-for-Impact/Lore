@@ -1,11 +1,9 @@
 """Describes the viewsets for Lore Users."""
 
-from typing import TYPE_CHECKING, Any, ClassVar, cast, overload
+from typing import Any, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated, Response
-from django.db.models import QuerySet
 from django.http import Http404, HttpRequest
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.response import Serializer
 from rest_framework.serializers import BaseSerializer
@@ -13,14 +11,12 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_404_NOT_FOUND,
-    HTTP_405_METHOD_NOT_ALLOWED,
     HTTP_409_CONFLICT,
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from rest_framework.views import Request
 
 from lore import serializers
-import lore
 from lore.models import Achievement, LoreGroup, LoreUser, Quote
 
 
@@ -80,7 +76,10 @@ class MutualPermission(permissions.BasePermission):
         return True
 
     def has_object_permission(
-        self, request: HttpRequest, view: viewsets.ViewSet, obj: LoreUser
+        self,
+        request: HttpRequest,
+        view: viewsets.ViewSet,
+        obj: LoreUser,
     ) -> bool:
         """Return true if accessing user shares a group with the object."""
         user: LoreUser = cast(LoreUser, request.user)
@@ -152,17 +151,6 @@ class LoreUserViewSet(
     Filter for who accomplished an achievement with `achievement`
     """
 
-    queryset = LoreUser.users.all()
-    serializer_class = serializers.UserSerializer
-    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
-        IsAuthenticated,
-        MutualPermission,
-        create_is_owner_permission(["destroy", "update", "partial_update"]),
-    ]
-    filter_backends: ClassVar[list[type[Any]]] = [
-        filters.SearchFilter,
-    ]
-    search_fields: ClassVar[list[str]] = ["first_name", "last_name"]
     # currently, any additional fields need to be added to the MutualPermission
 
 
@@ -188,7 +176,8 @@ class MemberViewSet(BaseLoreUserViewSet):
         Raises a 404 if the membership doesn't exist.
         """
         user: LoreUser | None = cast(
-            LoreUser | None, self.get_queryset().filter(pk=pk).first()
+            LoreUser | None,
+            self.get_queryset().filter(pk=pk).first(),
         )
         if user is None:
             msg = "No user found"
@@ -261,7 +250,10 @@ class AchievedViewSet(BaseLoreUserViewSet, mixins.CreateModelMixin):
         return Response(serializer.data, status=HTTP_201_CREATED)
 
     def destroy(
-        self, request: Request, achievement_pk: int, pk: int
+        self,
+        request: Request,
+        achievement_pk: int,
+        pk: int,
     ) -> Response:
         """Remove the authenticated user from the achievement.
 
