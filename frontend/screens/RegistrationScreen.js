@@ -1,23 +1,32 @@
 import React, { useContext, useEffect } from "react";
-import { Dimensions, View, Text, Button, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { Dimensions, View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import Logo from '../assets/logo-transparent-white.png';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const RegistrationScreen = ({ navigation }) => {
+const RegistrationScreen = () => {
+    const navigation = useNavigation();
+
+    const navigateToLogin = () => {
+        navigation.navigate('LoginScreen');
+    };
+    const navigateToCreate = () => {
+        navigation.navigate('CreateAccountScreen');
+    };
 
     return (
         <View style={styles.container}>
-        <Text style={styles.title}>What's Your</Text>
-        <Image source={Logo} style={styles.img}/>
-        <Text style={styles.text}>Connect with friends, run up challenges, & do it for the plot</Text>
-        <TouchableOpacity style={styles.login} nPress={() => navigation.navigate("Login")}>
-            <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.register} nPress={() => navigation.navigate("Register")}>
-            <Text style={styles.buttonText } numberOfLines={1}>Create Account</Text>
-        </TouchableOpacity>
+            <Text style={styles.title}>What's Your</Text>
+            <Image source={Logo} style={styles.img}/>
+            <Text style={styles.text}>Connect with friends, run up challenges, & do it for the plot</Text>
+            <TouchableOpacity style={styles.login} onPress={navigateToLogin}>
+                <Text style={styles.buttonText}>Log In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.register} onPress={navigateToCreate}>
+                <Text style={styles.buttonText } numberOfLines={1}>Create Account</Text>
+            </TouchableOpacity>
         </View>
     );
 };

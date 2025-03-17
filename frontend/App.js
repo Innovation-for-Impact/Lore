@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Navigation from './components/Navigation';
-import RegistrationScreen from "./screens/RegistrationScreen";
+import RegistrationStack from './components/RegistrationStack';
 
 
 const Stack = createStackNavigator(); 
@@ -32,7 +32,7 @@ export default function App() {
       <NavigationContainer> 
         <Stack.Navigator>
           {!user ? (
-            <Stack.Screen name="Registration" component={RegistrationScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Registration" component={RegistrationStack} options={{ headerShown: false }} />
           ) : (
             <Stack.Screen name="Navigation" component={Navigation} options={{ headerShown: false }} 
         />
