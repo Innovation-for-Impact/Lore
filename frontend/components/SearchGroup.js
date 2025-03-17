@@ -1,40 +1,67 @@
-import React from 'react';
+// SearchGroup.js
+import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const SearchGroupBar = () => {
+const SearchGroup = ({ onChangeQuery }) => {
+  const [query, setQuery] = useState('');
+
+  const handleChangeText = async (text) => {
+    setQuery(text);
+
+    // If the parent component wants the latest query, call onChangeQuery:
+    if (onChangeQuery) {
+      onChangeQuery(text);
+    }
+
+    // If you only want to fetch for non-empty queries:
+    if (!text.trim()) {
+      return;
+    }
+
+    // Example: call your API endpoint with the typed query
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/search?query=${encodeURIComponent(text)}`
+      );
+      const data = await response.json();
+      console.log('Search results:', data.results);
+    } catch (error) {
+      console.error('API error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Magnifying glass icon */}
-      <Ionicons name="search" size={20} color="#FFFFFF" style={styles.icon} />
-
-      {/* TextInput for typing */}
+      <Ionicons name="search" size={20} color="#FFF" style={styles.icon} />
       <TextInput
         style={styles.input}
-        placeholder="search for friend groups"
-        placeholderTextColor="#FFFFFF80"
+        placeholder="search"
+        placeholderTextColor="#FFFFFF99"
+        value={query}
+        onChangeText={handleChangeText}
       />
     </View>
   );
 };
 
-export default SearchGroupBar;
+export default SearchGroup;
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
-    borderRadius: 25,
+    backgroundColor: '#427F9D', // Bluish background for the pill shape
+    borderRadius: 20,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   icon: {
-    marginRight: 8,
+    marginRight: 6,
   },
   input: {
     flex: 1,
-    color: '#FFF', 
+    color: '#FFF', // White text color
     fontSize: 16,
   },
 });
