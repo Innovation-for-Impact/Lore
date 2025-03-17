@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { globalStyles } from '../styles/global';
 
 const GroupCreationScreen = () => {
@@ -17,7 +17,7 @@ const GroupCreationScreen = () => {
         style={{ position: 'absolute', top: 40, left: 10 }} 
         onPress={goBackToHome}
       >
-        <MaterialIcons name="arrow-back-ios" size={22} color="black" />
+        <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
       
       <Text>This is the group creation screen!</Text>
