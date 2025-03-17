@@ -3,6 +3,7 @@ import { Dimensions, View, Text, Button, StyleSheet, Image, TouchableOpacity } f
 import Logo from '../assets/logo-transparent-white.png';
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const RegistrationScreen = ({ navigation }) => {
 
@@ -15,7 +16,7 @@ const RegistrationScreen = ({ navigation }) => {
             <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.register} nPress={() => navigation.navigate("Register")}>
-            <Text style={styles.buttonText}>Create Account</Text>
+            <Text style={styles.buttonText } numberOfLines={1}>Create Account</Text>
         </TouchableOpacity>
         </View>
     );
@@ -50,14 +51,25 @@ const styles = StyleSheet.create({
     login: {
         backgroundColor: "#5F4078",
         marginTop: 150,
-        padding: 10,
+        marginBottom: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: screenHeight * 0.015,
+        paddingHorizontal: screenWidth * 0.35,
     },
     register: {
         backgroundColor: "#9680B6",
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: screenHeight * 0.015,
+        paddingHorizontal: screenWidth * 0.25,
     },
     buttonText: {
         color: "#FFFF",
         fontSize: 22,
+        textAlign: 'center', 
     }
 });
 
