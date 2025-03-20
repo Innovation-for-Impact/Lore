@@ -97,7 +97,7 @@ if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "mydb",
+            "NAME": "mydatabase", #changed
             "USER": "myuser",
             "PASSWORD": "mypass",
             "HOST": "localhost",
@@ -186,3 +186,4 @@ REST_AUTH = {
 
 AUTH_USER_MODEL = "lore.LoreUser"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+GOOGLE_AUTH_REDIRECT_URL = "http://localhost:8000/api/v1/auth/google/callback/" #changed
