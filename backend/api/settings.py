@@ -12,20 +12,27 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+    DATABASE_PORT=(str, ""),
+)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(Path(BASE_DIR) / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-_tc_qe)*pb@cy&8y@gmh4^1ly703rdlo&)n+v7ae5r%_zii88w"
-)
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -93,19 +100,30 @@ WSGI_APPLICATION = "api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "mydatabase", #changed
-            "USER": "myuser",
-            "PASSWORD": "mypass",
-            "HOST": "localhost",
-            "PORT": "",
-        }
-    }
-else:
-    raise NotImplementedError("No production database server for ")
+# if DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql_psycopg2",
+#             "NAME": "mydatabase", #changed
+#             "USER": "myuser",
+#             "PASSWORD": "mypass",
+#             "HOST": "localhost",
+#             "PORT": "",
+#         }
+#     }
+# else:
+#     raise NotImplementedError("No production database server for ")
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": env("DATABASE_NAME"),
+        "USER": env("DATABASE_USER"),
+        "PASSWORD": env("DATABASE_PASSWORD"),
+        "HOST": env("DATABASE_HOST"),
+        "PORT": env("DATABASE_PORT"),
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -125,6 +143,29 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+GOOGLE_AUTH_REDIRECT_URL = env("GOOGLE_AUTH_REDIRECT_URL")
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        "APP": {
+            "client_id": env("GOOGLE_CLIENT_ID"),
+            "secret": env("GOOGLE_SECRET"),
+            "key": "",
+        },
+        # These are provider-specific settings that can only be
+        # listed here:
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
