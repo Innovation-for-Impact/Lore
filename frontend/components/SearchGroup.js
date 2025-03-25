@@ -51,12 +51,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#427F9D', // Bluish background for the pill shape
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
     width: '60%',
     marginTop: 30,
+    alignSelf: 'center',
   },
   icon: {
     marginRight: 6,
@@ -65,5 +67,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#FFF', // White text color
     fontSize: 16,
+    textAlign: 'center', 
   },
 });
