@@ -21,6 +21,10 @@ const CreateAccountScreen = () => {
         navigation.navigate("LoginScreen");
     };
 
+    const goToEmail = () => {
+        navigation.navigate("CreateAccountEmailScreen");
+    };
+
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -46,7 +50,7 @@ const CreateAccountScreen = () => {
                         <Text style={styles.buttonText} numberOfLines={1}>Continue with Apple</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button3}>
+                <TouchableOpacity style={styles.button3} onPress={goToEmail}>
                     <View style={styles.buttonTextRow}> 
                         <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
                         <Text style={styles.buttonText} numberOfLines={1}>Continue with Email</Text>
