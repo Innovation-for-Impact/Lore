@@ -30,7 +30,11 @@ const CreateAccountEmailScreen = ({ navigation }) => {
             return;
         }
 
-        // TODO: API Endpoint
+        // TODO: API endpoint to create user
+
+        // TODO: API endpoint to check email
+        // if email already exists in database - X mark
+        // else check mark
 
         // Navigate to the next screen - name
         navigation.navigate('NameScreen');
@@ -97,6 +101,15 @@ const CreateAccountEmailScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.button} onPress={handleRegister}>
                     <Text style={styles.buttonText}>Create Account</Text>
                 </TouchableOpacity>
+            </View>
+
+            <View style={styles.footerTextContainer}>
+                <View style={styles.textRow}>
+                    <Text style={styles.linkText}>By creating an account, you agree to our</Text>
+                    <TouchableOpacity>
+                        <Text style={[styles.linkTextTerms, styles.linkText]}> Terms & Conditions</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -174,6 +187,23 @@ const styles = StyleSheet.create({
         top: screenHeight * 0.628,
         right: 15,
         padding: 5,
+    },
+    textRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+    },
+    footerTextContainer: {
+        position: 'absolute',  
+        width: screenWidth * 0.7,
+        bottom: 50,
+    },
+    linkText: {
+        color: "#007FBC",
+        fontSize: 16,
+    },
+    linkTextTerms: {
+        fontWeight: "bold",
     },
 });
 
