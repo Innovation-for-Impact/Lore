@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Modal, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 function JoinGroup() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -60,6 +61,9 @@ function JoinGroup() {
                 {/* Modal for entering group code - - way to show content above existing content*/}
                 {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
                 <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                    <View style={styles.fullScreenContainer}>
+                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                     </View>
                     {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
                     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
                         <View style={styles.modalContainer}>
@@ -94,6 +98,9 @@ function JoinGroup() {
 
                 {/* Success Modal */}
                 <Modal visible={successModalVisible} transparent={true} animationType="fade" onRequestClose={() => setSuccessModalVisible(false)}>
+                    <View style={styles.fullScreenContainer}>
+                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                     </View>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <View style={styles.iconSuccessFailTextContainer}>
@@ -115,6 +122,9 @@ function JoinGroup() {
 
                 {/* Failure Modal */}
                 <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
+                    <View style={styles.fullScreenContainer}>
+                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                     </View>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <View style={styles.iconSuccessFailTextContainer}>
@@ -247,6 +257,12 @@ const styles = StyleSheet.create({
     },
     activeButtonText: {
         color: 'white',
+    },
+    fullScreenContainer: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    fullScreenBlur: {
+        flex: 1,
     },
 });
 
