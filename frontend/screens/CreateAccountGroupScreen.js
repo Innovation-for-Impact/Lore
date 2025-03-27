@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import unlockIcon from '../assets/unlock-icon.png';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Feather } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -12,6 +13,8 @@ const CreateAccountGroupScreen = ({ navigation }) => {
     const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [failureModalVisible, setFailureModalVisible] = useState(false);
     const [groupCode, setGroupCode] = useState('');
+    const [isGroupJoined, setIsGroupJoined] = useState(false);
+    // const correctCode = '12345';
 
     const goBack = () => {
         navigation.goBack();
@@ -38,12 +41,24 @@ const CreateAccountGroupScreen = ({ navigation }) => {
             return response.json();
         })
         .then(() => {
+            setIsGroupJoined(true);
             setSuccessModalVisible(true);
         })
         .catch((error) => {
             console.error(error);
             setFailureModalVisible(true);
-        })
+        });
+    
+        setModalVisible(false);
+        setGroupCode('');
+        
+        // testing Next button on successful join
+        // if (groupCode === correctCode) {
+        //        setIsGroupJoined(true);
+        //     setSuccessModalVisible(true);
+        // } else {
+        //     setFailureModalVisible(true);
+        // }
 
         setModalVisible(false);
         setGroupCode('');
@@ -77,6 +92,9 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                     {/* Modal for entering group code - - way to show content above existing content*/}
                     {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
                     <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                        <View style={styles.fullScreenContainer}>
+                            <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                        </View>
                         {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
                         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
                             <View style={styles.modalContainer}>
@@ -111,6 +129,9 @@ const CreateAccountGroupScreen = ({ navigation }) => {
 
                     {/* Success Modal */}
                     <Modal visible={successModalVisible} transparent={true} animationType="fade" onRequestClose={() => setSuccessModalVisible(false)}>
+                        <View style={styles.fullScreenContainer}>
+                            <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                        </View>
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContent}>
                                 <View style={styles.iconSuccessFailTextContainer}>
@@ -132,6 +153,9 @@ const CreateAccountGroupScreen = ({ navigation }) => {
 
                     {/* Failure Modal */}
                     <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
+                        <View style={styles.fullScreenContainer}>
+                            <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                        </View>
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContent}>
                                 <View style={styles.iconSuccessFailTextContainer}>
@@ -151,7 +175,7 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                         </View>
                     </Modal>
                     
-                    {successModalVisible ? (
+                    {isGroupJoined ? (
                         <TouchableOpacity style={styles.button2} onPress={handleContinue}>
                             <Text style={styles.buttonText}>Next</Text>
                         </TouchableOpacity>
@@ -297,6 +321,12 @@ const styles = StyleSheet.create({
     },
     secondaryButton: {
         backgroundColor: '#44344D',
+    },
+    fullScreenContainer: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    fullScreenBlur: {
+        flex: 1,
     },
 });
 
