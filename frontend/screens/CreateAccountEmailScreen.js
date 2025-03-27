@@ -37,7 +37,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
         // else check mark
 
         // Navigate to the next screen - name
-        navigation.navigate('NameScreen');
+        navigation.navigate('CreateAccountNameScreen');
     };
 
     return (
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: "#5F4078",
         width: screenWidth * 0.9,
-        paddingVertical: 12,
+        paddingVertical: 16,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,

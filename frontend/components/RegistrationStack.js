@@ -3,7 +3,8 @@ import RegistrationScreen from '../screens/RegistrationScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
 import CreateAccountEmailScreen from '../screens/CreateAccountEmailScreen';
 import LoginScreen from '../screens/LoginScreen';
-import NameScreen from '../screens/NameScreen';
+import CreateAccountNameScreen from '../screens/CreateAccountNameScreen';
+import CreateAccountProfileScreen from '../screens/CreateAccountProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,8 +32,13 @@ function RegistrationStack() {
         options={{ headerShown: false }}
       />
       <Stack.Screen 
-        name="NameScreen"
-        component={NameScreen} 
+        name="CreateAccountNameScreen"
+        component={CreateAccountNameScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="CreateAccountProfileScreen"
+        component={CreateAccountProfileScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
