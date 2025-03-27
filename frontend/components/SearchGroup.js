@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   icon: {
-    marginRight: 6,
+    marginRight: -19,
   },
   input: {
     flex: 1,
