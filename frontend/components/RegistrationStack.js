@@ -3,6 +3,7 @@ import RegistrationScreen from '../screens/RegistrationScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
 import LoginScreen from '../screens/LoginScreen';
 import WelcomeBackScreen from '../screens/WelcomeBackScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ function RegistrationStack() {
       <Stack.Screen 
         name="WelcomeBack" 
         component={WelcomeBackScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="HomeScreen" 
+        component={HomeScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
