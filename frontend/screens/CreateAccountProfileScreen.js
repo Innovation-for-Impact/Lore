@@ -5,7 +5,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountProfileScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
@@ -31,7 +30,7 @@ const CreateAccountProfileScreen = ({ navigation }) => {
     
         const result = await ImagePicker.launchImageLibraryAsync({
             // mediaTypes: "Images",
-            mediaTypes: ImagePicker.MediaType.IMAGE,
+            mediaTypes: ImagePicker.MediaType,
             quality: 1,
         });
         
@@ -66,10 +65,17 @@ const CreateAccountProfileScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.button1} onPress={handleUpload}>
                     <Text style={styles.buttonText}>Add profile picture</Text>
                 </TouchableOpacity>
+                
+                {image ? (
+                    <TouchableOpacity style={styles.button2} onPress={handleContinue}>
+                        <Text style={styles.buttonText}>Next</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.button2} onPress={handleContinue}>
+                        <Text style={styles.buttonText}>Skip</Text>
+                    </TouchableOpacity>
+                )}
 
-                <TouchableOpacity style={styles.button2} onPress={handleContinue}>
-                    <Text style={styles.buttonText}>Skip</Text>
-                </TouchableOpacity>
             </View>
         </View>
     );
