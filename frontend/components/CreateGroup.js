@@ -2,103 +2,295 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
 
 function CreateGroup() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const [error, setError] = useState('');
+  const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState([]);
 
   // API Endpoint (POST)
   const handleCreateGroupName = () => {
-    // fetch(`/api/v1/groups/join/`, {
+    if (!groupName.trim()) {
+      setError("group name can't be empty");
+      return;
+    }
+    setError('');
+
+    // FIXME
+    // fetch(`/api/v1/groups/create/`, {
     //   method: "POST",
     //   credentials: "same-origin",
     //   headers: {
     //     "Content-Type": "application/json",
     //   },
-    //   body: JSON.stringify({ join_code: groupCode }),
+    //   body: JSON.stringify({ group_name: groupName }),
     // })
     // .then((response) => {
     //     if (!response.ok) throw Error(response.statusText);
     //     return response.json();
     // })
     // .then(() => {
-    //     setSuccessModalVisible(true);
+    //   setModalVisible(false);
+    //   setGroupName('');
+    //   setQuickAddModalVisible(true);
     // })
     // .catch((error) => {
     //     console.error(error);
-    //     setFailureModalVisible(true);
     // })
-    
+
+    // comment out when finished API endpoint
     setModalVisible(false);
     setGroupName('');
+    setQuickAddModalVisible(true);
   }
 
+  // FIXME API Endpoint (GET)
+  const handleSearch = (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+  
+    // fetch(`/api/v1/users/search/?q=${query}`, {
+    //   method: "GET",
+    //   credentials: "same-origin",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    // .then((response) => {
+    //     if (!response.ok) throw Error(response.statusText);
+    //     return response.json();
+    // })
+    // .then(() => {
+    //   setSearchResults(data.users || []);
+    // })
+    // .catch((error) => {
+    //     console.error(error);
+    //     setSearchResults([]);
+    // })
+
+    // testing UI, comment out when done with API
+    const fakeDatabase = [
+      { id: 1, name: "Tina Vu" },
+      { id: 2, name: "Alex Smart" },
+      { id: 3, name: "Kara Wong" },
+      { id: 4, name: "Arda Edil" }
+    ];
+  
+    // Filter results based on the search query
+    const filteredResults = fakeDatabase.filter(user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  
+    setSearchResults(filteredResults);
+  };
+
+  // FIXME API Endpoint (POST)
+  const handleAddMember = (user) => {
+    if (!selectedMembers.some((member) => member.id === user.id)) {
+      setSelectedMembers([...selectedMembers, user]);
+    }
+  };
+
+  // FIXME API Endpoint (POST)
+  const handleRemoveMember = (userId) => {
+    setSelectedMembers(selectedMembers.filter((member) => member.id !== userId));
+  };
+
   return (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        <TouchableOpacity 
-            style={[styles.createButton, isButtonActive && styles.activeButton]} 
-            onPress={() => {
-                setModalVisible(true);
-                setIsButtonActive(true);
-            }}
-        >
-            <Text style={[styles.createButtonText, (modalVisible) && styles.activeButtonText]}>
-                Create Group
-            </Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity 
+          style={[styles.createButton, isButtonActive && styles.activeButton]} 
+          onPress={() => {
+              setModalVisible(true);
+              setIsButtonActive(true);
+          }}
+      >
+          <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible) && styles.activeButtonText]}>
+            create group
+          </Text>
+      </TouchableOpacity>
 
-        {/* Modal for entering group code - - way to show content above existing content*/}
-        {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
-        <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-            <View style={styles.fullScreenContainer}>
-                <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+      {/* Modal for entering group code - - way to show content above existing content */}
+      {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
+      <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+          <View style={styles.fullScreenContainer}>
+              <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+          </View>
+          {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+              <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                      <View style={styles.iconTextContainer}>
+                          <Text style={styles.modalTitle}>create group name</Text>
+                          <TouchableOpacity onPress={() => {setModalVisible(false); setIsButtonActive(false); }}>
+                              <Feather name="x-square" size={25} color="black" />
+                          </TouchableOpacity>
+                      </View>
+
+                      <TextInput
+                          style={[styles.input, error && styles.inputError]}
+                          placeholder="group name"
+                          placeholderTextColor="#BFBFBF"
+                          value={groupName}
+                          onChangeText={(text) => {
+                            setGroupName(text);
+                            if (error) setError('');
+                          }}
+                          keyboardType="default"
+                      />
+                      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+                      <View style={styles.buttonRow}>
+                          <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupName('')}>
+                              <Text style={styles.buttonText}>clear</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity style={styles.button} onPress={handleCreateGroupName}>
+                              <Text style={styles.buttonText}>enter</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
               </View>
-            {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <View style={styles.iconTextContainer}> 
-                            <Text style={styles.modalTitle}>Create Group Name</Text>
-                            <TouchableOpacity onPress={() => {setModalVisible(false); setIsButtonActive(false); }}>
-                                <Feather name="x-square" size={25} color="black" />
-                            </TouchableOpacity>
-                        </View>
+          </KeyboardAvoidingView>
+      </Modal>
+      
+      {/* Quick add members modal */}
+      <Modal animationType="fade" transparent={true} visible={quickAddModalVisible} onRequestClose={() => setQuickAddModalVisible(false)}>
+          <View style={styles.fullScreenContainer}>
+                <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+          </View>
+          <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                  <Text style={styles.searchModalTitle}>add members</Text>
+                  
+                  {/* search feature */}
+                  <View style={styles.searchContainer}>
+                    <Ionicons name="search" size={20} color="#44344D" style={styles.icon} />
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder="search members"
+                      placeholderTextColor="#BFBFBF"
+                      value={searchQuery}
+                      onChangeText={(text) => {
+                        setSearchQuery(text);
+                        handleSearch(text);
+                      }}
+                      keyboardType="default"
+                    />
+                  </View>
 
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Group Name"
-                            value={groupName}
-                            onChangeText={setGroupName}
-                            keyboardType="default"
-                        />
-                        <View style={styles.buttonRow}>
-                            <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupName('')}>
-                                <Text style={styles.buttonText}>Clear</Text>
+                  {searchResults.length > 0 && (
+                    <View style={styles.searchResults}>
+                        {searchResults.map((user) => (
+                            <TouchableOpacity key={user.id} style={styles.resultItem} onPress={() => handleAddMember(user)}>
+                                <Text>{user.name}</Text>
                             </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.button} onPress={handleCreateGroupName}>
-                                <Text style={styles.buttonText}>Enter</Text>
-                            </TouchableOpacity>
-                        </View>
+                        ))}
                     </View>
-                </View>
-            </KeyboardAvoidingView>
-        </Modal>
+                  )}
 
-          
-        </View>
-    </SafeAreaProvider>
+                  <View style={styles.selectedMembersContainer}>
+                    <Text style={styles.selectedMembersTitle}>Selected Members:</Text>
+                    {selectedMembers.length === 0 ? (
+                      <Text style={styles.noMembersText}>No members selected.</Text>
+                    ) : (
+                      selectedMembers.map((member) => (
+                        <View key={member.id} style={styles.memberItem}>
+                          <Text style={styles.memberText}>{member.name}</Text>
+                          <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => handleRemoveMember(member.id)}
+                          >
+                            <Text style={styles.deleteText}>Remove</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))
+                    )}
+                  </View>
+
+                  <View style={styles.buttonRow}>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => { setQuickAddModalVisible(false); setIsButtonActive(false); }}>
+                        <Text style={styles.buttonText}>create group</Text>
+                    </TouchableOpacity>
+                  </View>
+              </View>
+          </View>
+      </Modal>
+
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  selectedMembersContainer: {
+    marginTop: 20,
+    width: '100%',
+    padding: 10,
+  },
+  selectedMembersTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  noMembersText: {
+    color: '#888',
+  },
+  memberItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  memberText: {
+    fontSize: 16,
+  },
+  deleteButton: {
+    backgroundColor: '#ff4d4d',
+    padding: 5,
+    borderRadius: 5,
+  },
+  deleteText: {
+    color: '#fff',
+    fontSize: 12,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F2',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 10,
+    marginTop: 10,
+    width: '100%',
+    height: 40,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
+    color: '#44344D',
+    paddingHorizontal: 10,
+  },
+  searchModalTitle: {
+    fontSize: 20,
+    marginRight: 130,
   },
   createButton: {
     color: '#5F4078',
@@ -108,8 +300,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingLeft: 15,
     paddingRight: 15,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   createButtonText: {
     fontSize: 15,
@@ -118,63 +310,96 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-      width: 300,
-      backgroundColor: 'white',
-      padding: 20,
-      borderRadius: 10,
-      alignItems: 'center',
-      borderWidth: 1.5,
-      borderColor: '#9680B6',
+    width: 300,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#9680B6',
   },
   iconTextContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
   },
   modalTitle: {
-      fontSize: 20,
-      marginRight: 70,
+    fontSize: 20,
+    marginRight: 58,
   },
+  modalButton: {
+    flex: 1,
+    backgroundColor: '#44344D',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 20,
+},
   input: {
-      width: '100%',
-      borderWidth: 1,
-      borderColor: '#ccc',
-      padding: 10,
-      marginBottom: 20,
-      borderRadius: 5,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 5,
   },
   buttonRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '60%',
-      marginLeft: 111,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '60%',
+    marginLeft: 111,
   },
   button: {
-      flex: 1,
-      backgroundColor: '#44344D',
-      padding: 10,
-      borderRadius: 5,
-      alignItems: 'center',
-      marginHorizontal: 5,
+    flex: 1,
+    backgroundColor: '#44344D',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 5,
   },
   clearButton: {
-      backgroundColor: '#9680B6',
+    backgroundColor: '#9680B6',
   },
   buttonText: {
-      color: 'white',
-      fontWeight: '600',
+    color: 'white',
+    fontWeight: '600',
+  },
+  activeButton: {
+    backgroundColor: '#5F4078',
+    borderColor: 'white',
+  },
+  activeButtonText: {
+    color: 'white',
   },
   fullScreenContainer: {
     ...StyleSheet.absoluteFillObject,
   },
   fullScreenBlur: {
       flex: 1,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    marginTop: -10,
+  },
+  searchResults: {
+    width: "100%",
+    marginBottom: 15,
+    maxHeight: 150,
+  },
+  resultItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });
 
