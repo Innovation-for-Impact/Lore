@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput } from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
@@ -14,6 +16,8 @@ function CreateGroup() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
+  const [groupCode, setGroupCode] = useState(null);
 
   // API Endpoint (POST)
   const handleCreateGroupName = () => {
@@ -87,23 +91,26 @@ function CreateGroup() {
   
     // Filter results based on the search query
     const filteredResults = fakeDatabase.filter(user =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      user.name.toLowerCase().includes(query.toLowerCase())
     );
   
     setSearchResults(filteredResults);
   };
 
-  // FIXME API Endpoint (POST)
   const handleAddMember = (user) => {
     if (!selectedMembers.some((member) => member.id === user.id)) {
       setSelectedMembers([...selectedMembers, user]);
     }
   };
 
-  // FIXME API Endpoint (POST)
   const handleRemoveMember = (userId) => {
     setSelectedMembers(selectedMembers.filter((member) => member.id !== userId));
   };
+
+  // FIXME API Endpoint: add selected members to group (POST) then GET the groupCode
+  const handleCreateGroup = async () => {
+    
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -114,7 +121,7 @@ function CreateGroup() {
               setIsButtonActive(true);
           }}
       >
-          <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible) && styles.activeButtonText]}>
+          <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
             create group
           </Text>
       </TouchableOpacity>
@@ -207,10 +214,10 @@ function CreateGroup() {
                         <View key={member.id} style={styles.memberItem}>
                           <Text style={styles.memberText}>{member.name}</Text>
                           <TouchableOpacity
-                            style={styles.deleteButton}
+                            style={styles.removeButton}
                             onPress={() => handleRemoveMember(member.id)}
                           >
-                            <Text style={styles.deleteText}>Remove</Text>
+                            <Text style={styles.removeText}>Remove</Text>
                           </TouchableOpacity>
                         </View>
                       ))
@@ -218,7 +225,14 @@ function CreateGroup() {
                   </View>
 
                   <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.modalButton} onPress={() => { setQuickAddModalVisible(false); setIsButtonActive(false); }}>
+                    <TouchableOpacity 
+                      style={styles.modalButton} 
+                      onPress={async () => {
+                        setQuickAddModalVisible(false); 
+                        setIsButtonActive(true); 
+                        setGroupCreatedModalVisible(true); 
+                        await handleCreateGroup();
+                    }}>
                         <Text style={styles.buttonText}>create group</Text>
                     </TouchableOpacity>
                   </View>
@@ -226,41 +240,52 @@ function CreateGroup() {
           </View>
       </Modal>
 
+      {/* Group created confirmation modal */}
+      <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.confirmView}>
+              <Feather name="check-circle" size={25} color="green" />
+              <Text style={styles.modalText}>group created.</Text>
+            </View>
+
+            {/* Display group code from GET */}
+            {groupCode ? (
+              <Text style={styles.groupCodeText}>{groupCode}</Text>
+            ) : (
+              <Text style={styles.groupCodeText}>ABC123LORE</Text>
+            )}
+            
+            <View style={styles.buttonRow}>
+              <TouchableOpacity 
+                style={styles.modalButton} 
+                onPress={() => {
+                  setGroupCreatedModalVisible(false);
+                  setIsButtonActive(false); 
+                  Clipboard.setString(groupCode);
+                  if (Platform.OS === 'android') {
+                    ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
+                  } else {
+                    Alert.alert('Text copied to clipboard!');
+                  }
+                }}
+              >
+                <Text style={styles.buttonText}>copy code</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  selectedMembersContainer: {
-    marginTop: 20,
-    width: '100%',
-    padding: 10,
-  },
-  selectedMembersTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  noMembersText: {
-    color: '#888',
-  },
-  memberItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  memberText: {
-    fontSize: 16,
-  },
-  deleteButton: {
-    backgroundColor: '#ff4d4d',
-    padding: 5,
-    borderRadius: 5,
-  },
-  deleteText: {
-    color: '#fff',
-    fontSize: 12,
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -333,6 +358,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginRight: 58,
   },
+  modalText: {
+    fontSize: 17,
+    marginLeft: 10,
+  },
   modalButton: {
     flex: 1,
     backgroundColor: '#44344D',
@@ -340,6 +369,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginHorizontal: 20,
+    marginTop: 10,
+    marginRight: 10,
 },
   input: {
     width: '100%',
@@ -392,7 +423,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   searchResults: {
-    width: "100%",
+    width: "90%",
     marginBottom: 15,
     maxHeight: 150,
   },
@@ -400,6 +431,54 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+  },
+  selectedMembersContainer: {
+    marginTop: 10,
+    width: '100%',
+    padding: 10,
+  },
+  selectedMembersTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#44344D',
+  },
+  noMembersText: {
+    color: '#44344D',
+  },
+  memberItem: {
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
+  memberText: {
+    fontSize: 15,
+    paddingBottom: 5,
+  },
+  removeButton: {
+    backgroundColor: '#ff4d4d',
+    padding: 5,
+    borderRadius: 5,
+    width: '30%',
+  },
+  removeText: {
+    color: '#fff',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  confirmView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+  },
+  groupCodeText: {
+    fontSize: '20',
+    fontWeight: '450',
+    marginTop: '15',
+    marginBottom: '10',
   },
 });
 
