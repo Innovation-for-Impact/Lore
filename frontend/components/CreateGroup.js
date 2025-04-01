@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput } from 'react-native';
 import { Alert } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -266,7 +266,8 @@ function CreateGroup() {
                 onPress={() => {
                   setGroupCreatedModalVisible(false);
                   setIsButtonActive(false); 
-                  Clipboard.setString(groupCode);
+                  Clipboard.setStringAsync(groupCode);
+                  // Clipboard.setStringAsync('ABC123LORE');
                   if (Platform.OS === 'android') {
                     ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
                   } else {
