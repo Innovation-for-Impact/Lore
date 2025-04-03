@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
     borderColor: '#9CAAC7',
   },
   textContainer: {
-    flex: 1,
+    flexShrink: 1,
     justifyContent: 'center',
-    marginBottom: 10,
+    paddingBottom: 5,
   },
   title: {
     fontWeight: 'bold',

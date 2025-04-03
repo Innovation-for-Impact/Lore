@@ -16,7 +16,7 @@ const AchievementBoardScreen = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                style={{ position: 'absolute', top: 60, left: 15, zIndex: 10 }} 
+                style={{ position: 'absolute', top: 30, left: 15, zIndex: 10 }} 
                 onPress={goBackToCommunity}
             >
                 <Ionicons name="arrow-back" size={35} color="white" />

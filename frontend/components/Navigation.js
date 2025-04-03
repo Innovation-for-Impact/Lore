@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CommunityScreen from '../screens/CommunityScreen';
+import CommunityStack from '../components/CommunityStack';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles, getTabBarStyle } from '../styles/global';
@@ -43,7 +43,7 @@ function Navigation() {
                         tabBarStyle: getTabBarStyle(insets, tabBarWidth),
                     })}
                 >
-                    <Tab.Screen name="Community" component={CommunityScreen} />
+                    <Tab.Screen name="Community" component={CommunityStack} />
                     <Tab.Screen name="Home" component={HomeScreen} />
                     <Tab.Screen name="Profile" component={ProfileScreen} />
                 </Tab.Navigator>
