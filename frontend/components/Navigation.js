@@ -3,8 +3,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CommunityScreen from '../screens/CommunityScreen';
+import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import HomeStack from '../components/HomeStack';
 import { navigationStyles, getTabBarStyle } from '../styles/global';
 
 const Tab = createBottomTabNavigator();
@@ -44,7 +44,7 @@ function Navigation() {
                     })}
                 >
                     <Tab.Screen name="Community" component={CommunityScreen} />
-                    <Tab.Screen name="Home" component={HomeStack} />
+                    <Tab.Screen name="Home" component={HomeScreen} />
                     <Tab.Screen name="Profile" component={ProfileScreen} />
                 </Tab.Navigator>
             </View>

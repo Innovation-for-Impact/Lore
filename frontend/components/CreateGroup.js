@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView } from 'react-native';
 import { Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -86,7 +86,9 @@ function CreateGroup() {
       { id: 1, name: "Tina Vu" },
       { id: 2, name: "Alex Smart" },
       { id: 3, name: "Kara Wong" },
-      { id: 4, name: "Arda Edil" }
+      { id: 4, name: "Arda Edil" },
+      { id: 5, name: "Random Guy" },
+      { id: 6, name: "Random Girl" },
     ];
   
     // Filter results based on the search query
@@ -175,69 +177,74 @@ function CreateGroup() {
           <View style={styles.fullScreenContainer}>
                 <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
           </View>
-          <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                  <Text style={styles.searchModalTitle}>add members</Text>
-                  
-                  {/* search feature */}
-                  <View style={styles.searchContainer}>
-                    <Ionicons name="search" size={20} color="#44344D" style={styles.icon} />
-                    <TextInput
-                      style={styles.searchInput}
-                      placeholder="search members"
-                      placeholderTextColor="#BFBFBF"
-                      value={searchQuery}
-                      onChangeText={(text) => {
-                        setSearchQuery(text);
-                        handleSearch(text);
-                      }}
-                      keyboardType="default"
-                    />
-                  </View>
-
-                  {searchResults.length > 0 && (
-                    <View style={styles.searchResults}>
-                        {searchResults.map((user) => (
-                            <TouchableOpacity key={user.id} style={styles.resultItem} onPress={() => handleAddMember(user)}>
-                                <Text>{user.name}</Text>
-                            </TouchableOpacity>
-                        ))}
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.searchModalTitle}>add members</Text>
+                    
+                    {/* search feature */}
+                    <View style={styles.searchContainer}>
+                      <Ionicons name="search" size={20} color="#44344D" style={styles.icon} />
+                      <TextInput
+                        style={styles.searchInput}
+                        placeholder="search members"
+                        placeholderTextColor="#BFBFBF"
+                        value={searchQuery}
+                        onChangeText={(text) => {
+                          setSearchQuery(text);
+                          handleSearch(text);
+                        }}
+                        keyboardType="default"
+                      />
                     </View>
-                  )}
+                    
+                    {/* add members content */}
+                    <View style={styles.searchResults}>
+                      {searchResults.length > 0 && (
+                        <ScrollView>
+                            {searchResults.map((user) => (
+                                <TouchableOpacity key={user.id} style={styles.resultItem} onPress={() => handleAddMember(user)}>
+                                    <Text>{user.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                      )}
+                    </View>
 
-                  <View style={styles.selectedMembersContainer}>
-                    <Text style={styles.selectedMembersTitle}>Selected Members:</Text>
-                    {selectedMembers.length === 0 ? (
-                      <Text style={styles.noMembersText}>No members selected.</Text>
-                    ) : (
-                      selectedMembers.map((member) => (
-                        <View key={member.id} style={styles.memberItem}>
-                          <Text style={styles.memberText}>{member.name}</Text>
-                          <TouchableOpacity
-                            style={styles.removeButton}
-                            onPress={() => handleRemoveMember(member.id)}
-                          >
-                            <Text style={styles.removeText}>Remove</Text>
-                          </TouchableOpacity>
-                        </View>
-                      ))
-                    )}
-                  </View>
+                    <View style={styles.selectedMembersContainer}>
+                      <Text style={styles.selectedMembersTitle}>Selected Members:</Text>
+                      {selectedMembers.length === 0 ? (
+                        <Text style={styles.noMembersText}>No members selected.</Text>
+                      ) : (
+                        selectedMembers.map((member) => (
+                          <View key={member.id} style={styles.memberItem}>
+                            <Text style={styles.memberText}>{member.name}</Text>
+                            <TouchableOpacity
+                              style={styles.removeButton}
+                              onPress={() => handleRemoveMember(member.id)}
+                            >
+                              <Text style={styles.removeText}>Remove</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ))
+                      )}
+                    </View>
 
-                  <View style={styles.buttonRow}>
-                    <TouchableOpacity 
-                      style={styles.modalButton} 
-                      onPress={async () => {
-                        setQuickAddModalVisible(false); 
-                        setIsButtonActive(true); 
-                        setGroupCreatedModalVisible(true); 
-                        await handleCreateGroup();
-                    }}>
-                        <Text style={styles.buttonText}>create group</Text>
-                    </TouchableOpacity>
-                  </View>
-              </View>
-          </View>
+                    <View style={styles.buttonRow}>
+                      <TouchableOpacity 
+                        style={styles.modalButton} 
+                        onPress={async () => {
+                          setQuickAddModalVisible(false); 
+                          setIsButtonActive(true); 
+                          setGroupCreatedModalVisible(true); 
+                          await handleCreateGroup();
+                      }}>
+                          <Text style={styles.buttonText}>create group</Text>
+                      </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+          </KeyboardAvoidingView>
       </Modal>
 
       {/* Group created confirmation modal */}
