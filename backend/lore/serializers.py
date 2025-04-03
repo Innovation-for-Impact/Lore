@@ -337,6 +337,7 @@ class GroupSerializer(
             "num_members",
             "join_code",
             "avatar",
+            "location",
             "created",
             "url",
             "achievements_url",

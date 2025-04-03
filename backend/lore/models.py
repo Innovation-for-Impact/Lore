@@ -141,6 +141,7 @@ class LoreGroupManager(models.Manager):
         owner: "LoreUser",
         avatar: File | None,
         members: list[LoreUser],
+        location: str,
     ) -> "LoreGroup":
         """Create a Lore group.
 
@@ -156,7 +157,12 @@ class LoreGroupManager(models.Manager):
         while self.filter(join_code=join_code).exists():
             join_code = uuid.uuid4().hex[:8]
 
-        group = self.model(name=name, join_code=join_code, avatar=avatar)
+        group = self.model(
+            name=name,
+            join_code=join_code,
+            avatar=avatar,
+            location=location,
+        )
 
         group.save(using=self._db)
         group.members.add(owner.pk)
@@ -199,6 +205,9 @@ class LoreGroup(models.Model):
         upload_to=PathAndRename("group_avatars"),
         null=True,
     )
+    location = models.CharField(max_length=32)
+
+    REQUIRED_FIELDS: ClassVar[list[str]] = ["name", "members", "avatar"]
 
     groups = LoreGroupManager()
 
