@@ -2,10 +2,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
 import CreateAccountEmailScreen from '../screens/CreateAccountEmailScreen';
-import LoginScreen from '../screens/LoginScreen';
 import CreateAccountNameScreen from '../screens/CreateAccountNameScreen';
 import CreateAccountProfileScreen from '../screens/CreateAccountProfileScreen';
 import CreateAccountGroupScreen from '../screens/CreateAccountGroupScreen';
+import CreateAccountWelcomeScreen from '../screens/Welcome';
+import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -45,6 +47,16 @@ function RegistrationStack() {
       <Stack.Screen 
         name="CreateAccountGroupScreen"
         component={CreateAccountGroupScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="CreateAccountWelcomeScreen" 
+        component={CreateAccountWelcomeScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="HomeScreen" 
+        component={HomeScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
