@@ -16,7 +16,7 @@ const Welcome = ({ navigation }) => {
         style={styles.button}
         onPress={() => navigation.navigate('HomeScreen')}
       >
-        <Text style={styles.buttonText}>Continue</Text>
+        <Text style={styles.buttonText}>continue</Text>
       </TouchableOpacity>
     </View>
   );
@@ -29,7 +29,7 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#B5AFE2',
+    backgroundColor: '#AFB0E4',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 30,
@@ -72,5 +72,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18, // larger button text
     fontWeight: '600',
+    letterSpacing: 2,
   },
 });

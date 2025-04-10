@@ -171,9 +171,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 15,
-    color: "#333"
+    color: "#333",
   },
   inputIcon: {
     position: "absolute",
@@ -181,9 +181,10 @@ const styles = StyleSheet.create({
     top: 13
   },
   forgotPassword: {
-    color: "#fff",
+    color: "#007FBC",
     textDecorationLine: "underline",
-    marginBottom: 20
+    marginBottom: 20,
+    fontSize: 16,
   },
   loginButton: {
     width: "80%",
