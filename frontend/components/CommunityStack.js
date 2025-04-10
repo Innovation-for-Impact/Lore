@@ -3,6 +3,7 @@ import CommunityScreen from '../screens/CommunityScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import AchievementBoardScreen from '../screens/AchievementBoardScreen';
+import QuoteDetailScreen from '../screens/QuoteDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,11 @@ function CommunityStack() {
       <Stack.Screen 
         name="AchievementBoardScreen"
         component={AchievementBoardScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="QuoteDetailScreen"
+        component={QuoteDetailScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
