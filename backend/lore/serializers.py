@@ -308,11 +308,12 @@ class GroupSerializer(
     logged_in_member_url = serializers.SerializerMethodField()
 
     def get_logged_in_member_url(self, obj: models.LoreGroup) -> str:
-        """Get the url to leave the group"""
+        """Get the url to leave the group."""
         request: Request = self.context["request"]
         base_url = request.build_absolute_uri(
             reverse(
-                "loregroup-loreuser-detail", args=[obj.pk, request.user.pk]
+                "loregroup-loreuser-detail",
+                args=[obj.pk, request.user.pk],
             ),
         )
         return f"{base_url}"
@@ -324,6 +325,7 @@ class GroupSerializer(
             owner=self.context["request"].user,
             avatar=validated_data.get("avatar"),
             members=validated_data.get("members", []),
+            location=validated_data["location"],
         )
 
     class Meta:
