@@ -16,7 +16,7 @@ const Welcome = ({ navigation }) => {
         style={styles.button}
         onPress={() => navigation.navigate('RegistrationScreen')}
       >
-        <Text style={styles.buttonText}>Continue</Text>
+        <Text style={styles.buttonText}>continue</Text>
       </TouchableOpacity>
     </View>
   );
@@ -29,7 +29,7 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#B5AFE2',
+    backgroundColor: '#AFB0E4',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 30,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 24, // larger subtitle
-    color: '#375E64',
+    color: '#2E5E76',
     textAlign: 'center',
     marginBottom: 60,
     fontWeight: 'bold',
@@ -72,5 +72,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18, // larger button text
     fontWeight: '600',
+    letterSpacing: 2,
   },
 });
