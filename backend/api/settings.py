@@ -100,6 +100,20 @@ WSGI_APPLICATION = "api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# if DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql_psycopg2",
+#             "NAME": "mydatabase", #changed
+#             "USER": "myuser",
+#             "PASSWORD": "mypass",
+#             "HOST": "localhost",
+#             "PORT": "",
+#         }
+#     }
+# else:
+#     raise NotImplementedError("No production database server for ")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -213,3 +227,4 @@ REST_AUTH = {
 
 AUTH_USER_MODEL = "lore.LoreUser"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+GOOGLE_AUTH_REDIRECT_URL = "http://localhost:8000/api/v1/auth/google/callback/" #changed

@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import HomeScreen from '../screens/HomeScreen';
 import CommunityScreen from '../screens/CommunityScreen';
+import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles, getTabBarStyle } from '../styles/global';
 
@@ -16,7 +16,6 @@ function Navigation() {
 
     return (
         <View style={navigationStyles.container}>
-            {/* Main Content */}
             <View style={navigationStyles.contentContainer}>
                 <Tab.Navigator
                     screenOptions={({ route }) => ({
