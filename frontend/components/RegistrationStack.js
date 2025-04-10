@@ -7,6 +7,7 @@ import CreateAccountProfileScreen from '../screens/CreateAccountProfileScreen';
 import CreateAccountGroupScreen from '../screens/CreateAccountGroupScreen';
 import CreateAccountWelcomeScreen from '../screens/Welcome';
 import LoginScreen from '../screens/LoginScreen';
+import WelcomeBackScreen from '../screens/WelcomeBackScreen';
 import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
@@ -52,6 +53,11 @@ function RegistrationStack() {
       <Stack.Screen 
         name="CreateAccountWelcomeScreen" 
         component={CreateAccountWelcomeScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="WelcomeBack" 
+        component={WelcomeBackScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen 
