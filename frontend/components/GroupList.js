@@ -70,67 +70,113 @@
 
 // export default GroupList;
 
-import React from 'react';
- import { FlatList, View, Text, StyleSheet } from 'react-native';
- import GroupCard from './GroupCard'; //import the group card component
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, Text, StyleSheet } from 'react-native';
+import GroupCard from './GroupCard'; //import the group card component
+// import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
  
- //contains the data about each group in the list
- const groupData = [
-   {
-     id: '1',
-     name: 'adphi girls',
-     updatedBy: 'tanya',
-     location: 'tokyo, japan',
-     num_members: 13, 
-     avatar: 'adphi.jpg',
-     join_code: '',
-     created: '',
-   },
-   {
-     id: '2',
-     name: 'lore legends',
-     updatedBy: 'chris',
-     location: 'ann arbor, usa',
-     num_members: 20,
-     avatar: 'lore.jpg',
-     join_code: '',
-     created: '',
-   },
-   {
-     id: '3',
-     name: 'skeeps feins',
-     updatedBy: 'seobin',
-     location: 'ann arbor, usa',
-     num_members: 15,
-     image: 'skeeps.jpg',
-     join_code: '',
-     created: '',
-   },
-   {
-     id: '4',
-     name: 'home from home',
-     updatedBy: 'valeria',
-     location: 'new york, usa',
-     num_members: 25,
-     image: 'home.jpg',
-     join_code: '',
-     created: '',
-   },
- ];
+//contains the data about each group in the list
+const data = [
+  {
+    id: '1',
+    name: 'adphi girls',
+    updatedBy: 'tanya',
+    location: 'tokyo, japan',
+    num_members: 13, 
+    avatar: 'adphi.jpg',
+    join_code: '',
+    created: '',
+  },
+  {
+    id: '2',
+    name: 'lore legends',
+    updatedBy: 'chris',
+    location: 'ann arbor, usa',
+    num_members: 20,
+    avatar: 'lore.jpg',
+    join_code: '',
+    created: '',
+  },
+  {
+    id: '3',
+    name: 'skeeps feins',
+    updatedBy: 'seobin',
+    location: 'ann arbor, usa',
+    num_members: 15,
+    image: 'skeeps.jpg',
+    join_code: '',
+    created: '',
+  },
+  {
+    id: '4',
+    name: 'home from home',
+    updatedBy: 'valeria',
+    location: 'new york, usa',
+    num_members: 25,
+    image: 'home.jpg',
+    join_code: '',
+    created: '',
+  },
+];
+
  
- const GroupList = () => {
-   return (
-     <View style={styles.container}>
-       <FlatList
-         data={groupData}
-         keyExtractor={(item) => item.id}
-         renderItem={({ item }) => <GroupCard group={item} />}
-         contentContainerStyle={styles.listContainer} // ensures even spacing
-         keyboardShouldPersistTaps="handled" // allows smooth scrolling
-         showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
-       />
-     </View>
-   );
+const GroupList = () => {
+  const [groupData, setGroupData] = useState([]);
+  const [loading, setLoading] = useState(true); // show spinner while loading
+
+  useEffect(() => {
+    // setGroupData(data);
+    const fetchGroups = async () => {
+      try {
+        const token = 'bearer token here';
+        const response = await fetch(
+          'http://localhost:8000/api/v1/groups/',{
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        // const response = await fetch('http://localhost:8000/api/v1/test');
+        const responseData = await response.json();
+        const results = responseData.results;
+        let data = [];
+        for (let i = 0; i < results.length; i++) {
+          data.push(results[i].data);
+        }
+        setGroupData(data);
+      } catch (error) {
+        console.error('Error fetching group data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
+  // TODO: change this
+  // if (loading) {
+  //   return (
+  //     <View style={styles.spinnerContainer}>
+  //       <ActivityIndicator size="large" color="purple" />
+  //     </View>
+  //   );
+  // }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={groupData}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <GroupCard group={item} />}
+        contentContainerStyle={styles.listContainer} // ensures even spacing
+        keyboardShouldPersistTaps="handled" // allows smooth scrolling
+        showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+      />
+    </View>
+  );
  };
  
  const styles = StyleSheet.create({

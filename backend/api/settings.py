@@ -36,7 +36,9 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8081",
+]
 
 # Application definition
 
