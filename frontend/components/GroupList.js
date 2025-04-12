@@ -167,32 +167,51 @@ const GroupList = ({ userJoinedGroup }) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={groupData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <GroupCard group={item} />}
-        contentContainerStyle={styles.listContainer} // ensures even spacing
-        keyboardShouldPersistTaps="handled" // allows smooth scrolling
-        showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
-      />
+      {groupData.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.noGroupsText}>
+            you are not in any groups yet
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={groupData}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <GroupCard group={item} />}
+          contentContainerStyle={styles.listContainer} // ensures even spacing
+          keyboardShouldPersistTaps="handled" // allows smooth scrolling
+          showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+        />
+      )}
     </View>
   );
  };
  
  const styles = StyleSheet.create({
    container: {
-     flex: 1, // allows the component to expand
+    flex: 1, // allows the component to expand
    },
    header: {
-     fontSize: 18,
-     fontWeight: 'bold',
-     color: 'purple',
-     marginBottom: 10,
-     textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'purple',
+    marginBottom: 10,
+    textAlign: 'center',
    },
    listContainer: {
-     paddingHorizontal: 20,
-     paddingBottom: 120, // i added extra padding so the last item in the list is fully visible
+    paddingHorizontal: 20,
+    paddingBottom: 120, // i added extra padding so the last item in the list is fully visible
+   },
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  
+   noGroupsText:{
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'purple',
+    marginBottom: 150,
    },
  });
  
