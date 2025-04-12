@@ -76,48 +76,48 @@ import GroupCard from './GroupCard'; //import the group card component
 // import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
  
 //contains the data about each group in the list
-const data = [
-  {
-    id: '1',
-    name: 'adphi girls',
-    updatedBy: 'tanya',
-    location: 'tokyo, japan',
-    num_members: 13, 
-    avatar: 'adphi.jpg',
-    join_code: '',
-    created: '',
-  },
-  {
-    id: '2',
-    name: 'lore legends',
-    updatedBy: 'chris',
-    location: 'ann arbor, usa',
-    num_members: 20,
-    avatar: 'lore.jpg',
-    join_code: '',
-    created: '',
-  },
-  {
-    id: '3',
-    name: 'skeeps feins',
-    updatedBy: 'seobin',
-    location: 'ann arbor, usa',
-    num_members: 15,
-    image: 'skeeps.jpg',
-    join_code: '',
-    created: '',
-  },
-  {
-    id: '4',
-    name: 'home from home',
-    updatedBy: 'valeria',
-    location: 'new york, usa',
-    num_members: 25,
-    image: 'home.jpg',
-    join_code: '',
-    created: '',
-  },
-];
+// const data = [
+//   {
+//     id: '1',
+//     name: 'adphi girls',
+//     updatedBy: 'tanya',
+//     location: 'tokyo, japan',
+//     num_members: 13, 
+//     avatar: 'adphi.jpg',
+//     join_code: '',
+//     created: '',
+//   },
+//   {
+//     id: '2',
+//     name: 'lore legends',
+//     updatedBy: 'chris',
+//     location: 'ann arbor, usa',
+//     num_members: 20,
+//     avatar: 'lore.jpg',
+//     join_code: '',
+//     created: '',
+//   },
+//   {
+//     id: '3',
+//     name: 'skeeps feins',
+//     updatedBy: 'seobin',
+//     location: 'ann arbor, usa',
+//     num_members: 15,
+//     image: 'skeeps.jpg',
+//     join_code: '',
+//     created: '',
+//   },
+//   {
+//     id: '4',
+//     name: 'home from home',
+//     updatedBy: 'valeria',
+//     location: 'new york, usa',
+//     num_members: 25,
+//     image: 'home.jpg',
+//     join_code: '',
+//     created: '',
+//   },
+// ];
 
  
 const GroupList = () => {
@@ -128,7 +128,7 @@ const GroupList = () => {
     // setGroupData(data);
     const fetchGroups = async () => {
       try {
-        const token = 'bearer token here';
+        const token = 'token here';
         const response = await fetch(
           'http://localhost:8000/api/v1/groups/',{
             method: 'GET',

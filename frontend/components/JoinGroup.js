@@ -10,39 +10,41 @@ function JoinGroup() {
     const [failureModalVisible, setFailureModalVisible] = useState(false);
     const [isButtonActive, setIsButtonActive] = useState(false);
     const [groupCode, setGroupCode] = useState('');
-    // const correctCode = '12345'; // temporary code, will need to grab code from database
 
     // api post request using fetch 
     // api/v1/groups/join/ w/ join_code
-    const handleJoinGroup = () => {
-        fetch(`/api/v1/groups/join/`, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ join_code: groupCode }),
-        })
-        .then((response) => {
-            if (!response.ok) throw Error(response.statusText);
-            return response.json();
-        })
-        .then(() => {
-            setSuccessModalVisible(true);
-        })
-        .catch((error) => {
-            console.error(error);
-            setFailureModalVisible(true);
-        })
-        // if (groupCode === correctCode) { // fix later
-        //     setSuccessModalVisible(true);
-        // } else {
-        //     setFailureModalVisible(true);
-        // }
+    const handleJoinGroup = async () => {
+        try {
+            const token = 'token here';
+            fetch('http://localhost:8000/api/v1/groups/join/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ join_code: groupCode }),
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then(() => {
+                setSuccessModalVisible(true);
+            })
+            .catch((error) => {
+                console.error(error);
+                setFailureModalVisible(true);
+            });
+
+        } catch (error) {
+            console.error('Error fetching group data:', error);
+        }
+
         setModalVisible(false);
         setGroupCode('');
     };
 
+    // TODO: refresh group list when joining a group
     return (
         <SafeAreaProvider>
             <SafeAreaView style={styles.container}>

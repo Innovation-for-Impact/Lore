@@ -100,7 +100,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         Raises a 409 error if the user is already in the group
         """
         user: models.LoreUser = cast(models.LoreUser, request.user)
-        join_code = request.POST.get("join_code", None)
+        join_code = request.data.get("join_code", None)
         if join_code is None:
             msg = "Expected join code"
             raise ParseError(msg)
