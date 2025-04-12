@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import JoinGroup from '../components/JoinGroup';
 import CreateGroup from '../components/CreateGroup';
@@ -7,14 +7,21 @@ import SearchGroupBar from '../components/SearchGroup';
 import { globalStyles } from '../styles/global';
 
 const HomeScreen = ({ navigation }) => {
+  const [userJoinedGroup, setUserJoinedGroup] = useState(false);
+
+  // GroupList re-fetches data
+  const handleUserJoinedGroup = () => {
+    setUserJoinedGroup(prev => !prev);
+  };
+  
   return (
     <View style={[globalStyles.container, { justifyContent: 'flex-start', alignItems: 'center' }]}>
       <SearchGroupBar />
       <View style={styles.container}>
-        <JoinGroup />
+        <JoinGroup  onJoinGroup={handleUserJoinedGroup} />
         <CreateGroup />
       </View>
-      <GroupList style={styles.innerContainer}/>
+      <GroupList style={styles.innerContainer} userJoinedGroup={userJoinedGroup} />
     </View>
   );
 };

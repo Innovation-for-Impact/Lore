@@ -4,7 +4,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
-function JoinGroup() {
+function JoinGroup({ onJoinGroup }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [failureModalVisible, setFailureModalVisible] = useState(false);
@@ -30,6 +30,8 @@ function JoinGroup() {
             })
             .then(() => {
                 setSuccessModalVisible(true);
+                // call home screen's callback to trigger the refresh
+                onJoinGroup();
             })
             .catch((error) => {
                 console.error(error);

@@ -120,7 +120,7 @@ import GroupCard from './GroupCard'; //import the group card component
 // ];
 
  
-const GroupList = () => {
+const GroupList = ({ userJoinedGroup }) => {
   const [groupData, setGroupData] = useState([]);
   const [loading, setLoading] = useState(true); // show spinner while loading
 
@@ -154,7 +154,7 @@ const GroupList = () => {
     };
 
     fetchGroups();
-  }, []);
+  }, [userJoinedGroup]); // dependency array - reloads when userJoinedGroup changes
 
   // TODO: change this
   // if (loading) {

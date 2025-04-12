@@ -84,15 +84,21 @@ const screenHeight = Dimensions.get('window').height;
 
 //individual Cards
 const GroupCard = ({ group }) => {
+  // fixes created date from db
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString()}`;
+  };
+  
   return (
     <View style={styles.card}>
       {/* put the image container here*/}
       <View style={styles.imageContainer}>
-        <Image source={{ uri: group.image }} style={styles.image} />
+        <Image source={{ uri: group.avatar }} style={styles.image} />
         
         {/* overlay the member count */}
         <View style={styles.overlay}>
-          <Text style={styles.memberCount}>+{group.members}</Text>
+          <Text style={styles.memberCount}>+{group.num_members}</Text>
           <FontAwesome name="users" size={16} color="white" />
         </View>
       </View>
@@ -102,7 +108,7 @@ const GroupCard = ({ group }) => {
         <Text>
           <Text style={styles.title}>{group.name}</Text>
           <Text> | </Text>
-          <Text style={styles.subtitle}>last updated: {group.updatedBy}</Text>
+          <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
         </Text>
         <View style={styles.location}>
           <FontAwesome name="map-marker" size={14} color="gray" />
@@ -128,17 +134,22 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.27,
   },
   imageContainer: {
-    position: 'relative', // this makes sure the overlay is positioned relative to the image
-    paddingBottom: 30,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: '100%',
-    height: 150,
+    width: '96%',
+    height: screenHeight * 0.19,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#9CAAC7',
+    marginTop: 75,
   },
   overlay: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    bottom: -60,
+    right: 20,
     flexDirection: 'row',
     backgroundColor: 'rgba(0,0,0,0.6)',
     padding: 5,
