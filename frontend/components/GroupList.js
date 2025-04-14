@@ -128,9 +128,12 @@ const GroupList = ({ userJoinedGroup }) => {
     // setGroupData(data);
     const fetchGroups = async () => {
       try {
-        const token = 'token here';
-        const response = await fetch(
-          'http://localhost:8000/api/v1/groups/',{
+        // const token = 'token here';
+        // const response = await fetch(
+        //   'http://localhost:8000/api/v1/groups/',{
+          const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ0NjU0Njk3LCJpYXQiOjE3NDQ2NTQzOTcsImp0aSI6ImExMGVlYTgzNDExYzRhMDc5MDcwYzkyNzdkYjM4NzdmIiwidXNlcl9pZCI6Mn0.uoz1HRyItZB5_8HCBG4RDwAMwdeP05kUgV45a99OVA0';
+          const response = await fetch(
+            'http://127.0.0.1:8000/api/v1/groups/',{
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -197,6 +200,7 @@ const GroupList = ({ userJoinedGroup }) => {
     color: 'purple',
     marginBottom: 10,
     textAlign: 'center',
+    fontFamily: 'Work Sans'
    },
    listContainer: {
     paddingHorizontal: 20,
@@ -209,9 +213,10 @@ const GroupList = ({ userJoinedGroup }) => {
   },  
    noGroupsText:{
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#5F4078',
     marginBottom: 150,
+    fontFamily: 'Work Sans'
    },
  });
  

@@ -111,7 +111,7 @@ const GroupCard = ({ group }) => {
           <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
         </Text>
         <View style={styles.location}>
-          <FontAwesome name="map-marker" size={14} color="gray" />
+          <FontAwesome name="map-marker" size={14} color="#44344D" />
           <Text style={styles.locationText}>{group.location}</Text>
         </View>
       </View>
@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
   memberCount: {
     color: 'white',
     marginRight: 5,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontFamily: 'Work Sans'
   },
   textContainer: {
     flex: 1,
@@ -167,12 +168,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: '600',
     fontSize: 16,
+    fontFamily: 'Work Sans',
+    color: '#44344D',
   },
   subtitle: {
-    color: 'purple',
-    fontSize: 14,
+    color: '#9680B6',
+    fontSize: 15,
+    fontFamily: 'Work Sans',
+    fontWeight: '600',
   },
   location: {
     flexDirection: 'row',
@@ -181,7 +186,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginLeft: 5,
-    color: 'gray',
+    color: '#44344D',
+    fontFamily: 'Work Sans'
   },
 });
 

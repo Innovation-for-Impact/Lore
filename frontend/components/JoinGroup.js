@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     },
     joinButtonText: {
         fontSize: 15,
+        fontFamily: 'Work Sans'
     },
     container: {
         flex: 1,
@@ -199,7 +200,8 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 20,
-        marginRight: 70,
+        marginRight: 60,
+        fontFamily: 'Work Sans'
     },
     input: {
         width: '100%',
@@ -208,6 +210,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 20,
         borderRadius: 5,
+        fontFamily: 'Work Sans'
     },
     buttonRow: {
         flexDirection: 'row',
@@ -228,7 +231,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
-        fontWeight: '600',
+        fontWeight: '500',
+        fontFamily: 'Work Sans'
     },
     iconSuccessFailTextContainer: {
         flexDirection: 'row',
@@ -238,6 +242,7 @@ const styles = StyleSheet.create({
     modalText: {
         fontSize: 17,
         marginLeft: 10,
+        fontFamily: 'Work Sans'
     },
     successFailButtonRow: {
         flexDirection: 'row',

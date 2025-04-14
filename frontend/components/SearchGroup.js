@@ -36,7 +36,7 @@ const SearchGroup = ({ onChangeQuery }) => {
       <Ionicons name="search" size={20} color="#FFF" style={styles.icon} />
       <TextInput
         style={styles.input}
-        placeholder="search"
+        placeholder="search for friend groups"
         placeholderTextColor="#FFFFFF99"
         value={query}
         onChangeText={handleChangeText}
@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#FFF', // White text color
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center', 
+    fontFamily: 'Work Sans'
   },
 });

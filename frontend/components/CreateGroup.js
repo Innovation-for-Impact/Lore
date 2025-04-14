@@ -325,10 +325,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#44344D',
     paddingHorizontal: 10,
+    fontFamily: 'Work Sans'
   },
   searchModalTitle: {
     fontSize: 20,
-    marginRight: 130,
+    marginRight: 120,
+    fontFamily: 'Work Sans'
   },
   createButton: {
     color: '#5F4078',
@@ -343,6 +345,7 @@ const styles = StyleSheet.create({
   },
   createButtonText: {
     fontSize: 15,
+    fontFamily: 'Work Sans'
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -369,11 +372,13 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    marginRight: 58,
+    marginRight: 51,
+    fontFamily: 'Work Sans'
   },
   modalText: {
     fontSize: 17,
     marginLeft: 10,
+    fontFamily: 'Work Sans'
   },
   modalButton: {
     flex: 1,
@@ -392,6 +397,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+    fontFamily: 'Work Sans'
   },
   buttonRow: {
     flexDirection: 'row',
@@ -412,7 +418,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: '600',
+    fontWeight: '500',
+    fontFamily: 'Work Sans'
   },
   activeButton: {
     backgroundColor: '#5F4078',
@@ -420,6 +427,7 @@ const styles = StyleSheet.create({
   },
   activeButtonText: {
     color: 'white',
+    fontFamily: 'Work Sans'
   },
   fullScreenContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -434,6 +442,7 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
     marginTop: -10,
+    fontFamily: 'Work Sans'
   },
   searchResults: {
     width: "90%",
@@ -452,11 +461,13 @@ const styles = StyleSheet.create({
   },
   selectedMembersTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontFamily: 'Work Sans',
     color: '#44344D',
   },
   noMembersText: {
     color: '#44344D',
+    fontFamily: 'Work Sans'
   },
   memberItem: {
     paddingBottom: 10,
@@ -470,6 +481,7 @@ const styles = StyleSheet.create({
   memberText: {
     fontSize: 15,
     paddingBottom: 5,
+    fontFamily: 'Work Sans'
   },
   removeButton: {
     backgroundColor: '#ff4d4d',
@@ -481,6 +493,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     textAlign: 'center',
+    fontFamily: 'Work Sans'
   },
   confirmView: {
     flexDirection: 'row',
@@ -492,6 +505,7 @@ const styles = StyleSheet.create({
     fontWeight: '450',
     marginTop: '15',
     marginBottom: '10',
+    fontFamily: 'Work Sans'
   },
 });
 

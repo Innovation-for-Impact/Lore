@@ -37,9 +37,4 @@ const getTabBarStyle = (insets, tabBarWidth) => ({
   shadowRadius: 3.84,
 });
 
-// join + create group button styling
-const joinButtonStyles = StyleSheet.create({
-
-});
-
-export { navigationStyles, getTabBarStyle, joinButtonStyles, globalStyles };
+export { navigationStyles, getTabBarStyle, globalStyles };
