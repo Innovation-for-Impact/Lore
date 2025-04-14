@@ -81,14 +81,16 @@ function CreateGroup() {
     //     setSearchResults([]);
     // })
 
-    // testing UI, comment out when done with API
+    // testing UI / demo purposes, comment out when done with API
     const fakeDatabase = [
       { id: 1, name: "Tina Vu" },
       { id: 2, name: "Alex Smart" },
       { id: 3, name: "Kara Wong" },
       { id: 4, name: "Arda Edil" },
-      { id: 5, name: "Random Guy" },
-      { id: 6, name: "Random Girl" },
+      { id: 5, name: "Ethan Sun" },
+      { id: 6, name: "Aimee Wu" },
+      { id: 7, name: "Random Guy" },
+      { id: 8, name: "Random Girl" },
     ];
   
     // Filter results based on the search query
@@ -273,8 +275,11 @@ function CreateGroup() {
                 onPress={() => {
                   setGroupCreatedModalVisible(false);
                   setIsButtonActive(false); 
-                  Clipboard.setStringAsync(groupCode);
-                  // Clipboard.setStringAsync('ABC123LORE');
+                  {groupCode ? (
+                    Clipboard.setStringAsync(groupCode)
+                  ) : (
+                    Clipboard.setStringAsync('ABC123LORE')
+                  )}
                   if (Platform.OS === 'android') {
                     ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
                   } else {

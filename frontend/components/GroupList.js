@@ -210,7 +210,7 @@ const GroupList = ({ userJoinedGroup }) => {
    noGroupsText:{
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'purple',
+    color: '#5F4078',
     marginBottom: 150,
    },
  });
