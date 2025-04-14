@@ -6,8 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { globalStyles } from '../styles/global';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const QuoteDetailScreen = () => {
   const navigation = useNavigation();
@@ -22,31 +28,17 @@ const QuoteDetailScreen = () => {
   const [context, setContext] = useState(''); // If you want to handle context locally
 
   // States to control edit mode
-  const [editMode, setEditMode] = useState(false);
   const [editedText, setEditedText] = useState(quoteText);
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  // Toggle into "edit mode"
-  const handleEdit = () => {
-    setEditedText(quoteText); // start with existing quote text
-    setEditMode(true);
-  };
-
-  // Cancel editing
-  const handleCancelEdit = () => {
-    setEditMode(false);
-  };
-
   // Save updated text
   const handleSave = () => {
     // In a real app, you'd make an API call here:
     // await updateQuoteOnServer(quote.id, editedText);
-
-    setQuoteText(editedText); // update local state
-    setEditMode(false);
+    setQuoteText(editedText); // update local quote state
     Alert.alert('Success', 'Quote updated!');
   };
 
@@ -62,6 +54,7 @@ const QuoteDetailScreen = () => {
           style: 'destructive',
           onPress: () => {
             // In a real app, you'd remove the quote from your server or store
+
             navigation.goBack();
           },
         },
@@ -70,43 +63,28 @@ const QuoteDetailScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Text style={styles.backArrow}>{'\u276E'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Quote Detail</Text>
-      </View>
-
+    <View style={[globalStyles.container, styles.container]}>
       <View style={styles.content}>
         {/* QUOTE DISPLAY / EDIT */}
-        {editMode ? (
-          // EDIT MODE
-          <View style={styles.editContainer}>
+        <View style={styles.quoteCard}>
+            <View style={styles.header}>
+              <TouchableOpacity
+                  onPress={handleBack}
+                  style={styles.backButton}
+              >
+                  <Ionicons name="arrow-back" size={35} color="#44344D" />
+              </TouchableOpacity>
+              <Text style={styles.timestamp}>{quote?.timestamp || '1 hour ago'}</Text>
+            </View>
             <TextInput
-              style={styles.editInput}
+              style={styles.quoteText}
               value={editedText}
               onChangeText={setEditedText}
-              multiline
+              // multiline
+              returnKeyType="default"
             />
-            <View style={styles.editButtons}>
-              <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-                <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCancelEdit} style={styles.cancelButton}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          // READ MODE
-          <View style={styles.quoteCard}>
-            <Text style={styles.timestamp}>{quote?.timestamp || '1 hour ago'}</Text>
-            <Text style={styles.quoteText}>{quoteText}</Text>
             <Text style={styles.author}>{author}</Text>
           </View>
-        )}
 
         {/* AUTHOR / CONTEXT (Optional) */}
         <View style={styles.infoSection}>
@@ -121,17 +99,15 @@ const QuoteDetailScreen = () => {
           />
         </View>
 
-        {/* BUTTONS: if not editing, show Edit & Delete */}
-        {!editMode && (
-          <>
-            <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-              <Text style={styles.buttonText}>Edit Quote</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-              <Text style={styles.buttonText}>Delete Quote</Text>
-            </TouchableOpacity>
-          </>
-        )}
+        {/* BUTTONS: show Edit & Delete */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.editButton} onPress={handleSave}>
+            <Text style={styles.buttonText}>save edits</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <Text style={styles.buttonText}>delete quote</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -142,19 +118,14 @@ export default QuoteDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D6CCF2', // Pastel lavender background
+    paddingTop: 50,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
   },
   backButton: {
-    paddingRight: 10,
-  },
-  backArrow: {
-    fontSize: 24,
-    color: '#4A4A4A',
+    paddingRight: 230,
   },
   headerTitle: {
     fontSize: 18,
@@ -168,8 +139,11 @@ const styles = StyleSheet.create({
   quoteCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
+    padding: 15,
+    marginHorizontal: 16,
     marginBottom: 16,
+    width: screenWidth * 0.85,
+    minHeight: screenHeight * 0.20,
     // iOS shadow
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -183,7 +157,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   quoteText: {
-    fontSize: 18,
+    fontSize: 24,
     color: '#333333',
     textAlign: 'center',
     marginVertical: 10,
@@ -192,12 +166,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B6B6B',
     textAlign: 'center',
+    marginTop: 50,
   },
   infoSection: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
+    padding: 15,
+    marginHorizontal: 16,
     marginBottom: 16,
+    width: screenWidth * 0.85,
+    minHeight: screenHeight * 0.20,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -217,16 +195,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 6,
   },
+  buttonContainer: {
+    alignItems: 'center',
+  },
   editButton: {
-    backgroundColor: '#7C57FE',
+    backgroundColor: '#5F4078',
     borderRadius: 8,
     paddingVertical: 14,
     marginBottom: 10,
+    width: screenWidth * 0.85,
   },
   deleteButton: {
-    backgroundColor: '#A66EFF',
+    backgroundColor: '#9680B6',
     borderRadius: 8,
     paddingVertical: 14,
+    width: screenWidth * 0.85,
   },
   buttonText: {
     color: '#FFF',

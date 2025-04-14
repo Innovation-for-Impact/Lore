@@ -8,6 +8,8 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ViewQuotes from '../components/ViewQuotes';
 import CreateQuoteFlow from '../components/CreateQuoteFlow';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { globalStyles } from '../styles/global';
 
 const QuoteBoardScreen = () => {
   const navigation = useNavigation();
@@ -34,13 +36,14 @@ const QuoteBoardScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[globalStyles.container, styles.container]}>
       {/* Header */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backArrow}>{'\u276E'}</Text>
+        <TouchableOpacity
+            onPress={handleBack}
+        >
+            <Ionicons name="arrow-back" size={35} color="white" />
         </TouchableOpacity>
-        <Text style={styles.screenTitle}>Quote Board</Text>
       </View>
 
       {/* Tabs */}
@@ -100,7 +103,6 @@ export default QuoteBoardScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D6CCF2',
   },
   topBar: {
     flexDirection: 'row',
@@ -108,22 +110,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
-  backButton: {
-    paddingRight: 10,
-  },
-  backArrow: {
-    fontSize: 24,
-    color: '#4A4A4A',
-  },
-  screenTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#4A4A4A',
-  },
   tabContainer: {
     flexDirection: 'row',
     alignSelf: 'center',
-    backgroundColor: '#E9E1FA',
+    backgroundColor: '#e6e7ff',
     borderRadius: 20,
     marginTop: 16,
     padding: 4,
@@ -134,15 +124,15 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   activeTabItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#44344D',
   },
   tabText: {
     fontSize: 14,
-    color: '#6B6B6B',
+    color: '#44344D',
     textTransform: 'capitalize',
   },
   activeTabText: {
-    color: '#6B6B6B',
+    color: '#ffff',
     fontWeight: 'bold',
   },
   content: {

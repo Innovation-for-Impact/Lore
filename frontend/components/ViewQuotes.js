@@ -6,8 +6,13 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 // Example dummy data (replace with your API data if needed)
 const initialQuotes = [
@@ -25,6 +30,8 @@ const ViewQuotes = () => {
   const [loading, setLoading] = useState(true);
   // Example: track pinned quote(s). If you only allow one pinned quote, store a single quote ID. If multiple are allowed, store an array.
   const [pinnedQuoteId, setPinnedQuoteId] = useState(null);
+  const [pinnedQuoteIds, setPinnedQuoteIds] = useState([]);
+
 
   // Simulate fetch or load
   useEffect(() => {
@@ -36,7 +43,7 @@ const ViewQuotes = () => {
     try {
       setLoading(true);
       // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 100));
       // Set dummy data
       setQuotes(initialQuotes);
     } catch (err) {
@@ -49,29 +56,25 @@ const ViewQuotes = () => {
   // Reorder quotes so pinned quote is at the top
   // (If you allow multiple pinned, you can sort pinned first, then unpinned.)
   const getOrderedQuotes = () => {
-    if (!pinnedQuoteId) return quotes;
-    // Move the pinned quote to the front
-    const pinnedQuote = quotes.find((q) => q.id === pinnedQuoteId);
-    if (!pinnedQuote) return quotes; // if pinned quote not found, just return original
-    // Filter out pinned quote from the rest
-    const rest = quotes.filter((q) => q.id !== pinnedQuoteId);
-    // Return pinned quote first, then the rest
-    return [pinnedQuote, ...rest];
+    if (!pinnedQuoteIds || pinnedQuoteIds.length === 0) 
+      return quotes;
+    const pinned = quotes.filter((q) => pinnedQuoteIds.includes(q.id));
+    const unpinned = quotes.filter((q) => !pinnedQuoteIds.includes(q.id));
+    return [...pinned, ...unpinned];
   };
 
   const handlePinPress = (quoteId) => {
-    // If we don’t allow multiple pins, toggle the pin
-    if (pinnedQuoteId === quoteId) {
-      // unpin
-      setPinnedQuoteId(null);
+    if (pinnedQuoteIds.includes(quoteId)) {
+      // Unpin if already pinned
+      setPinnedQuoteIds(pinnedQuoteIds.filter(id => id !== quoteId));
     } else {
-      // pin
-      setPinnedQuoteId(quoteId);
+      // Pin the quote
+      setPinnedQuoteIds([...pinnedQuoteIds, quoteId]);
     }
   };
 
   const renderItem = ({ item }) => {
-    const isPinned = item.id === pinnedQuoteId;
+    const isPinned = pinnedQuoteIds.includes(item.id);
 
     return (
       <TouchableOpacity
@@ -81,8 +84,12 @@ const ViewQuotes = () => {
         {/* Top row with pin icon and timestamp */}
         <View style={styles.topRow}>
           <TouchableOpacity onPress={() => handlePinPress(item.id)}>
-            <Text style={[styles.pinIcon, isPinned && styles.pinIconActive]}>
-              {isPinned ? '\u{1F4CC}' : '\u{1F4CC}'}
+            <Text>
+              {isPinned ? 
+                <AntDesign name="pushpin" size={25} color="#44344D" /> 
+              : 
+                <AntDesign name="pushpino" size={25} color="#44344D" />
+              }
             </Text>
           </TouchableOpacity>
           <Text style={styles.timestamp}>{item.timestamp}</Text>
@@ -122,7 +129,6 @@ export default ViewQuotes;
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
-    backgroundColor: '#D6CCF2', // to match your background
     flexGrow: 1, // ensure it takes full height
   },
   loadingContainer: {
@@ -136,6 +142,9 @@ const styles = StyleSheet.create({
     padding: 15,
     marginHorizontal: 16,
     marginBottom: 16,
+    width: screenWidth * 0.85,
+    minHeight: screenHeight * 0.20,
+    justifyContent: 'space-between',
     // iOS shadow
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -150,19 +159,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  pinIcon: {
-    fontSize: 20,
-    color: '#6B6B6B',
-  },
-  pinIconActive: {
-    color: '#7C57FE', // different color if pinned
-  },
   timestamp: {
     fontSize: 14,
     color: '#6B6B6B',
   },
   quoteText: {
-    fontSize: 16,
+    fontSize: 24,
     color: '#333333',
     textAlign: 'center',
     marginVertical: 10,
@@ -171,5 +173,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B6B6B',
     textAlign: 'center',
+    marginTop: 50,
   },
 });
