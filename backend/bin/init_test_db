@@ -7,6 +7,10 @@ echo "This script initializes a test Postgresql database with a privledge 'myuse
 echo "====================="
 
 sudo -u postgres psql <<EOF
+
+# mac
+# psql -U $(whoami) -h 127.0.0.1 -d postgres <<EOF
+
 \x
 CREATE DATABASE mydb;
 CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypass';
