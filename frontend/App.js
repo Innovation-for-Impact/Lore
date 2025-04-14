@@ -6,7 +6,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Navigation from './components/Navigation';
 import RegistrationStack from './components/RegistrationStack';
 
-
 const Stack = createStackNavigator(); 
 
 export default function App() {

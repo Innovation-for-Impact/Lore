@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Feather from '@expo/vector-icons/Feather';
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
@@ -37,7 +38,7 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     // Check credentials (hard-coded for example)
-    if (email === "admin@lore.com" && password === "123Abcd&") {
+    if (email === "admin@lore.com" && password === "testpassword") {
       // Navigate to WelcomeBack screen if valid
       navigation.navigate("WelcomeBack");
     } else {
@@ -48,12 +49,12 @@ const LoginScreen = () => {
 
   const handleForgotPassword = () => {
     // Navigate or handle forgot password logic
-    // e.g. navigation.navigate("ForgotPasswordScreen");
+    navigation.navigate("ForgotPasswordScreen");
   };
 
   const handleSignUp = () => {
     // Navigate to your Sign Up screen
-    // e.g. navigation.navigate("CreateAccountScreen");
+    navigation.navigate("CreateAccountScreen");
   };
 
   return (
@@ -107,11 +108,7 @@ const LoginScreen = () => {
           style={styles.inputIcon}
           onPress={() => setIsPasswordVisible(!isPasswordVisible)}
         >
-          <Ionicons
-            name={isPasswordVisible ? "eye" : "eye-off"}
-            size={24}
-            color="#888"
-          />
+          <Feather name={isPasswordVisible ? 'eye' : 'eye-off'} size={23} color="grey" />
         </TouchableOpacity>
       </View>
 
@@ -122,7 +119,7 @@ const LoginScreen = () => {
 
       {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log In</Text>
+        <Text style={styles.loginButtonText}>log in</Text>
       </TouchableOpacity>
 
       {/* Sign Up Footer */}
@@ -158,17 +155,16 @@ const styles = StyleSheet.create({
   },
   title: { 
     color: "#5F4078",
-    fontSize: 45, 
+    fontSize: 40, 
     fontWeight: "bold", 
     marginBottom: 30 
   },
   inputContainer: {
-    width: "80%",
+    width: screenWidth * 0.9,
     marginBottom: 15,
     position: "relative"
   },
   input: {
-    width: "100%",
     height: 50,
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -181,36 +177,43 @@ const styles = StyleSheet.create({
     top: 13
   },
   forgotPassword: {
-    color: "#007FBC",
+    color: "#2E5E76",
     textDecorationLine: "underline",
-    marginBottom: 20,
-    fontSize: 16,
+    marginBottom: 40,
+    fontSize: 14,
+    marginLeft: screenWidth * 0.62,
   },
   loginButton: {
-    width: "80%",
+    width: screenWidth * 0.9,
+    paddingVertical: screenHeight * 0.015,
     height: 50,
-    backgroundColor: "#645CAA",
+    backgroundColor: "#5F4078",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold"
+    fontSize: 20,
   },
   signUpContainer: {
     flexDirection: "row",
     alignItems: "center"
   },
   signUpText: {
-    color: "#fff"
+    color: "#2E5E76",
+    fontSize: 16,
   },
   signUpLink: {
-    color: "#fff",
+    color: "#2E5E76",
     fontWeight: "bold",
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
+    fontSize: 16,
   }
 });
 

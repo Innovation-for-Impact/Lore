@@ -4,13 +4,17 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image
+  Image,
+  Dimensions
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const WelcomeBackScreen = () => {
   const navigation = useNavigation();
@@ -45,7 +49,7 @@ const WelcomeBackScreen = () => {
 
       {/* Continue Button */}
       <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <Text style={styles.continueText}>Continue</Text>
+        <Text style={styles.continueText}>continue</Text>
       </TouchableOpacity>
     </View>
   );
@@ -68,36 +72,39 @@ const styles = StyleSheet.create({
     zIndex: 10
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: screenWidth * 0.6,
+    height: screenWidth * 0.25,
+    marginBottom: 25,
     resizeMode: "contain",
-    marginBottom: 20
   },
   title: {
-    fontSize: 28,
+    fontSize: 40,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#5F4078",
     marginBottom: 20
   },
   subtitle: {
-    fontSize: 16,
-    color: "#fff",
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: "#2E5E76",
     textAlign: "center",
-    marginHorizontal: 20,
-    marginBottom: 40,
-    lineHeight: 22
+    marginBottom: 60,
   },
   continueButton: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "#645CAA",
+    width: screenWidth * 0.9,
+    paddingVertical: screenHeight * 0.015,
+    backgroundColor: "#5F4078",
     borderRadius: 8,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    marginTop: screenHeight * 0.15,
   },
   continueText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold"
+    fontSize: 20,
   }
 });

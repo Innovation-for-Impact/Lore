@@ -7,6 +7,7 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountGroupScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -86,7 +87,7 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                             setModalVisible(true);
                         }}
                     >
-                        <Text style={[styles.buttonText, (modalVisible || successModalVisible || failureModalVisible)]}>Enter group code</Text>
+                        <Text style={[styles.buttonText, (modalVisible || successModalVisible || failureModalVisible)]}>enter group code</Text>
                     </TouchableOpacity>
 
                     {/* Modal for entering group code - - way to show content above existing content*/}
@@ -100,7 +101,7 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                             <View style={styles.modalContainer}>
                                 <View style={styles.modalContent}>
                                     <View style={styles.iconTextContainer}> 
-                                        <Text style={styles.modalTitle}>Enter Group Code</Text>
+                                        <Text style={styles.modalTitle}>enter group code</Text>
                                         <TouchableOpacity onPress={() => {setModalVisible(false); }}>
                                             <Feather name="x-square" size={25} color="black" />
                                         </TouchableOpacity>
@@ -115,11 +116,11 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                                     />
                                     <View style={styles.buttonRow}>
                                         <TouchableOpacity style={[styles.modalButton, styles.clearButton]} onPress={() => setGroupCode('')}>
-                                            <Text style={styles.modalButtonText}>Clear</Text>
+                                            <Text style={styles.modalButtonText}>clear</Text>
                                         </TouchableOpacity>
 
                                         <TouchableOpacity style={styles.modalButton} onPress={handleJoinGroup}>
-                                            <Text style={styles.modalButtonText}>Enter</Text>
+                                            <Text style={styles.modalButtonText}>enter</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -136,15 +137,15 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                             <View style={styles.modalContent}>
                                 <View style={styles.iconSuccessFailTextContainer}>
                                     <Feather name="check-circle" size={25} color="green" />
-                                    <Text style={styles.modalText}>Joined Successfully.</Text>
+                                    <Text style={styles.modalText}>joined successfully.</Text>
                                 </View>
 
                                 <View style={styles.successFailButtonRow}>
                                     <TouchableOpacity onPress={() => {setSuccessModalVisible(false); }} style={styles.successFailModalButton}>
-                                        <Text style={styles.modalButtonText}>Continue</Text>
+                                        <Text style={styles.modalButtonText}>continue</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => { setSuccessModalVisible(false); setModalVisible(true); }} style={[styles.successFailModalButton, styles.secondaryButton]}>
-                                        <Text style={styles.modalButtonText}>Join Another</Text>
+                                        <Text style={styles.modalButtonText}>join another</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -160,15 +161,15 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                             <View style={styles.modalContent}>
                                 <View style={styles.iconSuccessFailTextContainer}>
                                     <Feather name="x-circle" size={25} color="red" />
-                                    <Text style={styles.modalText}>Group Cannot Be Found.</Text>
+                                    <Text style={styles.modalText}>group cannot be found.</Text>
                                 </View>
 
                                 <View style={styles.successFailButtonRow}>
                                     <TouchableOpacity onPress={() => {setFailureModalVisible(false); }} style={[styles.successFailModalButton, styles.secondaryButton]}>
-                                        <Text style={styles.modalButtonText}>Cancel</Text>
+                                        <Text style={styles.modalButtonText}>cancel</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => { setFailureModalVisible(false); setModalVisible(true);}} style={styles.successFailModalButton}>
-                                        <Text style={styles.modalButtonText}>Try Again</Text>
+                                        <Text style={styles.modalButtonText}>try again</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -177,11 +178,11 @@ const CreateAccountGroupScreen = ({ navigation }) => {
                     
                     {isGroupJoined ? (
                         <TouchableOpacity style={styles.button2} onPress={handleContinue}>
-                            <Text style={styles.buttonText}>Next</Text>
+                            <Text style={styles.buttonText}>next</Text>
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity style={styles.button2} onPress={handleContinue}>
-                            <Text style={styles.buttonText}>Skip</Text>
+                            <Text style={styles.buttonText}>skip</Text>
                         </TouchableOpacity>
                     )}
 
@@ -208,13 +209,13 @@ const styles = StyleSheet.create({
     },
     title: { 
         color: "#5F4078",
-        fontSize: 45, 
+        fontSize: 38, 
         fontWeight: "bold", 
         marginBottom: 10,
     },
     text: {
-        color: "#007FBC",
-        fontSize: 20,
+        color: "#2E5E76",
+        fontSize: 22,
         fontWeight: "bold",
         marginBottom: 50,
         textAlign: "center",
@@ -224,23 +225,30 @@ const styles = StyleSheet.create({
     button1: {
         backgroundColor: "#5F4078",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     button2: {
         backgroundColor: "#9680B6",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     buttonText: {
         color: "white",
-        fontSize: 18,
-        fontWeight: "500",
+        fontSize: 20,
     },
     // modal styling
     modalContainer: {

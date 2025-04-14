@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   linkText: {
-    color: "#007FBC",
+    color: "#2E5E76",
     fontSize: 16,
   },
   linkTextLogin: {
@@ -132,14 +132,14 @@ const styles = StyleSheet.create({
   },
   title: { 
     color: "#5F4078",
-    fontSize: 50, 
+    fontSize: 48, 
     fontWeight: "bold", 
     marginBottom: 20 
   },
   text: {
-    color: "#007FBC",
+    color: "#2E5E76",
     fontSize: 22, 
-    fontWeight: "400",
+    fontWeight: "bold",
     marginLeft: 45,
     marginRight: 45,
     textAlign: 'center',
@@ -158,6 +158,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: screenHeight * 0.015,
     paddingHorizontal: screenWidth * 0.20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   button2: {
     backgroundColor: "#5F4078",
@@ -167,6 +171,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: screenHeight * 0.015,
     paddingHorizontal: screenWidth * 0.21,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   button3: {
     backgroundColor: "#5F4078",
@@ -175,6 +183,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: screenHeight * 0.015,
     paddingHorizontal: screenWidth * 0.21,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   buttonText: {
     color: "#FFFF",

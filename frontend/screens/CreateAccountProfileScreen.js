@@ -5,6 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountProfileScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
@@ -63,16 +64,16 @@ const CreateAccountProfileScreen = ({ navigation }) => {
                 <Text style={styles.text}>Add a profile picture so your friends know it's you. Everyone will be able to see your picture.</Text>
 
                 <TouchableOpacity style={styles.button1} onPress={handleUpload}>
-                    <Text style={styles.buttonText}>Add profile picture</Text>
+                    <Text style={styles.buttonText}>add profile picture</Text>
                 </TouchableOpacity>
                 
                 {image ? (
                     <TouchableOpacity style={styles.button2} onPress={handleContinue}>
-                        <Text style={styles.buttonText}>Next</Text>
+                        <Text style={styles.buttonText}>next</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity style={styles.button2} onPress={handleContinue}>
-                        <Text style={styles.buttonText}>Skip</Text>
+                        <Text style={styles.buttonText}>skip</Text>
                     </TouchableOpacity>
                 )}
 
@@ -103,13 +104,13 @@ const styles = StyleSheet.create({
     },
     title: { 
         color: "#5F4078",
-        fontSize: 45, 
+        fontSize: 38, 
         fontWeight: "bold", 
         marginBottom: 10,
     },
     text: {
-        color: "#007FBC",
-        fontSize: 20,
+        color: "#2E5E76",
+        fontSize: 22,
         fontWeight: "bold",
         marginBottom: 50,
         textAlign: "center",
@@ -119,23 +120,30 @@ const styles = StyleSheet.create({
     button1: {
         backgroundColor: "#5F4078",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     button2: {
         backgroundColor: "#9680B6",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     buttonText: {
         color: "white",
-        fontSize: 18,
-        fontWeight: "500",
+        fontSize: 20,
     },
 });
 

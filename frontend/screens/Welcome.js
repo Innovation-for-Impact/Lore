@@ -1,10 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const Welcome = ({ navigation }) => {
+  // Back arrow logic (if you want the arrow at the top left)
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
+      {/* Back Arrow */}
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <Ionicons name="arrow-back" size={35} color="white" />
+      </TouchableOpacity>
+
       <Image source={Logo} style={styles.img} />
 
       <Text style={styles.title}>Welcome!</Text>
@@ -34,6 +48,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 30,
   },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 15,
+    zIndex: 10
+  },
   img: {
     width: width * 0.6, // larger logo size
     height: width * 0.25,
@@ -41,13 +61,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
-    fontSize: 35, // bigger text
+    fontSize: 40, // bigger text
     fontWeight: 'bold',
     color: '#5D3B73',
     marginBottom: 20,
   },
   subtitle: {
-    fontSize: 24, // larger subtitle
+    fontSize: 22, // larger subtitle
     color: '#2E5E76',
     textAlign: 'center',
     marginBottom: 60,
@@ -55,8 +75,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#5D3B73',
-    paddingVertical: 18,
-    paddingHorizontal: 70,
+    width: screenWidth * 0.9,
+    paddingVertical: screenHeight * 0.015,
     borderRadius: 12,
     elevation: 4,
     shadowColor: '#000',
@@ -66,12 +86,11 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',   // centers the text inside
     justifyContent: 'center', // vertical alignment
+    marginTop: screenHeight * 0.15,
   },
 
   buttonText: {
     color: 'white',
-    fontSize: 18, // larger button text
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontSize: 20, // larger button text
   },
 });

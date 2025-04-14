@@ -29,4 +29,12 @@ const getTabBarStyle = (insets, tabBarWidth) => ({
   shadowRadius: 3.84,
 });
 
-export { navigationStyles, getTabBarStyle };
+// global font
+const fontStyle = StyleSheet.create({
+  workSans: {
+    fontFamily: 'Work Sans',
+  },
+});
+
+
+export { navigationStyles, getTabBarStyle, fontStyle };

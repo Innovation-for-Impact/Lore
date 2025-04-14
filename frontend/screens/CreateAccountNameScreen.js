@@ -46,7 +46,7 @@ const CreateAccountNameScreen = ({ navigation }) => {
 
                     <TextInput
                         style={styles.input}
-                        placeholder="First Name"
+                        placeholder="first name"
                         placeholderTextColor="#555"
                         value={firstName}
                         onChangeText={setFirstName}
@@ -56,7 +56,7 @@ const CreateAccountNameScreen = ({ navigation }) => {
 
                     <TextInput
                         style={styles.input}
-                        placeholder="Last Name"
+                        placeholder="last name"
                         placeholderTextColor="#555"
                         value={lastName}
                         onChangeText={setLastName}
@@ -67,7 +67,7 @@ const CreateAccountNameScreen = ({ navigation }) => {
                     {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                     <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                        <Text style={styles.buttonText}>Continue</Text>
+                        <Text style={styles.buttonText}>continue</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -89,13 +89,13 @@ const styles = StyleSheet.create({
     },
     title: { 
         color: "#5F4078",
-        fontSize: 45, 
+        fontSize: 38, 
         fontWeight: "bold", 
         marginBottom: 10,
     },
     text: {
-        color: "#007FBC",
-        fontSize: 35,
+        color: "#2E5E76",
+        fontSize: 28,
         fontWeight: "bold",
         marginBottom: 50,
     },
@@ -116,15 +116,18 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: "#5F4078",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         alignItems: "center",
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     buttonText: {
         color: "white",
-        fontSize: 18,
-        fontWeight: "500",
+        fontSize: 20,
     },
 });
 

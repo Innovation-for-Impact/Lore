@@ -54,7 +54,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Email"
+                    placeholder="email address"
                     placeholderTextColor="#555"
                     value={email}
                     onChangeText={setEmail}
@@ -65,7 +65,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
                 <View style={styles.inputWrapper}>
                     <TextInput
                         style={styles.inputPasswords}
-                        placeholder="Password"
+                        placeholder="password"
                         placeholderTextColor="#555"
                         value={password}
                         onChangeText={setPassword}
@@ -82,7 +82,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
                 <View style={styles.inputWrapper}>
                     <TextInput
                         style={styles.inputPasswords}
-                        placeholder="Confirm Password"
+                        placeholder="confirm password"
                         placeholderTextColor="#555"
                         value={confirmPassword}
                         onChangeText={setConfirmPassword}
@@ -99,7 +99,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                    <Text style={styles.buttonText}>Create Account</Text>
+                    <Text style={styles.buttonText} numberOfLines={1}>create account</Text>
                 </TouchableOpacity>
             </View>
 
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     },
     title: { 
         color: "#5F4078",
-        fontSize: 45, 
+        fontSize: 40, 
         fontWeight: "bold", 
         marginBottom: 30 
     },
@@ -166,15 +166,21 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: "#5F4078",
         width: screenWidth * 0.9,
-        paddingVertical: 16,
         borderRadius: 10,
         alignItems: "center",
+        justifyContent: 'center',
         marginTop: 10,
+        paddingVertical: screenHeight * 0.015,
+        paddingHorizontal: screenWidth * 0.25,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
     buttonText: {
-        color: "white",
-        fontSize: 18,
-        fontWeight: "500",
+        color: "#FFFF",
+        fontSize: 20,
+        textAlign: 'center',
     },
     eyePass: {
         position: 'absolute',
@@ -199,7 +205,7 @@ const styles = StyleSheet.create({
         bottom: 50,
     },
     linkText: {
-        color: "#007FBC",
+        color: "#2E5E76",
         fontSize: 16,
     },
     linkTextTerms: {
