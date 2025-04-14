@@ -37,4 +37,5 @@ const getTabBarStyle = (insets, tabBarWidth) => ({
   shadowRadius: 3.84,
 });
 
+
 export { navigationStyles, getTabBarStyle, globalStyles };
