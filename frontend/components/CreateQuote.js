@@ -5,14 +5,19 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Dimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 // Adjust these if needed
 const MAX_QUOTE_LENGTH = 100;
-const MAX_CONTEXT_LENGTH = 150;
+const MAX_CONTEXT_LENGTH = 200;
 
-const CreateQuoteFlow = () => {
+const CreateQuote = () => {
   const navigation = useNavigation();
   const [step, setStep] = useState('quote'); 
   const [quoteText, setQuoteText] = useState('');
@@ -22,18 +27,6 @@ const CreateQuoteFlow = () => {
   const handleQuoteContinue = () => {
     if (!quoteText.trim()) return;
     setStep('context');
-  };
-
-  // Step 2: Context
-  const handleContextContinue = () => {
-    if (!contextText.trim()) return;
-    finishAndNavigate();
-  };
-
-  const handleSkipContext = () => {
-    // Skip the optional context
-    setContextText('');
-    finishAndNavigate();
   };
 
   // Final step: Immediately navigate to the quotes screen
@@ -62,32 +55,28 @@ const CreateQuoteFlow = () => {
       {step === 'quote' && (
         <View style={styles.stepContainer}>
           <View style={styles.whiteBox}>
-            <TouchableOpacity
-              style={styles.boxBackButton}
-              onPress={() => {
-                // Optional: goBack() or do nothing
-              }}
-            >
-              <Text style={styles.boxBackArrow}>{'\u276E'}</Text>
-            </TouchableOpacity>
+            <View style={styles.quote}>
+              <Text style={styles.quotationMarkLeft}>"</Text>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  { textAlign: quoteText.trim().length === 0 ? 'center' : 'left' },
+                ]}
+                placeholder="type quote"
+                placeholderTextColor="BFBFBF"
+                value={quoteText}
+                onChangeText={setQuoteText}
+                // multiline
+                maxLength={MAX_QUOTE_LENGTH}
+              />
+              <Text style={styles.quotationMarkRight}>"</Text>
+            </View>
 
-            <TextInput
-              style={[
-                styles.textInput,
-                { textAlign: quoteText.trim().length === 0 ? 'center' : 'left' },
-              ]}
-              placeholder="type quote"
-              placeholderTextColor="#999"
-              value={quoteText}
-              onChangeText={setQuoteText}
-              multiline
-              maxLength={MAX_QUOTE_LENGTH}
-            />
+            {/* quote length */}
+            <Text style={styles.counter}>
+              {MAX_QUOTE_LENGTH - quoteText.length} characters remaining
+            </Text>
           </View>
-
-          <Text style={styles.counter}>
-            {MAX_QUOTE_LENGTH - quoteText.length} characters remaining
-          </Text>
 
           <TouchableOpacity
             style={[styles.button, !quoteText.trim() && styles.disabledButton]}
@@ -104,10 +93,9 @@ const CreateQuoteFlow = () => {
         <View style={styles.stepContainer}>
           <View style={styles.whiteBox}>
             <TouchableOpacity
-              style={styles.boxBackButton}
-              onPress={() => setStep('quote')}
+                onPress={() => setStep('quote')}
             >
-              <Text style={styles.boxBackArrow}>{'\u276E'}</Text>
+                <Ionicons name="arrow-back" size={30} color="#44344D" />
             </TouchableOpacity>
 
             <TextInput
@@ -116,21 +104,22 @@ const CreateQuoteFlow = () => {
                 { textAlign: contextText.trim().length === 0 ? 'center' : 'left' },
               ]}
               placeholder="type context (optional)"
-              placeholderTextColor="#999"
+              placeholderTextColor="#BFBFBF"
               value={contextText}
               onChangeText={setContextText}
-              multiline
+              // multiline
               maxLength={MAX_CONTEXT_LENGTH}
             />
+            
+            <Text style={styles.counter}>
+              {MAX_CONTEXT_LENGTH - contextText.length} characters remaining
+            </Text>
           </View>
-
-          <Text style={styles.counter}>
-            {MAX_CONTEXT_LENGTH - contextText.length} characters remaining
-          </Text>
 
           <TouchableOpacity
             style={[styles.button, !contextText.trim() && styles.disabledButton]}
-            onPress={handleContextContinue}
+            // onPress={handleContextContinue}
+            onPress={finishAndNavigate}
             disabled={!contextText.trim()}
           >
             <Text style={styles.btnText}>Continue</Text>
@@ -138,7 +127,8 @@ const CreateQuoteFlow = () => {
 
           <TouchableOpacity
             style={[styles.button, { marginTop: 10 }]}
-            onPress={handleSkipContext}
+            // onPress={handleSkipContext}
+            onPress={finishAndNavigate}
           >
             <Text style={styles.btnText}>Skip</Text>
           </TouchableOpacity>
@@ -148,67 +138,80 @@ const CreateQuoteFlow = () => {
   );
 };
 
-export default CreateQuoteFlow;
+export default CreateQuote;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D6CCF2',
-    padding: 20,
   },
   stepContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'top',
+    alignItems: 'center',
+    paddingTop: 10,
   },
   whiteBox: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
-    minHeight: 160,
+    padding: 15,
     marginBottom: 16,
-    position: 'relative',
+    width: screenWidth * 0.85,
+    minHeight: screenHeight * 0.20,
+    justifyContent: 'space-between',
+    // iOS shadow
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    // Android elevation
     elevation: 2,
-  },
-  boxBackButton: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    zIndex: 10,
-  },
-  boxBackArrow: {
-    fontSize: 24,
-    color: '#4A4A4A',
   },
   textInput: {
     marginTop: 40,
-    fontSize: 16,
-    color: '#333333',
-    textAlignVertical: 'top',
+    fontSize: 24,
+    textAlign: 'center',
     flex: 1,
+    marginBottom: 30,
+  },
+  quotationMarkLeft: {
+    fontSize: 24,
+    paddingLeft: 20,
+  },
+  quotationMarkRight: {
+    fontSize: 24,
+    paddingRight: 20,
+  },
+  quote: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    marginVertical: 20,
   },
   counter: {
-    textAlign: 'right',
-    marginBottom: 10,
-    fontSize: 14,
-    color: '#6B6B6B',
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#BFBFBF',
   },
   button: {
-    backgroundColor: '#7C57FE',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
+    backgroundColor: '#5F4078',
+    width: screenWidth * 0.85,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: 'center',
     marginTop: 10,
-    width: '100%',
+    paddingVertical: screenHeight * 0.015,
+    paddingHorizontal: screenWidth * 0.25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   btnText: {
     color: '#FFF',
-    fontWeight: '600',
+    fontSize: 20,
   },
   disabledButton: {
-    backgroundColor: '#aaa',
+    backgroundColor: '#9680B6',
   },
 });

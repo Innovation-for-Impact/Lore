@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ViewQuotes from '../components/ViewQuotes';
-import CreateQuoteFlow from '../components/CreateQuoteFlow';
+import CreateQuote from '../components/CreateQuote';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { globalStyles } from '../styles/global';
 
@@ -91,7 +91,7 @@ const QuoteBoardScreen = () => {
             onHideModal={() => setShowCreatedModal(false)}
           />
         ) : (
-          <CreateQuoteFlow />
+          <CreateQuote />
         )}
       </View>
     </View>
@@ -129,11 +129,10 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     color: '#44344D',
-    textTransform: 'capitalize',
   },
   activeTabText: {
     color: '#ffff',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   content: {
     flex: 1,

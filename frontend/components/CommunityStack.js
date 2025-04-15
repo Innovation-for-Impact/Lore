@@ -3,7 +3,7 @@ import CommunityScreen from '../screens/CommunityScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import AchievementBoardScreen from '../screens/AchievementBoardScreen';
-import QuoteDetailScreen from '../screens/QuoteDetailScreen';
+import QuoteDetailScreen from '../screens/QuoteEditScreen';
 
 const Stack = createStackNavigator();
 
