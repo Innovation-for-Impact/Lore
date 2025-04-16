@@ -2,6 +2,7 @@ import { React, useState, } from 'react';
 import { View, TouchableOpacity, Dimensions, StyleSheet, Image, Text, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Logo from '../assets/logo-transparent-white.png';
+import * as SecureStore from 'expo-secure-store';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -22,9 +23,35 @@ const CreateAccountNameScreen = ({ navigation }) => {
         }
 
         // TODO: API Endpoint
+        const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+        SecureStore.getItemAsync('jwt_token').then(token => {
+            fetch(`${apiUrl}/api/v1/auth/user/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    first_name: firstName,
+                    last_name: lastName,
+                }),
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            }).then(_ => {
+                navigation.navigate('CreateAccountProfileScreen');
+            }).catch((error) => {
+                console.error('Error:', error);
+                setError("Failed to update name")
+            });
+        }).catch(err => { 
+            navigation.navigate('LoginScreen');
+            console.error(`Error while getting token: ${err}`)
+            setError("Failed to update name");
+        });
 
         // Navigate to the next screen - profile picture
-        navigation.navigate('CreateAccountProfileScreen');
     };
 
     return (

@@ -34,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["10.0.2.2"]
+ALLOWED_HOSTS = ["10.0.2.2", "localhost"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8081",
@@ -232,4 +232,3 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 GOOGLE_AUTH_REDIRECT_URL = (
     "http://localhost:8000/api/v1/auth/google/callback/"  # changed
 )
-

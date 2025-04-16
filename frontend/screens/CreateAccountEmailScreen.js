@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Dimensions, StyleSheet, Image, Text, TextInput,
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import Logo from '../assets/logo-transparent-white.png';
+import * as SecureStore from 'expo-secure-store';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -31,13 +32,38 @@ const CreateAccountEmailScreen = ({ navigation }) => {
         }
 
         // TODO: API endpoint to create user
+        const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+        fetch(`${apiUrl}/api/v1/auth/registration/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                email: email,
+                password1: password,
+                password2: confirmPassword,
+            }),
+        })
+        .then((response) => {
+            if (!response.ok) throw Error(response.statusText);
+            return response.json();
+        }).then(res => {
+            const token = res.access;
+            SecureStore.setItemAsync('jwt_token', token).then(() => {
+                navigation.navigate('CreateAccountNameScreen');
+            }).catch(err => {
+                console.error(`Error while storing token: ${err}`)
+            });
+        }).catch((error) => {
+            console.error('Error:', error);
+            setError("Failed to register")
+        });
 
         // TODO: API endpoint to check email
         // if email already exists in database - X mark
         // else check mark
 
         // Navigate to the next screen - name
-        navigation.navigate('CreateAccountNameScreen');
     };
 
     return (
