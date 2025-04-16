@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   View,
@@ -69,7 +69,6 @@ const LoginScreen = () => {
       Alert.alert("Invalid Credentials", "Please check your email or password.");
     });
   };
-
 
   const handleForgotPassword = () => {
     // Navigate or handle forgot password logic
