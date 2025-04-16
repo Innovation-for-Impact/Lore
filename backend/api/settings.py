@@ -34,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["10.0.2.2"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8081",
@@ -229,4 +229,7 @@ REST_AUTH = {
 
 AUTH_USER_MODEL = "lore.LoreUser"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-GOOGLE_AUTH_REDIRECT_URL = "http://localhost:8000/api/v1/auth/google/callback/" #changed
+GOOGLE_AUTH_REDIRECT_URL = (
+    "http://localhost:8000/api/v1/auth/google/callback/"  # changed
+)
+

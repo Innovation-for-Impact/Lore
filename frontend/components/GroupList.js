@@ -73,6 +73,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 import GroupCard from './GroupCard'; //import the group card component
+import * as SecureStore from 'expo-secure-store';
 // import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
  
 //contains the data about each group in the list
@@ -128,9 +129,9 @@ const GroupList = ({ userJoinedGroup }) => {
     // setGroupData(data);
     const fetchGroups = async () => {
       try {
-        const token = 'token here';
-        const response = await fetch(
-          'http://localhost:8000/api/v1/groups/',{
+        const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+        const token = await SecureStore.getItemAsync('jwt_token');
+        const response = await fetch(`${apiUrl}/api/v1/groups/`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,

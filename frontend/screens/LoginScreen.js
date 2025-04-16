@@ -12,6 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from '@expo/vector-icons/Feather';
+import * as SecureStore from 'expo-secure-store';
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
@@ -37,15 +38,38 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    // Check credentials (hard-coded for example)
-    if (email === "admin@lore.com" && password === "testpassword") {
-      // Navigate to WelcomeBack screen if valid
-      navigation.navigate("WelcomeBack");
-    } else {
-      // Show alert or error message if invalid
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+    fetch(`${apiUrl}/api/v1/auth/login/`,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "email": email,
+          "password": password
+        })
+      }
+    ).then(res => {
+      if(!res.ok) {
+        throw new Error(
+          "Encountered an error while attempting to log in. Please try again, or report this problem."
+        )
+      }
+      return res.json()
+    })
+    .then(res => {
+      const token = res.access;
+      SecureStore.setItemAsync('jwt_token', token).then(() => {
+        navigation.navigate("WelcomeBack");
+      }).catch(err => {
+        console.error(`Error while storing token: ${err}`)
+      });
+    })
+    .catch(err => {
       Alert.alert("Invalid Credentials", "Please check your email or password.");
-    }
+    });
   };
+
 
   const handleForgotPassword = () => {
     // Navigate or handle forgot password logic

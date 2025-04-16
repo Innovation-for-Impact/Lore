@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Modal, TextInput, TouchableOpacity, KeyboardAvo
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import * as SecureStore from 'expo-secure-store';
 
 function JoinGroup({ onJoinGroup }) {
     const [modalVisible, setModalVisible] = useState(false);
@@ -15,8 +16,9 @@ function JoinGroup({ onJoinGroup }) {
     // api/v1/groups/join/ w/ join_code
     const handleJoinGroup = async () => {
         try {
-            const token = 'token here';
-            fetch('http://localhost:8000/api/v1/groups/join/', {
+            const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+            const token = await SecureStore.getItemAsync("jwt_token");
+            fetch(`${apiUrl}/api/v1/groups/join/`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
