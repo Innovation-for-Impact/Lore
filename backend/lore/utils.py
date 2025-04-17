@@ -38,7 +38,7 @@ class GroupMemberItemPermission(permissions.BasePermission):
     def has_object_permission(
         self,
         request: HttpRequest,
-        _: viewsets.ModelViewSet,
+        view: viewsets.ModelViewSet,
         obj: GroupItem,
     ):
         """Return true if the user can view the object.
@@ -47,4 +47,8 @@ class GroupMemberItemPermission(permissions.BasePermission):
         of the group
         """
         user: LoreUser = cast(LoreUser, request.user)
-        return user.is_in_group(obj.group.id)
+        group_pk = view.kwargs.get(
+            "loregroup_pk",
+            view.kwargs.get("group_id", obj.group.id),
+        )
+        return user.is_in_group(group_pk)

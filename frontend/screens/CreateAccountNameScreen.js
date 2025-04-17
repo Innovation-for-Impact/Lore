@@ -22,11 +22,11 @@ const CreateAccountNameScreen = ({ navigation }) => {
             return;
         }
 
-        // TODO: API Endpoint
+        // TODO: proper error handling
         const apiUrl = process.env.EXPO_PUBLIC_API_URL;
         SecureStore.getItemAsync('jwt_token').then(token => {
             fetch(`${apiUrl}/api/v1/auth/user/`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -46,7 +46,7 @@ const CreateAccountNameScreen = ({ navigation }) => {
                 setError("Failed to update name")
             });
         }).catch(err => { 
-            navigation.navigate('LoginScreen');
+            navigation.navigate('RegistrationScreen');
             console.error(`Error while getting token: ${err}`)
             setError("Failed to update name");
         });

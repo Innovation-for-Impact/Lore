@@ -18,6 +18,7 @@ from rest_framework.views import Request
 
 from lore import serializers
 from lore.models import Achievement, LoreGroup, LoreUser, Quote
+from lore.utils import GroupMemberItemPermission
 
 
 class MutualPermission(permissions.BasePermission):
@@ -159,6 +160,11 @@ class MemberViewSet(BaseLoreUserViewSet):
 
     Supports listing, retrieving, and deleting members
     """
+
+    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
+        IsAuthenticated,
+        GroupMemberItemPermission,
+    ]
 
     def get_queryset(self):
         """Get all the users based on the url."""

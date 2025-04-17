@@ -1,5 +1,5 @@
 import { React, useState, } from 'react';
-import { View, TouchableOpacity, Dimensions, StyleSheet, Image, Text, TextInput, } from 'react-native';
+import { View, TouchableOpacity, Dimensions, StyleSheet, Image, Text, TextInput, Alert, } from 'react-native';
 import profileIcon from '../assets/profile-icon.png';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
@@ -35,10 +35,40 @@ const CreateAccountProfileScreen = ({ navigation }) => {
             quality: 1,
         });
         
-        // TODO: API Endpoint
-        if (!result.canceled) {
-          setImage(result.assets[0].uri);
-        }
+        // TODO: proper error handling
+        const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+        SecureStore.getItemAsync('jwt_token').then(token => {
+            const formData = new FormData();
+
+            Alert.alert("Uploading image...");
+            formData.append('file', {
+                uri: result.assets[0].uri,
+                type: result.assets[0].type,
+                name: result.assets[0].fileName,
+            });
+
+            fetch(`${apiUrl}/api/v1/auth/user/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            }).then(_ => {
+                if (!result.canceled) {
+                    setImage(result.assets[0].uri);
+                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        }).catch(err => { 
+            navigation.navigate('RegistrationScreen');
+            console.error(`Error while getting token: ${err}`)
+        });
     };
 
 

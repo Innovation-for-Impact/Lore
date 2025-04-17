@@ -31,7 +31,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
             return;
         }
 
-        // TODO: API endpoint to create user
+        // TODO: proper error handling
         const apiUrl = process.env.EXPO_PUBLIC_API_URL;
         fetch(`${apiUrl}/api/v1/auth/registration/`, {
             method: 'POST',
@@ -56,7 +56,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
             });
         }).catch((error) => {
             console.error('Error:', error);
-            setError("Failed to register")
+            setError("Failed to register: " + error.message);
         });
 
         // TODO: API endpoint to check email
