@@ -127,7 +127,7 @@ class BaseLoreUserViewSet(
     Filter for who accomplished an achievement with `achievement`
     """
 
-    queryset = LoreUser.users.all()
+    queryset = LoreUser.users.all().order_by("pk")
     serializer_class = serializers.UserSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
