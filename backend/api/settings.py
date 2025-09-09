@@ -225,6 +225,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "jwt-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
+    "USER_DETAILS_SERIALIZER": "lore.serializers.UserSerializer",
 }
 
 AUTH_USER_MODEL = "lore.LoreUser"
