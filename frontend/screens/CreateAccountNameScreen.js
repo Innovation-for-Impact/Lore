@@ -52,6 +52,7 @@ const CreateAccountNameScreen = ({ navigation }) => {
         });
 
         // Navigate to the next screen - profile picture
+        // navigation.navigate('CreateAccountProfileScreen');
     };
 
     return (

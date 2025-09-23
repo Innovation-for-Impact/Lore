@@ -64,6 +64,7 @@ const CreateAccountEmailScreen = ({ navigation }) => {
         // else check mark
 
         // Navigate to the next screen - name
+        // navigation.navigate('CreateAccountNameScreen');
     };
 
     return (
