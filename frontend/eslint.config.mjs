@@ -3,6 +3,8 @@ import js from '@eslint/js';
 import react from 'eslint-plugin-react';
 import prettier from 'eslint-plugin-prettier';
 import configPrettier from 'eslint-config-prettier';
+import tsParser from "@typescript-eslint/parser";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
 
 /** @type {import("eslint").Linter.Config} */
 export default [
@@ -13,7 +15,7 @@ export default [
       sourceType: 'module',
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
-        ecmaFeatures: { jsx: true }, 
+        ecmaFeatures: { jsx: true },
       },
     },
     settings: {
@@ -31,6 +33,26 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'no-console': 'warn',
       'prettier/prettier': 'error',
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        project: "./tsconfig.json", // enables type-aware linting
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+      prettier,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      "prettier/prettier": "error",
     },
   },
   configPrettier,

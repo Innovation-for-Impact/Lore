@@ -1,22 +1,26 @@
-import { React, useEffect } from "react";
+import React from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
+  Dimensions,
   Image,
-  Dimensions
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 // Replace with your actual logo import
-import Logo from "../assets/logo-transparent-white.png";
+import Logo from '../assets/logo-transparent-white.png';
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
-const WelcomeBackScreen = ({ setUser }) => {
+interface WelcomeBackScreenProps {
+  setUser: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const WelcomeBackScreen = ({ setUser }: WelcomeBackScreenProps) => {
   const navigation = useNavigation();
 
   // Back arrow logic (if you want the arrow at the top left)
@@ -26,8 +30,8 @@ const WelcomeBackScreen = ({ setUser }) => {
 
   // Navigate to HomeScreen
   const handleContinue = () => {
-    setUser(true)
-    navigation.navigate("HomeScreen");
+    setUser(true);
+    navigation.navigate('HomeScreen' as never);
   };
 
   return (
@@ -61,45 +65,45 @@ export default WelcomeBackScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#AFB0E4",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 30
+    backgroundColor: '#AFB0E4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 30,
   },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 60,
     left: 15,
-    zIndex: 10
+    zIndex: 10,
   },
   logo: {
     width: screenWidth * 0.6,
     height: screenWidth * 0.25,
     marginBottom: 25,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 40,
-    fontWeight: "bold",
-    color: "#5F4078",
+    fontWeight: 'bold',
+    color: '#5F4078',
     marginBottom: 20,
-    fontFamily: 'Work Sans'
+    fontFamily: 'Work Sans',
   },
   subtitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: "#2E5E76",
-    textAlign: "center",
+    color: '#2E5E76',
+    textAlign: 'center',
     marginBottom: 60,
-    fontFamily: 'Work Sans'
+    fontFamily: 'Work Sans',
   },
   continueButton: {
     width: screenWidth * 0.9,
     paddingVertical: screenHeight * 0.015,
-    backgroundColor: "#5F4078",
+    backgroundColor: '#5F4078',
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
@@ -107,8 +111,8 @@ const styles = StyleSheet.create({
     marginTop: screenHeight * 0.15,
   },
   continueText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 20,
-    fontFamily: 'Work Sans'
-  }
+    fontFamily: 'Work Sans',
+  },
 });

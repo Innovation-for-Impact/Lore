@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from "react";
-import { Dimensions, View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React from "react";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
