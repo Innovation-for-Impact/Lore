@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import { Dimensions, View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
-import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, EXPO_CLIENT_ID } from '../components/config.js';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import * as WebBrowser from 'expo-web-browser';
+import React, { useEffect } from "react";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Logo from '../assets/logo-transparent-white.png';
+import { ANDROID_CLIENT_ID, EXPO_CLIENT_ID, IOS_CLIENT_ID } from '../components/config.js';
+import { Navigation } from "../types/navigation";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,7 +14,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
   console.log(EXPO_CLIENT_ID)
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: ANDROID_CLIENT_ID,
@@ -26,11 +25,11 @@ const CreateAccountScreen = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication } = response;
-      console.log("Google Access Token:", authentication.accessToken);
+      // console.log("Google Access Token:", authentication.accessToken);
 
       // Optional: Fetch user info from Google
       fetch('https://www.googleapis.com/userinfo/v2/me', {
-        headers: { Authorization: `Bearer ${authentication.accessToken}` }
+        headers: { Authorization: `Bearer ${authentication?.accessToken}` }
       })
         .then(res => res.json())
         .then(data => {
@@ -60,7 +59,7 @@ const CreateAccountScreen = () => {
         <Ionicons name="arrow-back" size={35} color="white" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>What's Your</Text>
+      <Text style={styles.title}>What&apos;s Your</Text>
       <Image source={Logo} style={styles.img}/>
       <Text style={styles.text}>Connect with friends, run up challenges, & do it for the plot</Text>
 

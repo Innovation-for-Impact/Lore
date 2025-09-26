@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './components/Navigation';
 import RegistrationStack from './components/RegistrationStack';
+import WorkSans from './assets/fonts/WorkSans-VariableFont_wght.ttf';
 
 const Stack = createStackNavigator();
 
@@ -13,8 +14,9 @@ export default function App() {
 
   // global font
   const [fontsLoaded] = useFonts({
-    'Work Sans': require('./assets/fonts/WorkSans-VariableFont_wght.ttf'),
+    'Work Sans': WorkSans,
   });
+
   if (!fontsLoaded) return null;
 
   return (

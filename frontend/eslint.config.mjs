@@ -1,8 +1,6 @@
 import globals from 'globals';
 import js from '@eslint/js';
 import react from 'eslint-plugin-react';
-import prettier from 'eslint-plugin-prettier';
-import configPrettier from 'eslint-config-prettier';
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 
@@ -25,14 +23,12 @@ export default [
     },
     plugins: {
       react,
-      prettier,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
       'no-console': 'warn',
-      'prettier/prettier': 'error',
     },
   },
   {
@@ -48,12 +44,9 @@ export default [
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
-      prettier,
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
-      "prettier/prettier": "error",
     },
   },
-  configPrettier,
 ];

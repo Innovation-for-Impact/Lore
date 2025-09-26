@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import ViewQuotes from '../components/ViewQuotes';
 import CreateQuote from '../components/CreateQuote';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import ViewQuotes from '../components/ViewQuotes';
 import { globalStyles } from '../styles/global';
+import { Navigation, RootStackParamList } from '../types/navigation';
 
 const QuoteBoardScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<Navigation>();
+  const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
 
   const [activeTab, setActiveTab] = useState('viewQuotes');
   const [showCreatedModal, setShowCreatedModal] = useState(false);
@@ -87,8 +88,8 @@ const QuoteBoardScreen = () => {
       <View style={styles.content}>
         {activeTab === 'viewQuotes' ? (
           <ViewQuotes
-            showCreatedModal={showCreatedModal}
-            onHideModal={() => setShowCreatedModal(false)}
+            // showCreatedModal={showCreatedModal}
+            // onHideModal={() => setShowCreatedModal(false)}
           />
         ) : (
           <CreateQuote />

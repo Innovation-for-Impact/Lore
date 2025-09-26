@@ -1,12 +1,13 @@
-import { React, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import JoinGroup from '../components/JoinGroup';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import CreateGroup from '../components/CreateGroup';
 import GroupList from '../components/GroupList'; // Import GroupList
+import JoinGroup from '../components/JoinGroup';
 import SearchGroupBar from '../components/SearchGroup';
 import { globalStyles } from '../styles/global';
 
-const HomeScreen = ({ navigation }) => {
+// TODO: Need to update the components
+const HomeScreen = () => {
   const [userJoinedGroup, setUserJoinedGroup] = useState(false);
 
   // GroupList re-fetches data
@@ -16,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
   
   return (
     <View style={[globalStyles.container, { justifyContent: 'flex-start', alignItems: 'center' }]}>
-      <SearchGroupBar />
+      <SearchGroupBar /> 
       <View style={styles.container}>
         <JoinGroup  onJoinGroup={handleUserJoinedGroup} />
         <CreateGroup />

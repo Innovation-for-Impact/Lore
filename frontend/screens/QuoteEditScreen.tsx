@@ -1,23 +1,26 @@
+import { Ionicons } from '@expo/vector-icons';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Dimensions,
+    Alert,
+    Dimensions,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { globalStyles } from '../styles/global';
+import { Navigation, RootStackParamList } from '../types/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+// Ethan: Should decide if quote is required or not. The code would be cleaner if quote is required.
+
 const QuoteDetailScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<Navigation>();
+  const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
 
   // The 'quote' object was passed in from ViewQuotes:
   // e.g. navigation.navigate('QuoteDetailScreen', { quote: item });

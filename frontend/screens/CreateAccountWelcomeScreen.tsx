@@ -1,14 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
-import Logo from '../assets/logo-transparent-white.png';
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Logo from '../assets/logo-transparent-white.png';
+import { Navigation } from '../types/navigation';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const CreateAccountWelcomeScreen = ({setUser}) => {
-  const navigation = useNavigation();
+interface CreateAccountWelcomeScreenProps {
+  setUser: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const CreateAccountWelcomeScreen = ({setUser}: CreateAccountWelcomeScreenProps) => {
+  const navigation = useNavigation<Navigation>();
 
   // Back arrow logic (if you want the arrow at the top left)
   const handleGoBack = () => {
@@ -94,7 +99,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    width: '100%',
+    // width: '100%',
     alignItems: 'center',   // centers the text inside
     justifyContent: 'center', // vertical alignment
     marginTop: screenHeight * 0.15,

@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
-import {
-  Dimensions,
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Alert
-} from "react-native";
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Feather from '@expo/vector-icons/Feather';
 import * as SecureStore from 'expo-secure-store';
+import React, { useState } from "react";
+import {
+    Alert,
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
+import { Navigation } from '../types/navigation';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
 
   // State for email/password
   const [email, setEmail] = useState("");
@@ -61,11 +61,11 @@ const LoginScreen = () => {
       const token = res.access;
       SecureStore.setItemAsync('jwt_token', token).then(() => {
         navigation.navigate("WelcomeBack");
-      }).catch(err => {
-        console.error(`Error while storing token: ${err}`)
+      }).catch(() => {
+        // console.error(`Error while storing token: ${err}`)
       });
     })
-    .catch(err => {
+    .catch(() => {
       Alert.alert("Invalid Credentials", "Please check your email or password.");
     });
   };
