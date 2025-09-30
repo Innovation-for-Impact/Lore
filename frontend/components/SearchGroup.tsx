@@ -3,10 +3,15 @@ import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const SearchGroup = ({ onChangeQuery }) => {
+
+type SearchGroupProps = {
+  onChangeQuery?: (query: string) => void;
+};
+
+const SearchGroup: React.FC<SearchGroupProps> = ({ onChangeQuery }) => {
   const [query, setQuery] = useState('');
 
-  const handleChangeText = async (text) => {
+  const handleChangeText = async (text: string) => {
     setQuery(text);
 
     // If the parent component wants the latest query, call onChangeQuery:

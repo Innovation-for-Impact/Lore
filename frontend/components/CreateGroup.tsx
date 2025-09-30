@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView } from 'react-native';
-import { Alert } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -14,10 +13,11 @@ function CreateGroup() {
   const [error, setError] = useState('');
   const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedMembers, setSelectedMembers] = useState([]);
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
   const [groupCode, setGroupCode] = useState(null);
+  type User = { id: number; name: string };
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
   // API Endpoint (POST)
   const handleCreateGroupName = () => {
@@ -56,7 +56,7 @@ function CreateGroup() {
   }
 
   // FIXME API Endpoint (GET)
-  const handleSearch = (query) => {
+  const handleSearch = (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
@@ -101,13 +101,13 @@ function CreateGroup() {
     setSearchResults(filteredResults);
   };
 
-  const handleAddMember = (user) => {
+  const handleAddMember = (user: User) => {
     if (!selectedMembers.some((member) => member.id === user.id)) {
       setSelectedMembers([...selectedMembers, user]);
     }
   };
 
-  const handleRemoveMember = (userId) => {
+  const handleRemoveMember = (userId: number) => {
     setSelectedMembers(selectedMembers.filter((member) => member.id !== userId));
   };
 
@@ -501,11 +501,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   groupCodeText: {
-    fontSize: '20',
-    fontWeight: '450',
-    marginTop: '15',
-    marginBottom: '10',
-    fontFamily: 'Work Sans'
+    fontSize: 20,
+    fontWeight: '500',
+    marginTop: 15,
+    marginBottom: 10,
+    fontFamily: 'Work Sans',
   },
 });
 

@@ -82,10 +82,23 @@ import { Dimensions } from 'react-native';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+export type Group = {
+  id: number;
+  name: string;
+  avatar: string;
+  num_members: number;
+  created: string;
+  location: string;
+};
+
+type GroupCardProps = {
+  group: Group;
+};
+
 //individual Cards
-const GroupCard = ({ group }) => {
+const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
   // fixes created date from db
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()}`;
   };

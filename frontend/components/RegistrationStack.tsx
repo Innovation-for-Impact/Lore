@@ -1,3 +1,4 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
@@ -10,9 +11,26 @@ import LoginScreen from '../screens/LoginScreen';
 import WelcomeBackScreen from '../screens/WelcomeBackScreen';
 import HomeScreen from '../screens/HomeScreen';
 
-const Stack = createStackNavigator();
+export type RegistrationStackParamList = {
+  RegistrationScreen: undefined;
+  CreateAccountScreen: undefined;
+  LoginScreen: undefined;
+  CreateAccountEmailScreen: undefined;
+  CreateAccountNameScreen: undefined;
+  CreateAccountProfileScreen: undefined;
+  CreateAccountGroupScreen: undefined;
+  CreateAccountWelcomeScreen: { setUser: (user: any) => void };
+  WelcomeBack: { setUser: (user: any) => void };
+  HomeScreen: undefined;
+};
 
-function RegistrationStack({ setUser }) {
+const Stack = createStackNavigator<RegistrationStackParamList>();
+
+interface RegistrationStackProps {
+  setUser: (user: any) => void;
+}
+
+function RegistrationStack({ setUser }: RegistrationStackProps) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
@@ -66,3 +84,4 @@ function RegistrationStack({ setUser }) {
 }
 
 export default RegistrationStack;
+

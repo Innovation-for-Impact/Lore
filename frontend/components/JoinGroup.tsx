@@ -5,7 +5,11 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as SecureStore from 'expo-secure-store';
 
-function JoinGroup({ onJoinGroup }) {
+type JoinGroupProps = {
+  onJoinGroup: () => void;
+};
+
+function JoinGroup({ onJoinGroup }: JoinGroupProps) {
     const [modalVisible, setModalVisible] = useState(false);
     const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [failureModalVisible, setFailureModalVisible] = useState(false);

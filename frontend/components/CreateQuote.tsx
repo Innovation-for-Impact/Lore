@@ -1,14 +1,16 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-  View,
+  Dimensions,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions
+  View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CommunityStackParamList } from '../components/CommunityStack';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -17,8 +19,13 @@ const screenHeight = Dimensions.get('window').height;
 const MAX_QUOTE_LENGTH = 100;
 const MAX_CONTEXT_LENGTH = 200;
 
+type CreateQuoteNavigationProp = NativeStackNavigationProp<
+  CommunityStackParamList,
+  'QuoteBoardScreen'
+>;
+
 const CreateQuote = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<CreateQuoteNavigationProp>();
   const [step, setStep] = useState('quote'); 
   const [quoteText, setQuoteText] = useState('');
   const [contextText, setContextText] = useState('');
@@ -32,16 +39,17 @@ const CreateQuote = () => {
   // Final step: Immediately navigate to the quotes screen
   // so it shows "quote created" popup over the quotes background.
   const finishAndNavigate = () => {
-    // (Optional) Save quoteText & contextText to your backend/Redux here
 
     // Force the user to the view quotes tab AND show the "quote created" modal
-    navigation.navigate('CommunityStack', {
-      screen: 'QuoteBoardScreen',
-      params: {
-        activeTab: 'viewQuotes',
-        showCreatedModal: true,
-      },
-    });
+    type RootStackParamList = {
+      CommunityStack: {
+        screen: keyof CommunityStackParamList;
+        params?: {
+          activeTab?: 'viewQuotes' | 'otherTab';
+          showCreatedModal?: boolean;
+        };
+      };
+    };
 
     // Reset local state
     setQuoteText('');
@@ -146,7 +154,7 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     flex: 1,
-    justifyContent: 'top',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 10,
   },

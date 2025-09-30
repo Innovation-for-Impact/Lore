@@ -72,7 +72,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
-import GroupCard from './GroupCard'; //import the group card component
+import GroupCard, { Group } from './GroupCard';
 import * as SecureStore from 'expo-secure-store';
 // import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
  
@@ -120,9 +120,12 @@ import * as SecureStore from 'expo-secure-store';
 //   },
 // ];
 
+type GroupListProps = {
+  userJoinedGroup: string;
+};
  
-const GroupList = ({ userJoinedGroup }) => {
-  const [groupData, setGroupData] = useState([]);
+const GroupList: React.FC<GroupListProps> = ({ userJoinedGroup }) => {
+  const [groupData, setGroupData] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true); // show spinner while loading
 
   useEffect(() => {
@@ -177,7 +180,7 @@ const GroupList = ({ userJoinedGroup }) => {
       ) : (
         <FlatList
           data={groupData}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => <GroupCard group={item} />}
           contentContainerStyle={styles.listContainer} // ensures even spacing
           keyboardShouldPersistTaps="handled" // allows smooth scrolling

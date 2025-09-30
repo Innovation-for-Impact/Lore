@@ -1,30 +1,34 @@
 import React from 'react';
- import { FlatList, View, StyleSheet, useNavigation } from 'react-native';
- import BoardCard from './BoardCard';
+import { FlatList, StyleSheet, View } from 'react-native';
+import BoardCard from './BoardCard';
  
  //contains the data about each Board in the list
  const BoardData = [
-   {
-     id: '1',
-     name: 'quote board',
-     image: '',
-     screen: 'QuoteBoardScreen',
-   },
-   {
-     id: '2',
-     name: 'memory board',
-     image: '',
-     screen: 'MemoryBoardScreen',
-   },
-   {
-     id: '3',
-     name: 'achievement board',
-     image: '',
-     screen: 'AchievementBoardScreen',
-   },
+    {
+      id: '1',
+      name: 'quote board',
+      image: '',
+      screen: 'QuoteBoardScreen',
+    },
+    {
+      id: '2',
+      name: 'memory board',
+      image: '',
+      screen: 'MemoryBoardScreen',
+    },
+    {
+      id: '3',
+      name: 'achievement board',
+      image: '',
+      screen: 'AchievementBoardScreen',
+    },
  ];
+
+  type BoardListProps = {
+    navigation: any;
+  };
  
- const BoardList = ({ navigation }) => {
+ const BoardList: React.FC<BoardListProps> = ({ navigation }) => {
 
     return (
         <View style={styles.container}>

@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
   ActivityIndicator,
   Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AntDesign from '@expo/vector-icons/AntDesign';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+type Quote = {
+  id: string;
+  text: string;
+  author: string;
+  timestamp: string;
+};
+
 // Example dummy data (replace with your API data if needed)
-const initialQuotes = [
+const initialQuotes: Quote[] = [
   { id: '1', text: '“tickle the bottom.”', author: 'geo johnson', timestamp: '1 hour ago' },
   { id: '2', text: '“lost taste in my left eye.”', author: 'ambrose brown', timestamp: '1 hour ago' },
   { id: '3', text: '“wisdom chases you but you are faster.”', author: 'valentina tran', timestamp: '1 hour ago' },
@@ -25,12 +32,10 @@ const ViewQuotes = () => {
   const navigation = useNavigation();
 
   // State for quotes array
-  const [quotes, setQuotes] = useState([]);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
   // Optional: track loading or error states
   const [loading, setLoading] = useState(true);
-  // Example: track pinned quote(s). If you only allow one pinned quote, store a single quote ID. If multiple are allowed, store an array.
-  const [pinnedQuoteId, setPinnedQuoteId] = useState(null);
-  const [pinnedQuoteIds, setPinnedQuoteIds] = useState([]);
+  const [pinnedQuoteIds, setPinnedQuoteIds] = useState<string[]>([]);
 
 
   // Simulate fetch or load
@@ -63,7 +68,7 @@ const ViewQuotes = () => {
     return [...pinned, ...unpinned];
   };
 
-  const handlePinPress = (quoteId) => {
+  const handlePinPress = (quoteId: string) => {
     if (pinnedQuoteIds.includes(quoteId)) {
       // Unpin if already pinned
       setPinnedQuoteIds(pinnedQuoteIds.filter(id => id !== quoteId));
@@ -73,7 +78,7 @@ const ViewQuotes = () => {
     }
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: Quote }) => {
     const isPinned = pinnedQuoteIds.includes(item.id);
 
     return (

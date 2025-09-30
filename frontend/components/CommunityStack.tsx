@@ -1,3 +1,4 @@
+import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CommunityScreen from '../screens/CommunityScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
@@ -5,7 +6,16 @@ import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import AchievementBoardScreen from '../screens/AchievementBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
 
-const Stack = createStackNavigator();
+// Define type for your stack params
+export type CommunityStackParamList = {
+  CommunityScreen: undefined;
+  QuoteBoardScreen: undefined;
+  MemoryBoardScreen: undefined;
+  AchievementBoardScreen: undefined;
+  QuoteDetailScreen: undefined;
+};
+
+const Stack = createStackNavigator<CommunityStackParamList>();
 
 function CommunityStack() {
   return (
