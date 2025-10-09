@@ -5,7 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Logo from '../assets/logo-transparent-white.png';
-import { ANDROID_CLIENT_ID, EXPO_CLIENT_ID, IOS_CLIENT_ID } from '../components/config.js';
+import { ANDROID_CLIENT_ID, EXPO_CLIENT_ID, IOS_CLIENT_ID } from '../components/config';
 import { Navigation } from "../types/navigation";
 
 WebBrowser.maybeCompleteAuthSession();

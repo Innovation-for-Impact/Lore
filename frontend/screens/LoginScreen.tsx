@@ -3,14 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
 import React, { useState } from "react";
 import {
-    Alert,
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 // Replace with your actual logo import
@@ -39,35 +39,36 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    fetch(`${apiUrl}/api/v1/auth/login/`,{
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          "email": email,
-          "password": password
-        })
-      }
+    navigation.navigate("WelcomeBack");
+    fetch(`${apiUrl}/api/v1/auth/login/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "email": email,
+        "password": password
+      })
+    }
     ).then(res => {
-      if(!res.ok) {
+      if (!res.ok) {
         throw new Error(
           "Encountered an error while attempting to log in. Please try again, or report this problem."
         )
       }
       return res.json()
     })
-    .then(res => {
-      const token = res.access;
-      SecureStore.setItemAsync('jwt_token', token).then(() => {
-        navigation.navigate("WelcomeBack");
-      }).catch(() => {
-        // console.error(`Error while storing token: ${err}`)
+      .then(res => {
+        const token = res.access;
+        SecureStore.setItemAsync('jwt_token', token).then(() => {
+          navigation.navigate("WelcomeBack");
+        }).catch(() => {
+          // console.error(`Error while storing token: ${err}`)
+        });
+      })
+      .catch(() => {
+        Alert.alert("Invalid Credentials", "Please check your email or password.");
       });
-    })
-    .catch(() => {
-      Alert.alert("Invalid Credentials", "Please check your email or password.");
-    });
   };
 
   const handleForgotPassword = () => {
@@ -123,7 +124,7 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="password"
           placeholderTextColor="#888"
-          secureTextEntry={!isPasswordVisible} 
+          secureTextEntry={!isPasswordVisible}
           value={password}
           onChangeText={setPassword}
         />
@@ -158,12 +159,12 @@ const LoginScreen = () => {
 
 // Styles
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     position: 'relative',
     backgroundColor: "#AFB0E4",
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: "center" 
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
   backButton: {
     position: "absolute",
@@ -176,10 +177,10 @@ const styles = StyleSheet.create({
     height: screenWidth * 0.25,
     marginBottom: 25,
   },
-  title: { 
+  title: {
     color: "#5F4078",
-    fontSize: 40, 
-    fontWeight: "bold", 
+    fontSize: 40,
+    fontWeight: "bold",
     marginBottom: 30,
     fontFamily: 'Work Sans'
   },
