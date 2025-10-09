@@ -69,8 +69,7 @@ pip install -r requirements.txt
 **Brew**
 
 ```bash
-brew install postgresql postgresql-contrib
-brew install libpq-dev python3-dev
+brew install postgresql
 ```
 
 **Linux**
@@ -178,6 +177,9 @@ For testing general purpose endpoints (that are not DRF), see
 [this](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Testing#views) guide
 
 ## API
+
+To generate a web view of the docs, run `./bin/start_docs`. By default, this hosts them on `localhost:8080` and you will need Docker to run them.
+If the doc generator emits errors and warnings, it should still be fine to view
 
 ### General
 

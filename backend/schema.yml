@@ -1,0 +1,2957 @@
+openapi: 3.0.3
+info:
+  title: Lore
+  version: 1.0.0
+  description: What's your lore?
+paths:
+  /api/v1/achievements/:
+    get:
+      operationId: achievements_list
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAchievementList'
+          description: ''
+    post:
+      operationId: achievements_create
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      tags:
+      - achievements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Achievement'
+          description: ''
+  /api/v1/achievements/{achievement_pk}/achievers/:
+    get:
+      operationId: achievements_achievers_list
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: achievement_pk
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: achievements_achievers_create
+      description: |-
+        Add or delete the authenticated user to the list of achievers.
+
+        Returns the authenticated user on success
+      parameters:
+      - in: path
+        name: achievement_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/achievements/{achievement_pk}/achievers/{id}/:
+    get:
+      operationId: achievements_achievers_retrieve
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: achievement_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: achievements_achievers_destroy
+      description: |-
+        Remove the authenticated user from the achievement.
+
+        Returns no content on success
+        Raises a 404 if the membership doesn't exist.
+      parameters:
+      - in: path
+        name: achievement_pk
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/achievements/{id}/:
+    get:
+      operationId: achievements_retrieve
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Achievement'
+          description: ''
+    put:
+      operationId: achievements_update
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - achievements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementUpdate'
+          description: ''
+    patch:
+      operationId: achievements_partial_update
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - achievements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementUpdate'
+          description: ''
+    delete:
+      operationId: achievements_destroy
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - achievements
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/google/:
+    post:
+      operationId: auth_google_create
+      description: |-
+        Handles google AUTH.
+
+        Create a post request with the authentication code
+        provide by Google on the callback url.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialLogin'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialLogin'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWT'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      tags:
+      - auth
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/password/change/:
+    post:
+      operationId: auth_password_change_create
+      description: |-
+        Calls Django Auth SetPasswordForm save method.
+
+        Accepts the following POST parameters: new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: |-
+        Calls Django Auth PasswordResetForm save method.
+
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/registration/:
+    post:
+      operationId: auth_registration_create
+      description: |-
+        Registers a new user.
+
+        Accepts the following POST parameters: username, email, password1, password2.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWT'
+          description: ''
+  /api/v1/auth/registration/resend-email/:
+    post:
+      operationId: auth_registration_resend_email_create
+      description: |-
+        Resends another email to an unverified email.
+
+        Accepts the following POST parameter: email.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/registration/verify-email/:
+    post:
+      operationId: auth_registration_verify_email_create
+      description: |-
+        Verifies the email associated with the provided key.
+
+        Accepts the following POST parameter: key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/token/verify/:
+    post:
+      operationId: auth_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
+          description: ''
+  /api/v1/auth/user/:
+    get:
+      operationId: auth_user_retrieve
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: auth_user_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: auth_user_partial_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/feed/:
+    get:
+      operationId: feed_retrieve
+      description: |-
+        Retrieve an ordererd list by timestamp of recent actions.
+
+        Query can be limited to a specific group by specifying the group_id
+        query parameter.
+      tags:
+      - feed
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/groups/:
+    get:
+      operationId: groups_list
+      description: Queryset for groups.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGroupList'
+          description: ''
+    post:
+      operationId: groups_create
+      description: Queryset for groups.
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Group'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/groups/{loregroup_pk}/achievements/:
+    get:
+      operationId: groups_achievements_list
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAchievementList'
+          description: ''
+    post:
+      operationId: groups_achievements_create
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Achievement'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Achievement'
+          description: ''
+  /api/v1/groups/{loregroup_pk}/achievements/{id}/:
+    get:
+      operationId: groups_achievements_retrieve
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Achievement'
+          description: ''
+    put:
+      operationId: groups_achievements_update
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AchievementUpdate'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementUpdate'
+          description: ''
+    patch:
+      operationId: groups_achievements_partial_update
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAchievementUpdate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AchievementUpdate'
+          description: ''
+    delete:
+      operationId: groups_achievements_destroy
+      description: |-
+        Viewset for achievements.
+
+        Supports filtering by group_id and searching by description and title
+        Achievements can only be created when querying by a specific group.
+
+        To create an achievemet, it expects an `image`, 'description', and 'title'
+        fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/{loregroup_pk}/images/:
+    get:
+      operationId: groups_images_list
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedImageList'
+          description: ''
+    post:
+      operationId: groups_images_create
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Image'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Image'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Image'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+  /api/v1/groups/{loregroup_pk}/images/{id}/:
+    get:
+      operationId: groups_images_retrieve
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    put:
+      operationId: groups_images_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Image'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Image'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Image'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    patch:
+      operationId: groups_images_partial_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    delete:
+      operationId: groups_images_destroy
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/{loregroup_pk}/members/:
+    get:
+      operationId: groups_members_list
+      description: |-
+        Viewset for group members.
+
+        Supports listing, retrieving, and deleting members
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+  /api/v1/groups/{loregroup_pk}/members/{id}/:
+    get:
+      operationId: groups_members_retrieve
+      description: |-
+        Viewset for group members.
+
+        Supports listing, retrieving, and deleting members
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: groups_members_destroy
+      description: |-
+        Remove the user from the group.
+
+        Raises a 404 if the membership doesn't exist.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/{loregroup_pk}/quotes/:
+    get:
+      operationId: groups_quotes_retrieve
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: groups_quotes_create
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/groups/{loregroup_pk}/quotes/{id}/:
+    get:
+      operationId: groups_quotes_retrieve_2
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: groups_quotes_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: groups_quotes_partial_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: groups_quotes_destroy
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/{id}/:
+    get:
+      operationId: groups_retrieve
+      description: Queryset for groups.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    put:
+      operationId: groups_update
+      description: Queryset for groups.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupUpdate'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupUpdate'
+          description: ''
+    patch:
+      operationId: groups_partial_update
+      description: Queryset for groups.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupUpdate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupUpdate'
+          description: ''
+    delete:
+      operationId: groups_destroy
+      description: Destroy the group if it exists and there is at most 1 member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/join/:
+    post:
+      operationId: groups_join_create
+      description: |-
+        Route for the logged in user to join a group.
+
+        Expects a "join_code" in the post request
+        Raises a 401 error if the join code is missing
+        Raises a 404 error if there is no group with the join code
+        Raises a 409 error if the user is already in the group
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Join'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Join'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Join'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Join'
+          description: ''
+  /api/v1/images/:
+    get:
+      operationId: images_list
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - images
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedImageList'
+          description: ''
+    post:
+      operationId: images_create
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      tags:
+      - images
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Image'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Image'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Image'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+  /api/v1/images/{id}/:
+    get:
+      operationId: images_retrieve
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - images
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    put:
+      operationId: images_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - images
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Image'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Image'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Image'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    patch:
+      operationId: images_partial_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - images
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedImage'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+          description: ''
+    delete:
+      operationId: images_destroy
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and searching by description
+        Images can only be created when querying by a specific group.
+
+        To create an image, it expects an `image` and optional `description` field.
+        The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - images
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/quotes/:
+    get:
+      operationId: quotes_retrieve
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: quotes_create
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/quotes/{id}/:
+    get:
+      operationId: quotes_retrieve_2
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: quotes_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: quotes_partial_update
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: quotes_destroy
+      description: |-
+        Viewset for quotes.
+
+        Supports filtering by group_id and said_by_id, and also searching by text
+        Quotes can only be created when querying by a specific group.
+
+        To create a quote, it expects a `text` and `said_by` field. The group
+        is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - quotes
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/:
+    get:
+      operationId: users_list
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - users
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+  /api/v1/users/{id}/:
+    get:
+      operationId: users_retrieve
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: users_update
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: users_partial_update
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: users_destroy
+      description: |-
+        Viewset for all lore users.
+
+        Can be searched by first and last name
+        Filter for what group a user is in with `member_of`
+        Filter for who accomplished an achievement with `achievement`
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    Achievement:
+      type: object
+      description: |-
+        Serializer for the achievement detail.
+
+        Serializes the images's:
+          - id (read only)
+          - title
+          - image
+          - description
+          - achieved_by (write only)
+          - achieved_by_url (read only)
+          - group (read only)
+          - group_url (read only)
+          - created (read only)
+          - url (read only)
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        image:
+          type: string
+          format: uri
+        description:
+          type: string
+          maxLength: 1024
+        achieved_by:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        num_achieved:
+          type: integer
+          description: Get the number of users that achieved this.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievers_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+      required:
+      - achieved_by
+      - achievers_url
+      - created
+      - description
+      - group
+      - group_url
+      - id
+      - logged_in_user_url
+      - num_achieved
+      - title
+      - url
+    AchievementUpdate:
+      type: object
+      description: |-
+        Limits what achievement fields can be updated.
+
+        Achieved_by is read only
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        image:
+          type: string
+          format: uri
+        description:
+          type: string
+          maxLength: 1024
+        num_achieved:
+          type: integer
+          description: Get the number of users that achieved this.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievers_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+      required:
+      - achievers_url
+      - created
+      - description
+      - group
+      - group_url
+      - id
+      - logged_in_user_url
+      - num_achieved
+      - title
+      - url
+    Group:
+      type: object
+      description: |-
+        Serializes a group.
+
+        Provides the following fields:
+        - id (read only)
+        - name
+        - members_url (read only)
+        - join_code (read only)
+        - avatar
+        - created (read only)
+        - url (read only)
+        - members (write only)
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 32
+          minLength: 1
+        members:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        num_members:
+          type: integer
+          description: Get the number of members in the group.
+          readOnly: true
+        join_code:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        location:
+          type: string
+          maxLength: 32
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievements_url:
+          type: string
+          format: uri
+          readOnly: true
+        quotes_url:
+          type: string
+          format: uri
+          readOnly: true
+        images_url:
+          type: string
+          format: uri
+          readOnly: true
+        members_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_member_url:
+          type: string
+          description: Get the url to leave the group.
+          readOnly: true
+      required:
+      - achievements_url
+      - created
+      - id
+      - images_url
+      - join_code
+      - location
+      - logged_in_member_url
+      - members
+      - members_url
+      - name
+      - num_members
+      - quotes_url
+      - url
+    GroupUpdate:
+      type: object
+      description: |-
+        Serializer that limits what group fields can be updated.
+
+        Members cannot be updated
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 32
+          minLength: 1
+        num_members:
+          type: integer
+          description: Get the number of members in the group.
+          readOnly: true
+        join_code:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        location:
+          type: string
+          maxLength: 32
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievements_url:
+          type: string
+          format: uri
+          readOnly: true
+        quotes_url:
+          type: string
+          format: uri
+          readOnly: true
+        images_url:
+          type: string
+          format: uri
+          readOnly: true
+        members_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_member_url:
+          type: string
+          description: Get the url to leave the group.
+          readOnly: true
+      required:
+      - achievements_url
+      - created
+      - id
+      - images_url
+      - join_code
+      - location
+      - logged_in_member_url
+      - members_url
+      - name
+      - num_members
+      - quotes_url
+      - url
+    Image:
+      type: object
+      description: |-
+        Serializer for the image detail.
+
+        Serializes the images's:
+          - id
+          - image
+          - description
+          - group
+          - group_url
+          - created
+          - url
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        description:
+          type: string
+        group:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - created
+      - group
+      - group_url
+      - id
+      - image
+      - url
+    JWT:
+      type: object
+      description: Serializer for JWT authentication.
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - access
+      - refresh
+      - user
+    Join:
+      type: object
+      properties:
+        join_code:
+          type: string
+      required:
+      - join_code
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+      - password
+    PaginatedAchievementList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+    PaginatedGroupList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+    PaginatedImageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PasswordChange:
+      type: object
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+      required:
+      - new_password1
+      - new_password2
+    PasswordReset:
+      type: object
+      description: Serializer for requesting a password reset e-mail.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PasswordResetConfirm:
+      type: object
+      description: Serializer for confirming a password reset attempt.
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - new_password1
+      - new_password2
+      - token
+      - uid
+    PatchedAchievementUpdate:
+      type: object
+      description: |-
+        Limits what achievement fields can be updated.
+
+        Achieved_by is read only
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        image:
+          type: string
+          format: uri
+        description:
+          type: string
+          maxLength: 1024
+        num_achieved:
+          type: integer
+          description: Get the number of users that achieved this.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievers_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+    PatchedGroupUpdate:
+      type: object
+      description: |-
+        Serializer that limits what group fields can be updated.
+
+        Members cannot be updated
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 32
+          minLength: 1
+        num_members:
+          type: integer
+          description: Get the number of members in the group.
+          readOnly: true
+        join_code:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        location:
+          type: string
+          maxLength: 32
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        achievements_url:
+          type: string
+          format: uri
+          readOnly: true
+        quotes_url:
+          type: string
+          format: uri
+          readOnly: true
+        images_url:
+          type: string
+          format: uri
+          readOnly: true
+        members_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_member_url:
+          type: string
+          description: Get the url to leave the group.
+          readOnly: true
+    PatchedImage:
+      type: object
+      description: |-
+        Serializer for the image detail.
+
+        Serializes the images's:
+          - id
+          - image
+          - description
+          - group
+          - group_url
+          - created
+          - url
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        description:
+          type: string
+        group:
+          type: integer
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 32
+        last_name:
+          type: string
+          maxLength: 32
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          minLength: 1
+        email:
+          type: string
+          format: email
+        password1:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password1
+      - password2
+    ResendEmailVerification:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    SocialLogin:
+      type: object
+      properties:
+        access_token:
+          type: string
+        code:
+          type: string
+        id_token:
+          type: string
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 32
+        last_name:
+          type: string
+          maxLength: 32
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - first_name
+      - id
+      - last_name
+      - url
+    VerifyEmail:
+      type: object
+      properties:
+        key:
+          type: string
+          writeOnly: true
+      required:
+      - key
+  securitySchemes:
+    jwtCookieAuth:
+      type: apiKey
+      in: cookie
+      name: jwt-auth
+    jwtHeaderAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

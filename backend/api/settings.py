@@ -34,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["10.0.2.2", "localhost", '127.0.0.1']
+ALLOWED_HOSTS = ["10.0.2.2", "localhost", "127.0.0.1"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8081",
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "corsheaders",
     "django_filters",
+    "drf_spectacular",
 ]
 
 SITE_ID = 1
@@ -209,6 +210,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Following is added to enable registration with email instead of username
@@ -233,3 +235,11 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 GOOGLE_AUTH_REDIRECT_URL = (
     "http://localhost:8000/api/v1/auth/google/callback/"  # changed
 )
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Lore",
+    "DESCRIPTION": "What's your lore?",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}

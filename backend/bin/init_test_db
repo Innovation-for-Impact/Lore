@@ -6,18 +6,20 @@ echo "====================="
 echo "This script initializes a test Postgresql database with a privledge 'myuser' with password 'mypass'"
 echo "====================="
 
-sudo -u postgres psql <<EOF
+(if [[ "$OSTYPE" == "darwin"* ]]; then
+    psql -U $(whoami) -h 127.0.0.1 -d postgres
+else
+    sudo -u postgres psql
+fi) <<EOF
 
-# mac
-# psql -U $(whoami) -h 127.0.0.1 -d postgres <<EOF
 
 \x
-CREATE DATABASE mydb;
+CREATE DATABASE lore;
 CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypass';
 ALTER ROLE myuser SET client_encoding TO 'utf8';
 ALTER ROLE myuser SET default_transaction_isolation TO 'read committed';
 ALTER ROLE myuser SET timezone TO 'UTC';
-GRANT postgres TO myuser;
+GRANT lore TO myuser;
 EOF
 
 python3 manage.py makemigrations
