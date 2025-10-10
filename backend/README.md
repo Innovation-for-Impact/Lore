@@ -1,4 +1,24 @@
 # Lore Backend
+## Quickstart
+```
+python3 -m venv env
+pip install -r requirements.txt
+source env/bin/activate
+./bin/init_test_db
+python3 manage.py createsuperuser
+python3 manage.py runserver
+
+# Run the server on IP:PORT
+python3 manage.py runserver <IP:PORT>
+```
+## API
+
+To generate an OpenAPI `yml` file, run `./bin/start_docs`. 
+
+Running it in docker will start a web server hosted on `localhost:8080` and you will need Docker to run them.
+If the doc generator emits errors and warnings, it should still be fine to view
+
+## Overview
 
 This document is written with a few goals in mind:
 
@@ -175,143 +195,6 @@ Additional resource for examples [here](https://dev.to/alchermd/what-to-test-in-
 
 For testing general purpose endpoints (that are not DRF), see
 [this](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Testing#views) guide
-
-## API
-
-To generate a web view of the docs, run `./bin/start_docs`. By default, this hosts them on `localhost:8080` and you will need Docker to run them.
-If the doc generator emits errors and warnings, it should still be fine to view
-
-### General
-
-- Most routes are paginated routes using page pagination.
-  The page size is 20.
-- All routes, except login/signup routes require authentication to access
-
-### Authentication: `api/v1/auth/...`
-
-This is the authentication input. All specifications are [here](https://django-rest-auth.readthedocs.io/en/latest/api_endpoints.html) with some minor exceptions given below:
-
-- `rest_auth` is replaced simply with `auth`.
-- The application just uses email, **NOT** usernames.
-- Registration takes in `first_name` and `last_name`.
-- There is a password reset confirmation URL (that **isn't** specified in the linked specification) that will server a _static_ HTML page provided by the backend. I.e. the frontend need not do anything with this endpoint.
-
-### Google Authentication: `api/v1/auth/google/`
-
-#### Method: `POST`
-
-Attempts to log in the user with the given OAuth code.
-
-**Expects:**
-
-- `code`: the code returned by Google OAuth.
-
-**Success Response:**
-
-- The signed in user detail.
-
-**Failure:**
-
-- `400`: if the code does not work.
-
-### Feed: `api/v1/feed/`
-
-#### Method: `GET`
-
-Returns a paginated list of `feed` details ordered by descending timestamp.
-
-##### Filter and Searching
-
-- `?group_id=<group_id>` to filter by feeds for a specific group `<group_id>`
-
-###### Access Control
-
-The authenticated user may only search for users of a particular item if
-that item is _known_ to the user.
-
-- i.e. if the authenticated user attempts to filter by a group they are not in,
-  it will not work.
-
-### Users: `api/v1/users/`
-
-#### Method: `GET`
-
-Returns a paginated list of all user details.
-
-##### Filter and Searching
-
-- `?search=<filter>` to search users by first and last names
-
-###### Access Control
-
-The authenticated user may only search for users of a particular item if
-that item is _known_ to the user.
-
-- i.e. if the authenticated user attempts to filter by a group they are not in,
-  it will not work.
-- i.e. if the authenticated user attempts to filter by a quote in a group they
-  are not in, it will not work.
-
-### Users: `api/v1/users/<user_id:int>/`
-
-#### Method: `GET`
-
-Returns a user detail for the user with id `user_id`.
-
-The authenticated user may only view this route if:
-
-- The user is themselves
-- The user is in the same group as the authenticated user
-
-### Groups: `api/v1/groups/`
-
-#### Method: `GET`
-
-Returns a list of paginated group details that the authenticated user
-is a member of.
-
-##### Filter and Searching
-
-- `?search=<filter>` to search by group name.
-
-#### Method: `POST`
-
-Accepts a group creation detail and creates a new group entry.
-The authenticated user is automatically added as a group member
-and the group's code will be automatically generated.
-
-### Groups: `api/v1/groups/<group_id:int>/`
-
-#### Method: `GET`
-
-Returns a group detail for the group with id `group_id`.
-
-The authenticated user may only view this route if they are
-a member of the group.
-
-#### Method: `PUT`
-
-TODO
-
-#### Method: `PATCH`
-
-TODO
-
-#### Method: `DELETE`
-
-Deletes the group if there is at most one user left in it.
-
-### Group Join `api/v1/groups/join/`
-
-#### Method: `POST`
-
-Expects a `join_code` field.
-
-If the `join_code` matches that of any group, the user will be added to
-that group. Otherwise, the server will respond with a `404` error.
-
-If the user is already in the group, the route will respond with
-`409`.
 
 ## Conclusion
 

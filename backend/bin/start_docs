@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -Eeuo pipefail
-
+source env/bin/activate
 ./manage.py spectacular --color --file schema.yml
-docker run -p 8080:8080 -e SWAGGER_JSON=/schema.yml -v ${PWD}/schema.yml:/schema.yml swaggerapi/swagger-ui
+
+# Uncomment this line to run the web server showing the docs. You need docker installed for this.
+# sudo docker run -p 8080:8080 -e SWAGGER_JSON=/schema.yml -v ${PWD}/schema.yml:/schema.yml swaggerapi/swagger-ui

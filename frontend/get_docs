@@ -1,0 +1,6 @@
+#!/bin/bash
+cd ../backend
+./bin/start_docs
+cd ../frontend
+./node_modules/.bin/openapi-typescript ../backend/schema.yml -o ./types/backend-schema.d.ts
+

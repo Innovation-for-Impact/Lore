@@ -1,12 +1,13 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import CommunityScreen from '../screens/CommunityScreen';
-import QuoteBoardScreen from '../screens/QuoteBoardScreen';
-import MemoryBoardScreen from '../screens/MemoryBoardScreen';
+import React from 'react';
 import AchievementBoardScreen from '../screens/AchievementBoardScreen';
+import CommunityScreen from '../screens/CommunityScreen';
+import MemoryBoardScreen from '../screens/MemoryBoardScreen';
+import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
 
 // Define type for your stack params
+// TODO: use the stack param list defined in types/navigation.ts
 export type CommunityStackParamList = {
   CommunityScreen: undefined;
   QuoteBoardScreen: undefined;
