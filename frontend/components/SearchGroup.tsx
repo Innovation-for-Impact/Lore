@@ -8,7 +8,7 @@ type SearchGroupProps = {
   onChangeQuery?: (query: string) => void;
 };
 
-const SearchGroup: React.FC<SearchGroupProps> = ({ onChangeQuery }) => {
+const SearchGroup = ({ onChangeQuery }: SearchGroupProps) => {
   const [query, setQuery] = useState('');
 
   const handleChangeText = async (text: string) => {
