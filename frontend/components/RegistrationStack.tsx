@@ -10,24 +10,12 @@ import CreateAccountWelcomeScreen from '../screens/CreateAccountWelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import WelcomeBackScreen from '../screens/WelcomeBackScreen';
 import HomeScreen from '../screens/HomeScreen';
+import { RootStackParamList } from '../types/navigation';
 
-export type RegistrationStackParamList = {
-  RegistrationScreen: undefined;
-  CreateAccountScreen: undefined;
-  LoginScreen: undefined;
-  CreateAccountEmailScreen: undefined;
-  CreateAccountNameScreen: undefined;
-  CreateAccountProfileScreen: undefined;
-  CreateAccountGroupScreen: undefined;
-  CreateAccountWelcomeScreen: { setUser: (user: any) => void };
-  WelcomeBack: { setUser: (user: any) => void };
-  HomeScreen: undefined;
-};
-
-const Stack = createStackNavigator<RegistrationStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 interface RegistrationStackProps {
-  setUser: (user: any) => void;
+  setUser: (user: boolean) => void;
 }
 
 function RegistrationStack({ setUser }: RegistrationStackProps) {

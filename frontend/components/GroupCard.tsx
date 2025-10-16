@@ -96,7 +96,7 @@ type GroupCardProps = {
 };
 
 //individual Cards
-const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
+const GroupCard = ({ group }: GroupCardProps) => {
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

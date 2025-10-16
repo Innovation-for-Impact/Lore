@@ -124,7 +124,7 @@ type GroupListProps = {
   userJoinedGroup: string;
 };
  
-const GroupList: React.FC<GroupListProps> = ({ userJoinedGroup }) => {
+const GroupList = ({ userJoinedGroup }: GroupListProps) => {
   const [groupData, setGroupData] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true); // show spinner while loading
 
