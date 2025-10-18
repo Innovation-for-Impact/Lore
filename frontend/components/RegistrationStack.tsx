@@ -31,11 +31,9 @@ function RegistrationStack({ setUser }: RegistrationStackProps) {
         component={CreateAccountScreen} 
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="LoginScreen" 
-        component={LoginScreen} 
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="LoginScreen" options={{ headerShown: false }}>
+        {(props) => <LoginScreen {...props} setUser={setUser} />}
+      </Stack.Screen>
       <Stack.Screen 
         name="CreateAccountEmailScreen"
         component={CreateAccountEmailScreen} 

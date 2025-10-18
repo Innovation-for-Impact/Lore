@@ -21,7 +21,11 @@ import { Navigation } from '../types/navigation';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const LoginScreen = () => {
+type LoginScreenProps = {
+  setUser: (value: boolean) => void;
+};
+
+const LoginScreen = ({ setUser }: LoginScreenProps) => {
   const navigation = useNavigation<Navigation>();
 
   // State for email/password
@@ -44,6 +48,7 @@ const LoginScreen = () => {
     {
       onSuccess: () => {
         // redirect to user page
+        setUser(true);
         navigation.navigate("HomeScreen");
       },
       onError: (error) => {
