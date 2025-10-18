@@ -3,41 +3,8 @@ import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-nativ
 import GroupCard from './GroupCard';
 import * as SecureStore from 'expo-secure-store';
 import { $api } from '../types/constants';
-// import { components } from '../types/backend-schema';
-
-// type GroupListProps = {
-//   userJoinedGroup: string;
-// };
-
-// type PaginatedGroup = components["schemas"]["PaginatedGroupList"];
-// type Group = components["schemas"]["Group"];
 
 const GroupList = () => {
-// const GroupList = ({ userJoinedGroup }: GroupListProps) => {
-  // const [groupData, setGroupData] = useState<Group[]>([]);
-
-  // const groupData: PaginatedGroup = {
-  //   count: 0,
-  //   next: null,
-  //   previous: null,
-  //   results: [
-  //     {
-  //       id: 1,
-  //       achievements_url: '',
-  //       created: '',
-  //       images_url: '',
-  //       join_code: '',
-  //       location: 'Ann arbor',
-  //       logged_in_member_url: '',
-  //       members: [1, 2],
-  //       members_url: '',
-  //       name: 'group2',
-  //       num_members: 2,
-  //       quotes_url: '',
-  //       url: '',
-  //     }
-  //   ]
-  // }
   const emptyGroupData = {
     count: 0,
     next: null,
@@ -45,21 +12,32 @@ const GroupList = () => {
     results: []
   };
 
-  const { data: groupData = emptyGroupData } = $api.useQuery(
+  const { data: groupData = emptyGroupData, isLoading, isError} = $api.useQuery(
     "get",
     "/api/v1/groups/",
   )
 
-
   // TODO: change this
-  // if (isLoading) {
-  //   return (
-  //     // ???
-  //     <View style={styles.spinnerContainer}> 
-  //       <ActivityIndicator size="large" color="purple" />
-  //     </View>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.noGroupsText}>
+          Loading groups...
+        </Text>
+        <ActivityIndicator size="large" color="purple" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.noGroupsText}>
+          Error loading groups
+        </Text>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
