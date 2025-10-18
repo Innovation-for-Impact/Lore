@@ -15,8 +15,6 @@ chmod +x get_docs
 ./bin/get_docs
 ```
 
-Modify the backend ip to be the local machine's IP in `types/constants.ts`
-
 Run the appropriate start script
 ```
 #iOS

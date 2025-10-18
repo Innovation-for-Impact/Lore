@@ -2,8 +2,11 @@ import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
 import type { paths } from "../types/backend-schema";
 
-const HOST_IP = '35.3.114.26';
-export const BACKEND_URL = `http://${HOST_IP}:8000`;
+if (process.env.EXPO_PUBLIC_HOST_IP === undefined) {
+  throw new Error("Backend IP Not defined in types/constants.ts");
+}
+
+export const BACKEND_URL = `http://${process.env.EXPO_PUBLIC_HOST_IP}:8000`;
 
 const fetchClient = createFetchClient<paths>({
   baseUrl: BACKEND_URL,
