@@ -18,44 +18,37 @@ const screenHeight = Dimensions.get('window').height;
 const RegistrationScreen = () => {
   const navigation = useNavigation<Navigation>();
 
-  const navigateToLogin = () => {
-    navigation.navigate('LoginScreen');
-  };
-  const navigateToCreate = () => {
-    navigation.navigate('CreateAccountScreen');
-  };
-
   // Check if user is already logged in
-  useEffect(() => {
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    let stale = false;
-    SecureStore.getItemAsync('jwt_token').then((token) => {
-      fetch(`${apiUrl}/api/v1/auth/token/verify/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: token,
-        }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Not logged in.');
-          }
-
-          if (!stale) {
-            navigation.navigate('WelcomeBack');
-          }
-        })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
-    });
-    return () => {
-      stale = true;
-    };
-  }, []);
+  // useEffect(() => {
+  //   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+  //   let stale = false;
+  //   SecureStore.getItemAsync('jwt_token').then((token) => {
+  //     fetch(`${apiUrl}/api/v1/auth/token/verify/`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         token: token,
+  //       }),
+  //     })
+  //       .then((res) => {
+  //         if (!res.ok) {
+  //           throw new Error('Not logged in.');
+  //         }
+  //
+  //         if (!stale) {
+  //           navigation.navigate("WelcomeBack");
+  //         }
+  //       })
+  //     // .catch((err) => {
+  //     //   console.log(err);
+  //     // });
+  //   });
+  //   return () => {
+  //     stale = true;
+  //   };
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -64,10 +57,14 @@ const RegistrationScreen = () => {
       <Text style={styles.text}>
         Connect with friends, run up challenges, & do it for the plot
       </Text>
-      <TouchableOpacity style={styles.login} onPress={navigateToLogin}>
+      <TouchableOpacity style={styles.login} onPress={() => {
+        navigation.navigate('LoginScreen');
+      }}>
         <Text style={styles.buttonText}>log in</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.register} onPress={navigateToCreate}>
+      <TouchableOpacity style={styles.register} onPress={() => {
+        navigation.navigate('CreateAccountScreen');
+      }}>
         <Text style={styles.buttonText} numberOfLines={1}>
           create account
         </Text>

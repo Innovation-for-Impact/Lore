@@ -8,7 +8,7 @@ import { globalStyles } from '../styles/global';
 
 // TODO: Need to update the components
 const HomeScreen = () => {
-  const [userJoinedGroup, setUserJoinedGroup] = useState(false);
+  // const [userJoinedGroup, setUserJoinedGroup] = useState(false);
 
   // GroupList re-fetches data
   const handleUserJoinedGroup = () => {
@@ -22,7 +22,7 @@ const HomeScreen = () => {
         <JoinGroup  onJoinGroup={handleUserJoinedGroup} />
         <CreateGroup />
       </View>
-      <GroupList style={styles.innerContainer} userJoinedGroup={userJoinedGroup} />
+      <GroupList />
     </View>
   );
 };

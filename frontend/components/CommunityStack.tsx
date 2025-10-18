@@ -5,18 +5,11 @@ import CommunityScreen from '../screens/CommunityScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
+import { RootStackParamList } from '../types/navigation';
 
 // Define type for your stack params
-// TODO: use the stack param list defined in types/navigation.ts
-export type CommunityStackParamList = {
-  CommunityScreen: undefined;
-  QuoteBoardScreen: undefined;
-  MemoryBoardScreen: undefined;
-  AchievementBoardScreen: undefined;
-  QuoteDetailScreen: undefined;
-};
 
-const Stack = createStackNavigator<CommunityStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 function CommunityStack() {
   return (

@@ -43,8 +43,8 @@ const LoginScreen = () => {
     "/api/v1/auth/login/",
     {
       onSuccess: () => {
-        console.log("success");
         // redirect to user page
+        navigation.navigate("HomeScreen");
       },
       onError: (error) => {
         console.log("error occured", error);
@@ -55,7 +55,7 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     // validate input fields
-    const response = await login(
+    await login(
       {
         body: {
           email: email,
@@ -63,40 +63,7 @@ const LoginScreen = () => {
         }
       }     
     );
-    console.log(response);
-    
-
-    // const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    // navigation.navigate("WelcomeBack");
-    // fetch(`${apiUrl}/api/v1/auth/login/`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     "email": email,
-    //     "password": password
-    //   })
-    // }
-    // ).then(res => {
-    //   if (!res.ok) {
-    //     throw new Error(
-    //       "Encountered an error while attempting to log in. Please try again, or report this problem."
-    //     )
-    //   }
-    //   return res.json()
-    // })
-    //   .then(res => {
-    //     const token = res.access;
-    //     SecureStore.setItemAsync('jwt_token', token).then(() => {
-    //       navigation.navigate("WelcomeBack");
-    //     }).catch(() => {
-    //       // console.error(`Error while storing token: ${err}`)
-    //     });
-    //   })
-    //   .catch(() => {
-    //     Alert.alert("Invalid Credentials", "Please check your email or password.");
-    //   });
+    // console.log(response);
   };
 
   const handleForgotPassword = () => {

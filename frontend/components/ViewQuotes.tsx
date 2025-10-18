@@ -10,11 +10,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Navigation } from '../types/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-type Quote = {
+export type Quote = {
   id: string;
   text: string;
   author: string;
@@ -29,7 +30,7 @@ const initialQuotes: Quote[] = [
 ];
 
 const ViewQuotes = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
 
   // State for quotes array
   const [quotes, setQuotes] = useState<Quote[]>([]);

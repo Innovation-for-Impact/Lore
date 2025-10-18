@@ -1252,6 +1252,11 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url?: string;
+            /**
+             * Email address
+             * Format: email
+             */
+            email?: string;
         };
         Register: {
             username?: string;
@@ -1287,6 +1292,11 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url: string;
+            /**
+             * Email address
+             * Format: email
+             */
+            email: string;
         };
         VerifyEmail: {
             key: string;

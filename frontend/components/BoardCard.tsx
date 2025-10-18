@@ -1,26 +1,24 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import placeholder from '../assets/placeholder.png';
+import { useNavigation } from '@react-navigation/native';
+import { Navigation, RootStackParamList } from '../types/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-type Board = {
+// TODO: change this to be inline with API
+export type Board = {
+  id: string;
   name: string;
   image?: string;
-  screen?: string;
+  screen: keyof RootStackParamList;
 };
 
-type BoardCardProps = {
-  board: Board;
-  navigation: any;
-};
-
-const BoardCard: React.FC<BoardCardProps> = ({ board, navigation }) => {
+const BoardCard = ({ name, screen, image }: Board ) => {
+  const navigation = useNavigation<Navigation>();
   const handlePress = () => {
-    if (board.screen) {
-      navigation.navigate(board.screen);
-    }
+    navigation.navigate(screen as never);
   };
 
   return (
@@ -29,14 +27,14 @@ const BoardCard: React.FC<BoardCardProps> = ({ board, navigation }) => {
       <View style={styles.imageContainer}>
         {/* added placeholder for image */}
         <Image
-          source={board.image ? { uri: board.image } : placeholder}
+          source={image ? { uri: image } : placeholder}
           style={styles.image}
         />
       </View>
 
       {/* info for each card */}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{board.name}</Text>
+        <Text style={styles.title}>{name}</Text>
       </View>
     </TouchableOpacity>
   );

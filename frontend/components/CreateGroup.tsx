@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { $api } from '../types/constants';
+import { components } from '../types/backend-schema';
+
+type User = components["schemas"]["User"];
 
 function CreateGroup() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,91 +18,41 @@ function CreateGroup() {
   const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
-  const [groupCode, setGroupCode] = useState(null);
-  type User = { id: number; name: string };
+  const [groupCode, setGroupCode] = useState('');
+  // type User = { id: number; name: string };
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
-  // API Endpoint (POST)
+  // Get all users. Should this be for "friends"?
+  const { data } = $api.useQuery(
+    "get",
+    "/api/v1/users/",
+  );
+
   const handleCreateGroupName = () => {
     if (!groupName.trim()) {
       setError("group name can't be empty");
       return;
     }
     setError('');
-
-    // FIXME
-    // fetch(`/api/v1/groups/create/`, {
-    //   method: "POST",
-    //   credentials: "same-origin",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ group_name: groupName }),
-    // })
-    // .then((response) => {
-    //     if (!response.ok) throw Error(response.statusText);
-    //     return response.json();
-    // })
-    // .then(() => {
-    //   setModalVisible(false);
-    //   setGroupName('');
-    //   setQuickAddModalVisible(true);
-    // })
-    // .catch((error) => {
-    //     console.error(error);
-    // })
-
-    // comment out when finished API endpoint
     setModalVisible(false);
-    setGroupName('');
     setQuickAddModalVisible(true);
   }
 
-  // FIXME API Endpoint (GET)
   const handleSearch = (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
     }
-  
-    // fetch(`/api/v1/users/search/?q=${query}`, {
-    //   method: "GET",
-    //   credentials: "same-origin",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // })
-    // .then((response) => {
-    //     if (!response.ok) throw Error(response.statusText);
-    //     return response.json();
-    // })
-    // .then(() => {
-    //   setSearchResults(data.users || []);
-    // })
-    // .catch((error) => {
-    //     console.error(error);
-    //     setSearchResults([]);
-    // })
 
-    // testing UI / demo purposes, comment out when done with API
-    const fakeDatabase = [
-      { id: 1, name: "Tina Vu" },
-      { id: 2, name: "Alex Smart" },
-      { id: 3, name: "Kara Wong" },
-      { id: 4, name: "Arda Edil" },
-      { id: 5, name: "Ethan Sun" },
-      { id: 6, name: "Aimee Wu" },
-      { id: 7, name: "Random Guy" },
-      { id: 8, name: "Random Girl" },
-    ];
-  
     // Filter results based on the search query
-    const filteredResults = fakeDatabase.filter(user =>
-      user.name.toLowerCase().includes(query.toLowerCase())
-    );
-  
-    setSearchResults(filteredResults);
+    // TODO: backend needs to fix this for openAPI
+    const filteredResults = data?.results.filter(user => {
+      const fullName = `${user.data.first_name} ${user.data.last_name}`.toLowerCase();
+      return fullName.includes(query.toLowerCase());
+    });
+    const flattenedResults = filteredResults?.map(item => item.data);
+    setSearchResults(flattenedResults === undefined ? [] : flattenedResults);
   };
 
   const handleAddMember = (user: User) => {
@@ -111,142 +65,179 @@ function CreateGroup() {
     setSelectedMembers(selectedMembers.filter((member) => member.id !== userId));
   };
 
-  // FIXME API Endpoint: add selected members to group (POST) then GET the groupCode
-  const handleCreateGroup = async () => {
-    
-  }
+  const { mutateAsync: handleCreateGroup, isPending: groupCreateLoading } = $api.useMutation(
+    "post",
+    "/api/v1/groups/", {
+      onError: (error) => {
+        console.log(error);
+      }
+    }
+  )
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity 
-          style={[styles.createButton, isButtonActive && styles.activeButton]} 
-          onPress={() => {
-              setModalVisible(true);
-              setIsButtonActive(true);
-          }}
+      <TouchableOpacity
+        style={[styles.createButton, isButtonActive && styles.activeButton]}
+        onPress={() => {
+          setModalVisible(true);
+          setIsButtonActive(true);
+          setGroupName('');
+          setSearchQuery('');
+          setSearchResults([]);
+        }}
       >
-          <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
-            create group
-          </Text>
+        <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
+          create group
+        </Text>
       </TouchableOpacity>
 
       {/* Modal for entering group code - - way to show content above existing content */}
       {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
       <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-          <View style={styles.fullScreenContainer}>
-              <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-          </View>
-          {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-              <View style={styles.modalContainer}>
-                  <View style={styles.modalContent}>
-                      <View style={styles.iconTextContainer}>
-                          <Text style={styles.modalTitle}>create group name</Text>
-                          <TouchableOpacity onPress={() => {setModalVisible(false); setIsButtonActive(false); }}>
-                              <Feather name="x-square" size={25} color="black" />
-                          </TouchableOpacity>
-                      </View>
-
-                      <TextInput
-                          style={[styles.input, error && styles.inputError]}
-                          placeholder="group name"
-                          placeholderTextColor="#BFBFBF"
-                          value={groupName}
-                          onChangeText={(text) => {
-                            setGroupName(text);
-                            if (error) setError('');
-                          }}
-                          keyboardType="default"
-                      />
-                      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-                      <View style={styles.buttonRow}>
-                          <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupName('')}>
-                              <Text style={styles.buttonText}>clear</Text>
-                          </TouchableOpacity>
-
-                          <TouchableOpacity style={styles.button} onPress={handleCreateGroupName}>
-                              <Text style={styles.buttonText}>enter</Text>
-                          </TouchableOpacity>
-                      </View>
-                  </View>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+        {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.iconTextContainer}>
+                <Text style={styles.modalTitle}>create group name</Text>
+                <TouchableOpacity onPress={() => { setModalVisible(false); setIsButtonActive(false); }}>
+                  <Feather name="x-square" size={25} color="black" />
+                </TouchableOpacity>
               </View>
-          </KeyboardAvoidingView>
+
+              <TextInput
+                style={[styles.input, error && styles.inputError]}
+                placeholder="group name"
+                placeholderTextColor="#BFBFBF"
+                value={groupName}
+                onChangeText={(text) => {
+                  setGroupName(text);
+                  if (error) setError('');
+                }}
+                keyboardType="default"
+              />
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupName('')}>
+                  <Text style={styles.buttonText}>clear</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={handleCreateGroupName}>
+                  <Text style={styles.buttonText}>enter</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
-      
+
       {/* Quick add members modal */}
       <Modal animationType="fade" transparent={true} visible={quickAddModalVisible} onRequestClose={() => setQuickAddModalVisible(false)}>
-          <View style={styles.fullScreenContainer}>
-                <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-          </View>
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.searchModalTitle}>add members</Text>
-                    
-                    {/* search feature */}
-                    <View style={styles.searchContainer}>
-                      <Ionicons name="search" size={20} color="#44344D" style={styles.icon} />
-                      <TextInput
-                        style={styles.searchInput}
-                        placeholder="search members"
-                        placeholderTextColor="#BFBFBF"
-                        value={searchQuery}
-                        onChangeText={(text) => {
-                          setSearchQuery(text);
-                          handleSearch(text);
-                        }}
-                        keyboardType="default"
-                      />
-                    </View>
-                    
-                    {/* add members content */}
-                    <View style={styles.searchResults}>
-                      {searchResults.length > 0 && (
-                        <ScrollView>
-                            {searchResults.map((user) => (
-                                <TouchableOpacity key={user.id} style={styles.resultItem} onPress={() => handleAddMember(user)}>
-                                    <Text>{user.name}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                      )}
-                    </View>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.searchModalTitle}>add members</Text>
 
-                    <View style={styles.selectedMembersContainer}>
-                      <Text style={styles.selectedMembersTitle}>Selected Members:</Text>
-                      {selectedMembers.length === 0 ? (
-                        <Text style={styles.noMembersText}>No members selected.</Text>
-                      ) : (
-                        selectedMembers.map((member) => (
-                          <View key={member.id} style={styles.memberItem}>
-                            <Text style={styles.memberText}>{member.name}</Text>
-                            <TouchableOpacity
-                              style={styles.removeButton}
-                              onPress={() => handleRemoveMember(member.id)}
-                            >
-                              <Text style={styles.removeText}>Remove</Text>
-                            </TouchableOpacity>
-                          </View>
-                        ))
-                      )}
-                    </View>
+              {/* search feature */}
+              <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color="#44344D" style={styles.icon} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="search members"
+                  placeholderTextColor="#BFBFBF"
+                  value={searchQuery}
+                  onChangeText={(text) => {
+                    setSearchQuery(text);
+                    handleSearch(text);
+                  }}
+                  keyboardType="default"
+                />
+              </View>
 
-                    <View style={styles.buttonRow}>
-                      <TouchableOpacity 
-                        style={styles.modalButton} 
-                        onPress={async () => {
-                          setQuickAddModalVisible(false); 
-                          setIsButtonActive(true); 
-                          setGroupCreatedModalVisible(true); 
-                          await handleCreateGroup();
-                      }}>
-                          <Text style={styles.buttonText}>create group</Text>
+              {/* add members content */}
+              <View style={styles.searchResults}>
+                {searchResults.length > 0 && (
+                  <ScrollView>
+                    {searchResults.map((user) => (
+                      <TouchableOpacity key={user.id} style={styles.resultItem} onPress={() => handleAddMember(user)}>
+                        <Text>{user.first_name + " " + user.last_name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                )}
+              </View>
+
+              <View style={styles.selectedMembersContainer}>
+                <Text style={styles.selectedMembersTitle}>Selected Members:</Text>
+                {selectedMembers.length === 0 ? (
+                  <Text style={styles.noMembersText}>No members selected.</Text>
+                ) : (
+                  selectedMembers.map((member) => (
+                    <View key={member.id} style={styles.memberItem}>
+                      <Text style={styles.memberText}>{member.first_name + " " + member.last_name}</Text>
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => handleRemoveMember(member.id)}
+                      >
+                        <Text style={styles.removeText}>Remove</Text>
                       </TouchableOpacity>
                     </View>
-                </View>
+                  ))
+                )}
+              </View>
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={[styles.button, styles.clearButton]}
+                  onPress={async () => {
+                    setQuickAddModalVisible(false);
+                    setModalVisible(true);
+                  }}>
+                  <Text style={styles.buttonText}>back</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    setQuickAddModalVisible(false);
+                    setIsButtonActive(true);
+                    setGroupCreatedModalVisible(true);
+                    // What?
+                    // TODO: is group code generated from backend?
+                    // TODO: is group ID generated from backend?
+                    // TODO: need to keep track of current user info
+                    // handleCreateGroup({
+                    //   body: {
+                    //     name: groupName,
+                    //     location: '',
+                    //     members: [...selectedMembers.map(member => member.id)],
+                    //     quotes_url: '',
+                    //     images_url: '',
+                    //     url: '',
+                    //     num_members: selectedMembers.length,
+                    //     members_url: '',
+                    //     logged_in_member_url: '',
+                    //     join_code: '',
+                    //     created: '',
+                    //     achievements_url: '',
+                    //     id: 1, // This should not be here
+                    //   }
+                    //
+                    // });
+                  }}>
+                  <Text style={styles.buttonText}>create group</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </KeyboardAvoidingView>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Group created confirmation modal */}
@@ -261,35 +252,35 @@ function CreateGroup() {
               <Feather name="check-circle" size={25} color="green" />
               <Text style={styles.modalText}>group created.</Text>
             </View>
-
-            {/* Display group code from GET */}
-            {groupCode ? (
-              <Text style={styles.groupCodeText}>{groupCode}</Text>
-            ) : (
-              <Text style={styles.groupCodeText}>ABC123LORE</Text>
-            )}
             
-            <View style={styles.buttonRow}>
-              <TouchableOpacity 
-                style={styles.modalButton} 
-                onPress={() => {
-                  setGroupCreatedModalVisible(false);
-                  setIsButtonActive(false); 
-                  {groupCode ? (
-                    Clipboard.setStringAsync(groupCode)
-                  ) : (
-                    Clipboard.setStringAsync('ABC123LORE')
-                  )}
-                  if (Platform.OS === 'android') {
-                    ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
-                  } else {
-                    Alert.alert('Text copied to clipboard!');
-                  }
-                }}
-              >
-                <Text style={styles.buttonText}>copy code</Text>
-              </TouchableOpacity>
-            </View>
+            {
+              groupCreateLoading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <ActivityIndicator size="large" color="#44344D" />
+                </View>
+              ) : (
+                  <>
+                    <Text style={styles.groupCodeText}>{groupCode}</Text>
+                    <View style={styles.buttonRow}>
+                      <TouchableOpacity
+                        style={styles.modalButton}
+                        onPress={() => {
+                          setGroupCreatedModalVisible(false);
+                          setIsButtonActive(false);
+                          Clipboard.setStringAsync(groupCode);
+                          if (Platform.OS === 'android') {
+                            ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
+                          } else {
+                            Alert.alert('Text copied to clipboard!');
+                          }
+                        }}
+                      >
+                        <Text style={styles.buttonText}>copy code</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )
+            }
           </View>
         </View>
       </Modal>
@@ -310,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F2',
     borderRadius: 10,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    // paddingVertical: 5,
     marginBottom: 10,
     marginTop: 10,
     width: '100%',
@@ -389,7 +380,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
     marginRight: 10,
-},
+  },
   input: {
     width: '100%',
     borderWidth: 1,
@@ -402,8 +393,8 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '60%',
-    marginLeft: 111,
+    width: '100%',
+    // marginLeft: 111,
   },
   button: {
     flex: 1,
@@ -417,6 +408,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#9680B6',
   },
   buttonText: {
+
     color: 'white',
     fontWeight: '500',
     fontFamily: 'Work Sans'
@@ -433,7 +425,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   fullScreenBlur: {
-      flex: 1,
+    flex: 1,
   },
   inputError: {
     borderColor: 'red',
