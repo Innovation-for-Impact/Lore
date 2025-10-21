@@ -5,6 +5,7 @@ import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View,
 import Logo from '../assets/logo-transparent-white.png';
 import { useNavigation } from '@react-navigation/native';
 import { Navigation } from '../types/navigation';
+import { $api } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -18,11 +19,27 @@ const CreateAccountEmailScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation<Navigation>();
 
+  const {mutateAsync: register} = $api.useMutation(
+    "post",
+    "/api/v1/auth/registration/",
+    {
+      onSuccess: () => {
+        navigation.navigate('CreateAccountNameScreen');
+      },
+      onError: (error) => {
+        // setError(error.password1); // TODO: Get openAPI spec to generate this
+        setError(JSON.stringify(error)); // TODO: Get openAPI spec to generate this
+      }
+    }
+  )
+
   const goBack = () => {
     navigation.goBack();
   };
 
-  const handleRegister = () => {
+  // TODO: this whole flow is a problem, what if somebody quits in the middle of account creation? then only half of the user info exists in the DB...
+  // To fix: collect all info, then make one request to DB. there needs to be an API endpoint for this.
+  const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
       setError("All fields are required.");
       return;
@@ -33,33 +50,16 @@ const CreateAccountEmailScreen = () => {
       return;
     }
 
-    // TODO: proper error handling make this async/await
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-    fetch(`${apiUrl}/api/v1/auth/registration/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        password1: password,
-        password2: confirmPassword,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return response.json();
-      }).then(res => {
-        const token = res.access;
-        SecureStore.setItemAsync('jwt_token', token).then(() => {
-          navigation.navigate('CreateAccountNameScreen');
-        }).catch(() => {
-          // console.error(`Error while storing token: ${err}`)
-        });
-      }).catch((error) => {
-        console.error('Error:', error);
-        setError("Failed to register: " + error.message);
-      });
+    // TODO: error handling
+    // await register({
+    //   body: {
+    //     email: email,
+    //     password1: password,
+    //     password2: password
+    //   }
+    // })
+
+    // console.log(data);
 
     // TODO: API endpoint to check email
     // if email already exists in database - X mark
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginBottom: 10,
+    textAlign: 'center',
     fontFamily: 'Work Sans'
   },
   button: {

@@ -6,7 +6,7 @@ import { BlurView as NativeBlurView } from '@react-native-community/blur';
 type BlurViewProps = React.ComponentProps<typeof NativeBlurView> &
   React.ComponentProps<typeof View>;
 
-const BlurView: React.FC<BlurViewProps> = (props) => {
+const BlurView = (props: BlurViewProps) => {
   if (Platform.OS === 'web') {
     return (
       <View {...props} style={[props.style, { backgroundColor: 'rgba(0,0,0,0.4)' }]}>
