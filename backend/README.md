@@ -13,7 +13,7 @@ python3 manage.py createsuperuser
 ### Run Backend
 Make sure the virtual environment is active
 ```
-python3 manage.py runserver
+python3 manage.py runserver 0.0.0.0:8000
 
 # Run the server on IP:PORT
 python3 manage.py runserver <IP:PORT>
