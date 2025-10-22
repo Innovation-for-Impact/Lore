@@ -1,11 +1,18 @@
 # Lore Backend
 ## Quickstart
+### Setup
 ```
 python3 -m venv env
 pip install -r requirements.txt
 source env/bin/activate
+cp .env.dist .env
 ./bin/init_test_db
 python3 manage.py createsuperuser
+```
+
+### Run Backend
+Make sure the virtual environment is active
+```
 python3 manage.py runserver
 
 # Run the server on IP:PORT

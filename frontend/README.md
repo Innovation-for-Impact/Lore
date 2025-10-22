@@ -1,23 +1,27 @@
 # Quickstart
 
 ## WSL2
-For development on WSL, follow these instructions: https://github.com/expo/fyi/blob/main/wsl.md
+For development on WSL2, follow these instructions: [https://github.com/expo/fyi/blob/main/wsl.md](https://github.com/expo/fyi/blob/main/wsl.md)
 
+## Dependencies 
 Install dependencies
 ```
 npm install
 ```
-Follow the Quickstart in `backend/README.md`
 
+## Backend
+Follow the setup instructions in `backend/README.md`
+
+## Docs
 Generate the types from OpenAPI schema
 ```
 chmod +x get_docs
 ./bin/get_docs
 ```
 
+## Development
 Run the appropriate start script
 ```
-#iOS
 npm run start
 
 #web
