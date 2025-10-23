@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import AchievementBoardScreen from '../screens/AchievementBoardScreen';
+import AchievementBoardScreen from '../screens/AcheivementScreens/AchievementBoardScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
@@ -17,7 +17,7 @@ function CommunityStack() {
       <Stack.Screen 
         name="CommunityScreen"
         component={CommunityScreen} 
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
       <Stack.Screen 
         name="QuoteBoardScreen"
