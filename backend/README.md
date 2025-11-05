@@ -1,26 +1,22 @@
 # Lore Backend
+
 ## Quickstart
-### Setup
+
 ```
 python3 -m venv env
 pip install -r requirements.txt
 source env/bin/activate
-cp .env.dist .env
 ./bin/init_test_db
 python3 manage.py createsuperuser
-```
-
-### Run Backend
-Make sure the virtual environment is active
-```
-python3 manage.py runserver 0.0.0.0:8000
+python3 manage.py runserver
 
 # Run the server on IP:PORT
 python3 manage.py runserver <IP:PORT>
 ```
+
 ## API
 
-To generate an OpenAPI `yml` file, run `./bin/start_docs`. 
+To generate an OpenAPI `yml` file, run `./bin/start_docs`.
 
 Running it in docker will start a web server hosted on `localhost:8080` and you will need Docker to run them.
 If the doc generator emits errors and warnings, it should still be fine to view

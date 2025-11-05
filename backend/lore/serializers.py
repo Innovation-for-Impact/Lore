@@ -1,10 +1,13 @@
 import contextlib
 from typing import Any, ClassVar, cast, override
+import typing
 
+from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import serializers
 from rest_framework.views import Request
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
+from dj_rest_auth.registration.serializers import RegisterSerializer
 
 from lore import models
 
@@ -382,3 +385,33 @@ class UserSerializer(
     class Meta:
         model = models.LoreUser
         fields = ["id", "first_name", "last_name", "avatar", "url"]
+
+
+class UserRegisterSerializer(RegisterSerializer):
+    """Custom serializer for user registration.
+
+    Adds the first/last name and avatar fields
+    """
+
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    avatar = serializers.ImageField(allow_null=True, required=False)
+
+    class Meta:
+        fields: typing.ClassVar[list[str]] = [
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "password1",
+            "password2",
+        ]
+
+    def save(self, request: HttpRequest) -> models.LoreUser:
+        """Manually handle saving of additional registration fields."""
+        user = super().save(request)
+        user.first_name = self.data.get("first_name", "")
+        user.last_name = self.data.get("last_name", None)
+        user.avatar = self.data.get("avatar", None)
+        user.save()
+        return user
