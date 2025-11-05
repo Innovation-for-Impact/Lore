@@ -9,14 +9,6 @@ from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.serializers import BaseSerializer
-from rest_framework.status import (
-    HTTP_201_CREATED,
-    HTTP_404_NOT_FOUND,
-    HTTP_405_METHOD_NOT_ALLOWED,
-    HTTP_409_CONFLICT,
-    HTTP_500_INTERNAL_SERVER_ERROR,
-)
-from rest_framework.views import Response
 
 from lore import serializers
 from lore.models import Achievement, LoreGroup, LoreUser
@@ -69,7 +61,10 @@ class AchievementViewSet(viewsets.ModelViewSet):
 
         return queryset.order_by("pk")
 
-    def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
+    def perform_create(
+        self,
+        serializer: serializers.AchievementSerializer,
+    ) -> None:
         """Create the item in the database."""
         # Extract the group_id from query parameters
         group_id: str | None = self.kwargs.get("loregroup_pk")
