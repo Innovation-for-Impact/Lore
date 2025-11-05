@@ -1,15 +1,18 @@
-import contextlib
-from typing import Any, ClassVar, cast, override
-import typing
+"""Serializers for various endpoints."""
 
+import contextlib
+import typing
+from typing import Any, ClassVar, cast, override
+
+from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import serializers
-from rest_framework.views import Request
-from rest_framework_nested.relations import NestedHyperlinkedRelatedField
-from dj_rest_auth.registration.serializers import RegisterSerializer
 
 from lore import models
+
+if typing.TYPE_CHECKING:
+    from rest_framework.views import Request
 
 
 class DataLinksSerializerMixin(serializers.Serializer):
@@ -72,7 +75,7 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
         super().__init__(*args, **kwargs)
 
         try:
-            # get userse that are only in the shared group
+            # get users that are only in the shared group
             user: models.LoreUser = cast(
                 models.LoreUser,
                 self.context["request"].user,
@@ -86,6 +89,9 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
                 read_only=True,
             )
         except KeyError:
+            pass
+        except AttributeError:
+            # user is anonymous and doesnt have the functions
             pass
 
     def create(self, validated_data: dict[Any, Any]) -> models.Quote:
@@ -375,6 +381,8 @@ class GroupUpdateSerializer(GroupSerializer):
 
 
 class JoinSerializer(serializers.Serializer):
+    """A custom serializer for the group join endpoint."""
+
     join_code = serializers.CharField()
 
 
@@ -382,9 +390,17 @@ class UserSerializer(
     serializers.HyperlinkedModelSerializer,
     DataLinksSerializerMixin,
 ):
+    """A serializer for exposing public information about a user."""
+
     class Meta:
         model = models.LoreUser
-        fields = ["id", "first_name", "last_name", "avatar", "url"]
+        fields: typing.ClassVar[list[str]] = [
+            "id",
+            "first_name",
+            "last_name",
+            "avatar",
+            "url",
+        ]
 
 
 class UserRegisterSerializer(RegisterSerializer):
