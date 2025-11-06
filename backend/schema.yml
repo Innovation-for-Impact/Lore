@@ -527,13 +527,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Register'
+              $ref: '#/components/schemas/UserRegister'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Register'
+              $ref: '#/components/schemas/UserRegister'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Register'
+              $ref: '#/components/schemas/UserRegister'
         required: true
       security:
       - jwtHeaderAuth: []
@@ -1391,7 +1391,7 @@ paths:
           description: No response body
   /api/v1/groups/{loregroup_pk}/quotes/:
     get:
-      operationId: groups_quotes_retrieve
+      operationId: groups_quotes_list
       description: |-
         Viewset for quotes.
 
@@ -1406,6 +1406,18 @@ paths:
         schema:
           type: string
         required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - groups
       security:
@@ -1413,7 +1425,11 @@ paths:
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuoteList'
+          description: ''
     post:
       operationId: groups_quotes_create
       description: |-
@@ -1432,15 +1448,31 @@ paths:
         required: true
       tags:
       - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quote'
+        required: true
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '201':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
   /api/v1/groups/{loregroup_pk}/quotes/{id}/:
     get:
-      operationId: groups_quotes_retrieve_2
+      operationId: groups_quotes_retrieve
       description: |-
         Viewset for quotes.
 
@@ -1467,7 +1499,11 @@ paths:
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     put:
       operationId: groups_quotes_update
       description: |-
@@ -1491,12 +1527,28 @@ paths:
         required: true
       tags:
       - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quote'
+        required: true
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     patch:
       operationId: groups_quotes_partial_update
       description: |-
@@ -1520,12 +1572,27 @@ paths:
         required: true
       tags:
       - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     delete:
       operationId: groups_quotes_destroy
       description: |-
@@ -1897,7 +1964,7 @@ paths:
           description: No response body
   /api/v1/quotes/:
     get:
-      operationId: quotes_retrieve
+      operationId: quotes_list
       description: |-
         Viewset for quotes.
 
@@ -1906,6 +1973,19 @@ paths:
 
         To create a quote, it expects a `text` and `said_by` field. The group
         is automatically set by the query parameters.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - quotes
       security:
@@ -1913,7 +1993,11 @@ paths:
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuoteList'
+          description: ''
     post:
       operationId: quotes_create
       description: |-
@@ -1926,15 +2010,31 @@ paths:
         is automatically set by the query parameters.
       tags:
       - quotes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quote'
+        required: true
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '201':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
   /api/v1/quotes/{id}/:
     get:
-      operationId: quotes_retrieve_2
+      operationId: quotes_retrieve
       description: |-
         Viewset for quotes.
 
@@ -1956,7 +2056,11 @@ paths:
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     put:
       operationId: quotes_update
       description: |-
@@ -1975,12 +2079,28 @@ paths:
         required: true
       tags:
       - quotes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quote'
+        required: true
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     patch:
       operationId: quotes_partial_update
       description: |-
@@ -1999,12 +2119,27 @@ paths:
         required: true
       tags:
       - quotes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuote'
       security:
       - jwtHeaderAuth: []
       - jwtCookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
     delete:
       operationId: quotes_destroy
       description: |-
@@ -2539,6 +2674,7 @@ components:
       - user
     Join:
       type: object
+      description: A custom serializer for the group join endpoint.
       properties:
         join_code:
           type: string
@@ -2625,6 +2761,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Image'
+    PaginatedQuoteList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Quote'
     PaginatedUserList:
       type: object
       required:
@@ -2828,8 +2987,53 @@ components:
           type: string
           format: uri
           readOnly: true
+    PatchedQuote:
+      type: object
+      description: |-
+        Serializer for the quote detail.
+
+        Serializes the quote's:
+          - id
+          - text
+          - said_by
+          - said_by_url
+          - group
+          - group_url
+          - created
+          - url
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2048
+        said_by:
+          type: integer
+        pinned:
+          type: boolean
+        said_by_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        group:
+          type: integer
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
     PatchedUser:
       type: object
+      description: A serializer for exposing public information about a user.
       properties:
         id:
           type: integer
@@ -2848,26 +3052,59 @@ components:
           type: string
           format: uri
           readOnly: true
-    Register:
+    Quote:
       type: object
+      description: |-
+        Serializer for the quote detail.
+
+        Serializes the quote's:
+          - id
+          - text
+          - said_by
+          - said_by_url
+          - group
+          - group_url
+          - created
+          - url
       properties:
-        username:
+        id:
+          type: integer
+          readOnly: true
+        text:
           type: string
-          maxLength: 255
           minLength: 1
-        email:
+          maxLength: 2048
+        said_by:
+          type: integer
+        pinned:
+          type: boolean
+        said_by_url:
           type: string
-          format: email
-        password1:
+          format: uri
+          readOnly: true
+        group_url:
           type: string
-          writeOnly: true
-        password2:
+          format: uri
+          readOnly: true
+        group:
+          type: integer
+        created:
           type: string
-          writeOnly: true
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
       required:
-      - email
-      - password1
-      - password2
+      - created
+      - group
+      - group_url
+      - id
+      - said_by
+      - said_by_url
+      - text
+      - url
     ResendEmailVerification:
       type: object
       properties:
@@ -2915,6 +3152,7 @@ components:
       - token
     User:
       type: object
+      description: A serializer for exposing public information about a user.
       properties:
         id:
           type: integer
@@ -2938,6 +3176,40 @@ components:
       - id
       - last_name
       - url
+    UserRegister:
+      type: object
+      description: |-
+        Custom serializer for user registration.
+
+        Adds the first/last name and avatar fields
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          minLength: 1
+        email:
+          type: string
+          format: email
+        password1:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+        first_name:
+          type: string
+        last_name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - email
+      - first_name
+      - last_name
+      - password1
+      - password2
     VerifyEmail:
       type: object
       properties:

@@ -59,6 +59,10 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
   )
 
   const handleLogin = async () => {
+    if (!isEmailValid) {
+      // Set error message for email
+      return;
+    }
     // validate input fields
     await login(
       {
@@ -68,7 +72,6 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
         }
       }     
     );
-    // console.log(response);
   };
 
   const handleForgotPassword = () => {

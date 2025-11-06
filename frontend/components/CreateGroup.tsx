@@ -19,7 +19,7 @@ function CreateGroup() {
   const [searchQuery, setSearchQuery] = useState('');
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
   const [groupCode, setGroupCode] = useState('');
-  // type User = { id: number; name: string };
+
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
@@ -27,6 +27,13 @@ function CreateGroup() {
   const { data } = $api.useQuery(
     "get",
     "/api/v1/users/",
+    {
+      params: {
+        query: {
+          search: searchQuery
+        }
+      }
+    },
   );
 
   const handleCreateGroupName = () => {
@@ -205,7 +212,7 @@ function CreateGroup() {
 
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => {
+                  onPress={async () => {
                     setQuickAddModalVisible(false);
                     setIsButtonActive(true);
                     setGroupCreatedModalVisible(true);
@@ -213,24 +220,23 @@ function CreateGroup() {
                     // TODO: is group code generated from backend?
                     // TODO: is group ID generated from backend?
                     // TODO: need to keep track of current user info
-                    // handleCreateGroup({
-                    //   body: {
-                    //     name: groupName,
-                    //     location: '',
-                    //     members: [...selectedMembers.map(member => member.id)],
-                    //     quotes_url: '',
-                    //     images_url: '',
-                    //     url: '',
-                    //     num_members: selectedMembers.length,
-                    //     members_url: '',
-                    //     logged_in_member_url: '',
-                    //     join_code: '',
-                    //     created: '',
-                    //     achievements_url: '',
-                    //     id: 1, // This should not be here
-                    //   }
-                    //
-                    // });
+                    const s = await handleCreateGroup({
+                      body: {
+                        name: groupName,
+                        location: '',
+                        members: [...selectedMembers.map(member => member.id)],
+                        quotes_url: '',
+                        images_url: '',
+                        url: '',
+                        num_members: selectedMembers.length,
+                        members_url: '',
+                        logged_in_member_url: '',
+                        join_code: '',
+                        created: '',
+                        achievements_url: '',
+                        id: 0
+                      }
+                    });
                   }}>
                   <Text style={styles.buttonText}>create group</Text>
                 </TouchableOpacity>

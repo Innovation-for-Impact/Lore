@@ -11,6 +11,8 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountEmailScreen = () => {
+  const [first_name, setFirstName] = useState('');
+  const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,19 +21,32 @@ const CreateAccountEmailScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation<Navigation>();
 
+  const isEmailValid = email.includes("@") && email.includes(".");
+
   const {mutateAsync: register} = $api.useMutation(
     "post",
     "/api/v1/auth/registration/",
     {
       onSuccess: () => {
-        navigation.navigate('CreateAccountNameScreen');
+        navigation.navigate('CreateAccountProfileScreen');
       },
       onError: (error) => {
-        // setError(error.password1); // TODO: Get openAPI spec to generate this
-        setError(JSON.stringify(error)); // TODO: Get openAPI spec to generate this
+        setError(error.password1[0]); // TODO: Get openAPI spec to generate this
       }
     }
   )
+
+  // const { data } = $api.useQuery(
+  //   "get",
+  //   "/api/v1/users/",
+  //   {
+  //     params: {
+  //       query: {
+  //         search: email
+  //       }
+  //     }
+  //   },
+  // );
 
   const goBack = () => {
     navigation.goBack();
@@ -40,8 +55,13 @@ const CreateAccountEmailScreen = () => {
   // TODO: this whole flow is a problem, what if somebody quits in the middle of account creation? then only half of the user info exists in the DB...
   // To fix: collect all info, then make one request to DB. there needs to be an API endpoint for this.
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
+    if (!first_name || !last_name || !email || !password || !confirmPassword) {
       setError("All fields are required.");
+      return;
+    }
+
+    if (!isEmailValid) {
+      setError("Invalid email.");
       return;
     }
 
@@ -51,13 +71,15 @@ const CreateAccountEmailScreen = () => {
     }
 
     // TODO: error handling
-    // await register({
-    //   body: {
-    //     email: email,
-    //     password1: password,
-    //     password2: password
-    //   }
-    // })
+    await register({
+      body: {
+        email: email,
+        password1: password,
+        password2: password,
+        first_name: first_name,
+        last_name: last_name
+      }
+    })
 
     // console.log(data);
 
@@ -83,6 +105,22 @@ const CreateAccountEmailScreen = () => {
 
         <TextInput
           style={styles.input}
+          placeholder="first name"
+          placeholderTextColor="#555"
+          value={first_name}
+          onChangeText={setFirstName}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="last name"
+          placeholderTextColor="#555"
+          value={last_name}
+          onChangeText={setLastName}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
           placeholder="email address"
           placeholderTextColor="#555"
           value={email}
@@ -101,7 +139,6 @@ const CreateAccountEmailScreen = () => {
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity
-            style={styles.eyeIcon}
             onPress={() => setShowPassword(!showPassword)}
           >
             <Feather name={showPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
@@ -118,7 +155,6 @@ const CreateAccountEmailScreen = () => {
             secureTextEntry={!showConfirmPassword}
           />
           <TouchableOpacity
-            style={styles.eyeIcon}
             onPress={() => setShowConfirmPassword(!showConfirmPassword)}
           >
             <Feather name={showConfirmPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
