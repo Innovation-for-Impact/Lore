@@ -223,20 +223,21 @@ function CreateGroup() {
                     const s = await handleCreateGroup({
                       body: {
                         name: groupName,
-                        location: '',
+                        location: 'Ann Arbor',
                         members: [...selectedMembers.map(member => member.id)],
-                        quotes_url: '',
-                        images_url: '',
-                        url: '',
-                        num_members: selectedMembers.length,
-                        members_url: '',
-                        logged_in_member_url: '',
-                        join_code: '',
-                        created: '',
-                        achievements_url: '',
-                        id: 0
+                        // quotes_url: '',
+                        // images_url: '',
+                        // url: '',
+                        // num_members: selectedMembers.length,
+                        // members_url: '',
+                        // logged_in_member_url: '',
+                        // join_code: '',
+                        // created: '',
+                        // achievements_url: '',
+                        // id: 0
                       }
                     });
+                    setGroupCode(s.data.join_code);
                   }}>
                   <Text style={styles.buttonText}>create group</Text>
                 </TouchableOpacity>

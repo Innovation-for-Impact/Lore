@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
 import { components } from '../types/backend-schema';
@@ -29,33 +29,39 @@ const GroupCard = ({ group }: GroupCardProps) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()}`;
   };
+
+  function pressGroup(group: Group) {
+    console.log(group);
+  }
   
   return (
-    <View style={styles.card}>
-      {/* put the image container here*/}
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: group.avatar }} style={styles.image} />
-        
-        {/* overlay the member count */}
-        <View style={styles.overlay}>
-          <Text style={styles.memberCount}>+{group.num_members}</Text>
-          <FontAwesome name="users" size={16} color="white" />
-        </View>
-      </View>
+    <TouchableOpacity onPress={() => pressGroup(group)}>
+      <View style={styles.card}>
+        {/* put the image container here*/}
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: group.avatar }} style={styles.image} />
 
-      {/* info for each card */}
-      <View style={styles.textContainer}>
-        <Text>
-          <Text style={styles.title}>{group.name}</Text>
-          <Text> | </Text>
-          <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
-        </Text>
-        <View style={styles.location}>
-          <FontAwesome name="map-marker" size={14} color="#44344D" />
-          <Text style={styles.locationText}>{group.location}</Text>
+          {/* overlay the member count */}
+          <View style={styles.overlay}>
+            <Text style={styles.memberCount}>+{group.num_members}</Text>
+            <FontAwesome name="users" size={16} color="white" />
+          </View>
+        </View>
+
+        {/* info for each card */}
+        <View style={styles.textContainer}>
+          <Text>
+            <Text style={styles.title}>{group.name}</Text>
+            <Text> | </Text>
+            <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
+          </Text>
+          <View style={styles.location}>
+            <FontAwesome name="map-marker" size={14} color="#44344D" />
+            <Text style={styles.locationText}>{group.location}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

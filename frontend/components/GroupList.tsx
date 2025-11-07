@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import GroupCard from './GroupCard';
-import * as SecureStore from 'expo-secure-store';
 import { $api } from '../types/constants';
 
 const GroupList = () => {
@@ -50,11 +49,12 @@ const GroupList = () => {
       ) : (
         <FlatList
           data={groupData.results}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <GroupCard group={item} />}
+          keyExtractor={(item) => String(item.data.id)}
+          renderItem={({ item }) => <GroupCard group={item.data} />}
           contentContainerStyle={styles.listContainer} // ensures even spacing
           keyboardShouldPersistTaps="handled" // allows smooth scrolling
           showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+          
         />
       )}
     </View>
