@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Dimensions } from 'react-native';
 import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -82,7 +83,7 @@ function CreateGroup() {
   )
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <TouchableOpacity
         style={[styles.createButton, isButtonActive && styles.activeButton]}
         onPress={() => {
@@ -291,24 +292,17 @@ function CreateGroup() {
           </View>
         </View>
       </Modal>
-
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
     borderRadius: 10,
     paddingHorizontal: 10,
-    // paddingVertical: 5,
     marginBottom: 10,
     marginTop: 10,
     width: '100%',
@@ -336,14 +330,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#44344D',
     borderRadius: 20,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingVertical: 5,
+    width: '40%',
+    alignItems: 'center',
   },
   createButtonText: {
     fontSize: 15,
-    fontFamily: 'Work Sans'
+    fontFamily: 'Work Sans',
   },
   keyboardAvoidingView: {
     flex: 1,

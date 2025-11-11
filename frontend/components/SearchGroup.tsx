@@ -45,8 +45,8 @@ const SearchGroup = ({ onChangeQuery }: SearchGroupProps) => {
       <Ionicons name="search-outline" size={20} color="#FFF" style={styles.icon} />
       <TextInput
         style={styles.input}
-        placeholder="search for friend groups"
-        placeholderTextColor="#FFFFFF99"
+        placeholder="search friend groups"
+        placeholderTextColor="#FFF"
         value={query}
         onChangeText={handleChangeText}
       />
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#427F9D', // Bluish background for the pill shape
+    backgroundColor: '#9680B6',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,

@@ -54,108 +54,106 @@ function JoinGroup({ onJoinGroup }: JoinGroupProps) {
 
     // TODO: refresh group list when joining a group
     return (
-        <SafeAreaProvider>
-            <SafeAreaView style={styles.container}>
-                <TouchableOpacity 
-                    style={[styles.joinButton, isButtonActive && styles.activeButton]} 
-                    onPress={() => {
-                        setModalVisible(true);
-                        setIsButtonActive(true);
-                    }}
-                >
-                    <Text style={[styles.joinButtonText, (modalVisible || successModalVisible || failureModalVisible) && styles.activeButtonText]}>
-                        join group
-                    </Text>
-                </TouchableOpacity>
+        <>
+            <TouchableOpacity 
+                style={[styles.joinButton, isButtonActive && styles.activeButton]} 
+                onPress={() => {
+                    setModalVisible(true);
+                    setIsButtonActive(true);
+                }}
+            >
+                <Text style={[styles.joinButtonText, (modalVisible || successModalVisible || failureModalVisible) && styles.activeButtonText]}>
+                    join group
+                </Text>
+            </TouchableOpacity>
 
-                {/* Modal for entering group code - - way to show content above existing content*/}
-                {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
-                <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-                    <View style={styles.fullScreenContainer}>
-                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-                    </View>
-                    {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
-                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-                        <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                                <View style={styles.iconTextContainer}> 
-                                    <Text style={styles.modalTitle}>enter group code</Text>
-                                    <TouchableOpacity onPress={() => {setModalVisible(false); setIsButtonActive(false); }}>
-                                        <Feather name="x-square" size={25} color="black" />
-                                    </TouchableOpacity>
-                                </View>
-
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="group code"
-                                    placeholderTextColor="#BFBFBF"
-                                    value={groupCode}
-                                    onChangeText={setGroupCode}
-                                    keyboardType="default"
-                                />
-                                <View style={styles.buttonRow}>
-                                    <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupCode('')}>
-                                        <Text style={styles.buttonText}>clear</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity style={styles.button} onPress={handleJoinGroup}>
-                                        <Text style={styles.buttonText}>enter</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </KeyboardAvoidingView>
-                </Modal>
-
-                {/* Success Modal */}
-                <Modal visible={successModalVisible} transparent={true} animationType="fade" onRequestClose={() => setSuccessModalVisible(false)}>
-                    <View style={styles.fullScreenContainer}>
-                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-                    </View>
+            {/* Modal for entering group code - - way to show content above existing content*/}
+            {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
+            <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <View style={styles.fullScreenContainer}>
+                    <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                </View>
+                {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <View style={styles.iconSuccessFailTextContainer}>
-                                <Feather name="check-circle" size={25} color="green" />
-                                <Text style={styles.modalText}>joined successfully.</Text>
+                            <View style={styles.iconTextContainer}> 
+                                <Text style={styles.modalTitle}>enter group code</Text>
+                                <TouchableOpacity onPress={() => {setModalVisible(false); setIsButtonActive(false); }}>
+                                    <Feather name="x-square" size={25} color="black" />
+                                </TouchableOpacity>
                             </View>
 
-                            <View style={styles.successFailButtonRow}>
-                                <TouchableOpacity onPress={() => {setSuccessModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
-                                    <Text style={styles.buttonText}>continue</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="group code"
+                                placeholderTextColor="#BFBFBF"
+                                value={groupCode}
+                                onChangeText={setGroupCode}
+                                keyboardType="default"
+                            />
+                            <View style={styles.buttonRow}>
+                                <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupCode('')}>
+                                    <Text style={styles.buttonText}>clear</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => { setSuccessModalVisible(false); setModalVisible(true); setIsButtonActive(true); }} style={[styles.modalButton, styles.secondaryButton]}>
-                                    <Text style={styles.buttonText}>join another</Text>
+
+                                <TouchableOpacity style={styles.button} onPress={handleJoinGroup}>
+                                    <Text style={styles.buttonText}>enter</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     </View>
-                </Modal>
+                </KeyboardAvoidingView>
+            </Modal>
 
-                {/* Failure Modal */}
-                <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
-                    <View style={styles.fullScreenContainer}>
-                        <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-                    </View>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <View style={styles.iconSuccessFailTextContainer}>
-                                <Feather name="x-circle" size={25} color="red" />
-                                <Text style={styles.modalText}>group cannot be found.</Text>
-                            </View>
+            {/* Success Modal */}
+            <Modal visible={successModalVisible} transparent={true} animationType="fade" onRequestClose={() => setSuccessModalVisible(false)}>
+                <View style={styles.fullScreenContainer}>
+                    <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                </View>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.iconSuccessFailTextContainer}>
+                            <Feather name="check-circle" size={25} color="green" />
+                            <Text style={styles.modalText}>joined successfully.</Text>
+                        </View>
 
-                            <View style={styles.successFailButtonRow}>
-                                <TouchableOpacity onPress={() => {setFailureModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
-                                    <Text style={styles.buttonText}>cancel</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => { setFailureModalVisible(false); setModalVisible(true); setIsButtonActive(true);}} style={[styles.modalButton, styles.secondaryButton]}>
-                                    <Text style={styles.buttonText}>try again</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={styles.successFailButtonRow}>
+                            <TouchableOpacity onPress={() => {setSuccessModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
+                                <Text style={styles.buttonText}>continue</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setSuccessModalVisible(false); setModalVisible(true); setIsButtonActive(true); }} style={[styles.modalButton, styles.secondaryButton]}>
+                                <Text style={styles.buttonText}>join another</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                </Modal>
-            </SafeAreaView>
-        </SafeAreaProvider>
+                </View>
+            </Modal>
+
+            {/* Failure Modal */}
+            <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
+                <View style={styles.fullScreenContainer}>
+                    <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+                </View>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.iconSuccessFailTextContainer}>
+                            <Feather name="x-circle" size={25} color="red" />
+                            <Text style={styles.modalText}>group cannot be found.</Text>
+                        </View>
+
+                        <View style={styles.successFailButtonRow}>
+                            <TouchableOpacity onPress={() => {setFailureModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
+                                <Text style={styles.buttonText}>cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { setFailureModalVisible(false); setModalVisible(true); setIsButtonActive(true);}} style={[styles.modalButton, styles.secondaryButton]}>
+                                <Text style={styles.buttonText}>try again</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </>
     );
 }
 
@@ -166,20 +164,13 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#44344D',
         borderRadius: 20,
-        paddingLeft: 15,
-        paddingRight: 15,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginTop: 25,
+        paddingVertical: 5,
+        width: '40%',
+        alignItems: 'center',
     },
     joinButtonText: {
         fontSize: 15,
         fontFamily: 'Work Sans'
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     keyboardAvoidingView: {
         flex: 1,

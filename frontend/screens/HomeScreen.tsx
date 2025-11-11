@@ -16,35 +16,30 @@ const HomeScreen = () => {
   };
   
   return (
-    <View style={[globalStyles.container, { justifyContent: 'flex-start', alignItems: 'center' }]}>
+    <View style={[globalStyles.container, styles.mainContainer]}>
       <SearchGroupBar /> 
-      <View style={styles.container}>
-        <JoinGroup  onJoinGroup={handleUserJoinedGroup} />
+      
+      <View style={styles.buttonContainer}>
+        <JoinGroup onJoinGroup={handleUserJoinedGroup} />
         <CreateGroup />
       </View>
+      
       <GroupList />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: -35,
-    marginBottom: -25,
-  },
-  innerContainer: {
-    flex: 1, // Allows screen to expand properly
-    backgroundColor: '#f5f5f5',
-    paddingTop: 40,
-    paddingHorizontal: 15,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 35,
+    paddingVertical: 25,
   },
 });
 

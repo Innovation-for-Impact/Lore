@@ -50,9 +50,9 @@ function Navigation() {
                         tabBarStyle: getTabBarStyle(insets, tabBarWidth),
                     })}
                 >
-                    <Tab.Screen name="Community" component={CommunityStack} />
-                    <Tab.Screen name="Home" component={HomeScreen} />
-                    <Tab.Screen name="Profile" component={ProfileScreen} />
+                    <Tab.Screen name="Community" options={{ headerShown: false }} component={CommunityStack} />
+                    <Tab.Screen name="Home" options={{ headerShown: false }} component={HomeScreen} />
+                    <Tab.Screen name="Profile" options={{ headerShown: false }} component={ProfileScreen} />
                 </Tab.Navigator>
             </View>
         </View>
