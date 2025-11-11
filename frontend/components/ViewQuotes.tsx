@@ -1,4 +1,4 @@
-import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -92,9 +92,9 @@ const ViewQuotes = () => {
           <TouchableOpacity onPress={() => handlePinPress(item.id)}>
             <Text>
               {isPinned ? 
-                <AntDesign name="pushpin" size={25} color="#44344D" /> 
+                <MaterialCommunityIcons name="pin" size={32} color="#44344D" /> 
               : 
-                <AntDesign name="pushpino" size={25} color="#44344D" />
+                <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" />
               }
             </Text>
           </TouchableOpacity>
