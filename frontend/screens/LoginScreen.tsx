@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: screenWidth * 0.9,
-    paddingVertical: screenHeight * 0.015,
+    paddingVertical: screenHeight * 0.014,
     height: 50,
     backgroundColor: "#5F4078",
     borderRadius: 8,

@@ -7,6 +7,19 @@ import { components } from '../types/backend-schema';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+const isSmallScreen = screenHeight < 700;        // iPhone SE
+const isMediumScreen = screenHeight >= 700 && screenHeight < 900; // iPhone 11/12/13/14/15
+// const isLargeScreen = screenHeight >= 900;      // Pro Max / Plus
+
+const cardHeight = Math.max(screenHeight * 0.27, 200); // minimum 200px height
+const imageHeight = Math.max(screenHeight * 0.2, 145); // minimum 120px for image
+
+const fontSize = {
+  title: isSmallScreen ? 15 : isMediumScreen ? 16 : 17,
+  subtitle: isSmallScreen ? 14 : isMediumScreen ? 15 : 16,
+  location: isSmallScreen ? 13 : isMediumScreen ? 14 : 15,
+};
+
 type Group = components["schemas"]["Group"];
 // TODO: use components["schemas"]["Group"]
 // export type Group = {
@@ -37,14 +50,14 @@ const GroupCard = ({ group }: GroupCardProps) => {
   return (
     <TouchableOpacity onPress={() => pressGroup(group)}>
       <View style={styles.card}>
-        {/* put the image container here*/}
+        {/* image container */}
         <View style={styles.imageContainer}>
           <Image source={{ uri: group.avatar }} style={styles.image} />
 
           {/* overlay the member count */}
           <View style={styles.overlay}>
             <Text style={styles.memberCount}>+{group.num_members}</Text>
-            <FontAwesome name="users" size={16} color="white" />
+            <FontAwesome name="users" size={isSmallScreen ? 14 : 16} color="white" />
           </View>
         </View>
 
@@ -52,11 +65,11 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <View style={styles.textContainer}>
           <Text>
             <Text style={styles.title}>{group.name}</Text>
-            <Text> | </Text>
+            <Text style={styles.separator}> | </Text>
             <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
           </Text>
           <View style={styles.location}>
-            <FontAwesome name="map-marker" size={14} color="#44344D" />
+            <FontAwesome name="map-marker" size={fontSize.location} color="#44344D" />
             <Text style={styles.locationText}>{group.location}</Text>
           </View>
         </View>
@@ -77,28 +90,29 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
     width: screenWidth * 0.9,
-    height: screenHeight * 0.27,
+    height: cardHeight,
   },
   imageContainer: {
-    flex: 1,
+    flex: 1.6,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: isSmallScreen ? 55 : isMediumScreen ? 65 : 75,
   },
   image: {
-    width: '96%',
-    height: screenHeight * 0.19,
+    width: '95%',
+    height: imageHeight,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#9CAAC7',
-    marginTop: 75,
   },
   overlay: {
     position: 'absolute',
-    bottom: -60,
-    right: 20,
+    bottom: isSmallScreen ? -40 : isMediumScreen ? -50 : -60,
+    right: 15,
     flexDirection: 'row',
     backgroundColor: 'rgba(0,0,0,0.6)',
-    padding: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 10,
     alignItems: 'center',
   },
@@ -106,34 +120,41 @@ const styles = StyleSheet.create({
     color: 'white',
     marginRight: 5,
     fontWeight: '600',
-    fontFamily: 'Work Sans'
+    fontFamily: 'Work Sans',
+    fontSize: isSmallScreen ? 13 : 14,
   },
   textContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 10,
+    flex: 1.4,
+    justifyContent: 'flex-start',
+    paddingHorizontal: 12,
+    paddingTop: isSmallScreen ? 45 : isMediumScreen ? 60 : 65,
+    gap: isSmallScreen ? 4 : isMediumScreen ? 5 : 6,
   },
   title: {
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: fontSize.title,
     fontFamily: 'Work Sans',
     color: '#44344D',
   },
+  separator: {
+    color: '#9680B6',
+    fontSize: fontSize.subtitle,
+  },
   subtitle: {
     color: '#9680B6',
-    fontSize: 15,
+    fontSize: fontSize.subtitle,
     fontFamily: 'Work Sans',
     fontWeight: '600',
   },
   location: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5,
   },
   locationText: {
     marginLeft: 5,
     color: '#44344D',
-    fontFamily: 'Work Sans'
+    fontFamily: 'Work Sans',
+    fontSize: fontSize.location,
   },
 });
 

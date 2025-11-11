@@ -7,6 +7,14 @@ import { Navigation, RootStackParamList } from '../types/navigation';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+const isSmallScreen = screenHeight < 700;
+const isMediumScreen = screenHeight >= 700 && screenHeight < 900;
+const cardHeight = Math.max(screenHeight * 0.23, 200); // minimum 200px height
+const imageHeight = Math.max(screenHeight * 0.18, 145); // minimum 120px for image
+const fontSize = {
+  title: isSmallScreen ? 23 : isMediumScreen ? 24 : 25,
+};
+
 // TODO: change this to be inline with API
 export type Board = {
   id: string;
@@ -22,19 +30,22 @@ const BoardCard = ({ name, screen, image }: Board ) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.card}>
-      {/* put the image container here*/}
-      <View style={styles.imageContainer}>
-        {/* added placeholder for image */}
-        <Image
-          source={image ? { uri: image } : placeholder}
-          style={styles.image}
-        />
-      </View>
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.card}>
 
-      {/* info for each card */}
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>{name}</Text>
+        {/* image section */}
+        <View style={styles.imageContainer}>
+          <Image
+            source={image ? { uri: image } : placeholder}
+            style={styles.image}
+          />
+        </View>
+
+        {/* title section */}
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{name}</Text>
+        </View>
+
       </View>
     </TouchableOpacity>
   );
@@ -51,32 +62,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    width: screenWidth * 0.85,
-    height: screenHeight * 0.23,
+    width: screenWidth * 0.9,
+    height: cardHeight,
   },
   imageContainer: {
-    flex: 1,
+    flex: 1.6,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: isSmallScreen ? 55 : isMediumScreen ? 65 : 75,
   },
   image: {
     width: '95%',
-    height: screenHeight * 0.18,
+    height: imageHeight,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#9CAAC7',
   },
   textContainer: {
-    flexShrink: 1,
-    justifyContent: 'center',
-    paddingBottom: 5,
+    flex: 1.4,
+    justifyContent: 'flex-start',
+    paddingHorizontal: 12,
+    paddingTop: isSmallScreen ? 58 : isMediumScreen ? 61 : 69,
+    alignItems: 'center',
   },
   title: {
     fontWeight: '600',
-    fontSize: 20,
+    fontSize: fontSize.title,
+    fontFamily: 'Work Sans',
     color: '#44344D',
     textAlign: 'center',
-    fontFamily: 'Work Sans'
   },
 });
 
