@@ -16,7 +16,6 @@ const GroupList = () => {
     "/api/v1/groups/",
   )
 
-  // TODO: change this
   if (isLoading) {
     return (
       <View style={styles.emptyContainer}>
@@ -54,7 +53,6 @@ const GroupList = () => {
           contentContainerStyle={styles.listContainer} // ensures even spacing
           keyboardShouldPersistTaps="handled" // allows smooth scrolling
           showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
-          
         />
       )}
     </View>

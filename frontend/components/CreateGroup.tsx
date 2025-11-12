@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { $api } from '../types/constants';
 import { components } from '../types/backend-schema';
+import { useQueryClient } from '@tanstack/react-query';
+import { QueryKey } from 'openapi-react-query';
 
 type User = components["schemas"]["User"];
 
@@ -23,6 +25,8 @@ function CreateGroup() {
 
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
+
+  const queryClient = useQueryClient();
 
   // Get all users. Should this be for "friends"?
   const { data } = $api.useQuery(
@@ -88,6 +92,9 @@ function CreateGroup() {
     "/api/v1/groups/", {
       onError: (error) => {
         console.log(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
       }
     }
   )
@@ -274,10 +281,6 @@ function CreateGroup() {
                     setQuickAddModalVisible(false);
                     setIsButtonActive(true);
                     setGroupCreatedModalVisible(true);
-                    // What?
-                    // TODO: is group code generated from backend?
-                    // TODO: is group ID generated from backend?
-                    // TODO: need to keep track of current user info
                     const s = await handleCreateGroup({
                       body: {
                         name: groupName,

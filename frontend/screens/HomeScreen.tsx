@@ -11,16 +11,16 @@ const HomeScreen = () => {
   // const [userJoinedGroup, setUserJoinedGroup] = useState(false);
 
   // GroupList re-fetches data
-  const handleUserJoinedGroup = () => {
-    setUserJoinedGroup(prev => !prev);
-  };
+  // const handleUserJoinedGroup = () => {
+  //   setUserJoinedGroup(prev => !prev);
+  // };
   
   return (
     <View style={[globalStyles.container, styles.mainContainer]}>
       <SearchGroupBar /> 
       
       <View style={styles.buttonContainer}>
-        <JoinGroup onJoinGroup={handleUserJoinedGroup} />
+        <JoinGroup />
         <CreateGroup />
       </View>
       
