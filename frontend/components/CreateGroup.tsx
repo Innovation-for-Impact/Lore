@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions } from 'react-native';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -15,11 +13,13 @@ function CreateGroup() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [error, setError] = useState('');
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [location, setLocation] = useState('');
   const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
   const [groupCode, setGroupCode] = useState('');
+  const [error, setError] = useState('');
 
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
@@ -44,6 +44,16 @@ function CreateGroup() {
     }
     setError('');
     setModalVisible(false);
+    setLocationModalVisible(true);
+  }
+
+  const handleSetLocation = () => {
+    if (!location.trim()) {
+      setError("location can't be empty");
+      return;
+    }
+    setError('');
+    setLocationModalVisible(false);
     setQuickAddModalVisible(true);
   }
 
@@ -90,22 +100,21 @@ function CreateGroup() {
           setModalVisible(true);
           setIsButtonActive(true);
           setGroupName('');
+          setLocation('');
           setSearchQuery('');
           setSearchResults([]);
         }}
       >
-        <Text style={[styles.createButtonText, (modalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
+        <Text style={[styles.createButtonText, (modalVisible || locationModalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
           create group
         </Text>
       </TouchableOpacity>
 
-      {/* Modal for entering group code - - way to show content above existing content */}
-      {/* onRequestClose closes the modal when users go back or swipe on android/swipe, while updating state  */}
+      {/* Modal for entering group name */}
       <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
-        {/* KeyboardAvoidingView ensures that the content is still visible when keyboard is used */}
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -135,7 +144,55 @@ function CreateGroup() {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.button} onPress={handleCreateGroupName}>
-                  <Text style={styles.buttonText}>enter</Text>
+                  <Text style={styles.buttonText}>next</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Modal for entering location */}
+      <Modal animationType="fade" transparent={true} visible={locationModalVisible} onRequestClose={() => setLocationModalVisible(false)}>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.iconTextContainer}>
+                <Text style={styles.searchModalTitle}>set location</Text>
+                <TouchableOpacity onPress={() => { setLocationModalVisible(false); setIsButtonActive(false); }}>
+                  <Feather name="x-square" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={[styles.input, error && styles.inputError]}
+                placeholder="location"
+                placeholderTextColor="#BFBFBF"
+                value={location}
+                onChangeText={(text) => {
+                  setLocation(text);
+                  if (error) setError('');
+                }}
+                keyboardType="default"
+              />
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <View style={styles.buttonRow}>
+                <TouchableOpacity 
+                  style={[styles.button, styles.clearButton]} 
+                  onPress={() => {
+                    setLocationModalVisible(false);
+                    setModalVisible(true);
+                  }}
+                >
+                  <Text style={styles.buttonText}>back</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={handleSetLocation}>
+                  <Text style={styles.buttonText}>next</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -204,9 +261,9 @@ function CreateGroup() {
               <View style={styles.buttonRow}>
                 <TouchableOpacity
                   style={[styles.button, styles.clearButton]}
-                  onPress={async () => {
+                  onPress={() => {
                     setQuickAddModalVisible(false);
-                    setModalVisible(true);
+                    setLocationModalVisible(true);
                   }}>
                   <Text style={styles.buttonText}>back</Text>
                 </TouchableOpacity>
@@ -224,7 +281,7 @@ function CreateGroup() {
                     const s = await handleCreateGroup({
                       body: {
                         name: groupName,
-                        location: 'Ann Arbor',
+                        location: location,
                         members: [...selectedMembers.map(member => member.id)],
                         // quotes_url: '',
                         // images_url: '',
@@ -394,7 +451,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    // marginLeft: 111,
   },
   button: {
     flex: 1,
@@ -408,7 +464,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#9680B6',
   },
   buttonText: {
-
     color: 'white',
     fontWeight: '500',
     fontFamily: 'Work Sans'
