@@ -38,6 +38,8 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
   // Toggle for password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const [error, setError] = useState("");
+
   const goBackToRegistration = () => {
     navigation.goBack();
   };
@@ -46,14 +48,16 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
     "post",
     "/api/v1/auth/login/",
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         // redirect to user page
         setUser(true);
+        // TODO: save this somewhere
+        // response.access;
+        // response.refresh
         navigation.navigate("HomeScreen");
       },
       onError: (error) => {
-        console.log("error occured", error);
-        // display any errors
+        setError(error.non_field_errors);
       }
     }
   )
@@ -61,6 +65,7 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
   const handleLogin = async () => {
     if (!isEmailValid) {
       // Set error message for email
+      setError("Email is invalid!");
       return;
     }
     // validate input fields
@@ -139,15 +144,19 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
         </TouchableOpacity>
       </View>
 
+
       {/* Forgot Password */}
       <TouchableOpacity onPress={handleForgotPassword}>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
       {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>log in</Text>
       </TouchableOpacity>
+
 
       {/* Sign Up Footer */}
       <View style={styles.signUpContainer}>
@@ -174,6 +183,12 @@ const styles = StyleSheet.create({
     top: 60,
     left: 15,
     zIndex: 10
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    marginTop: -10,
+    fontFamily: 'Work Sans'
   },
   logo: {
     width: screenWidth * 0.6,

@@ -69,6 +69,7 @@ function CreateGroup() {
 
     // Filter results based on the search query
     // TODO: backend needs to fix this for openAPI
+    // TODO: filter out logged in user
     const filteredResults = data?.results.filter(user => {
       const fullName = `${user.data.first_name} ${user.data.last_name}`.toLowerCase();
       return fullName.includes(query.toLowerCase());
@@ -107,6 +108,7 @@ function CreateGroup() {
           setModalVisible(true);
           setIsButtonActive(true);
           setGroupName('');
+          setSelectedMembers([]);
           setLocation('');
           setSearchQuery('');
           setSearchResults([]);
