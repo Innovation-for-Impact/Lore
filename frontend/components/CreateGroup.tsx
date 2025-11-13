@@ -8,7 +8,6 @@ import { BlurView } from 'expo-blur';
 import { $api } from '../types/constants';
 import { components } from '../types/backend-schema';
 import { useQueryClient } from '@tanstack/react-query';
-import { QueryKey } from 'openapi-react-query';
 
 type User = components["schemas"]["User"];
 
@@ -17,6 +16,7 @@ function CreateGroup() {
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [location, setLocation] = useState('');
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [image, setImage] = useState<string | null>(null);
@@ -125,9 +125,11 @@ function CreateGroup() {
     "post",
     "/api/v1/groups/", {
       onError: (error) => {
+        setFailureModalVisible(true);
         console.log(error);
       },
       onSuccess: () => {
+        setGroupCreatedModalVisible(true);
         queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
       }
     }
@@ -143,6 +145,7 @@ function CreateGroup() {
           setGroupName('');
           setSelectedMembers([]);
           setLocation('');
+          setImage('');
           setSearchQuery('');
           setSearchResults([]);
         }}
@@ -367,12 +370,12 @@ function CreateGroup() {
                   onPress={async () => {
                     setQuickAddModalVisible(false);
                     setIsButtonActive(true);
-                    setGroupCreatedModalVisible(true);
                     const s = await handleCreateGroup({
                       body: {
                         name: groupName,
                         location: location,
                         members: [...selectedMembers.map(member => member.id)],
+                        // TODO: fix this
                         avatar: image,
                         // quotes_url: '',
                         // images_url: '',
@@ -396,6 +399,25 @@ function CreateGroup() {
         </KeyboardAvoidingView>
       </Modal>
 
+      {/* Loading Modal */}
+      <Modal animationType="fade" transparent={true} visible={groupCreateLoading}>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.confirmView}>
+              <View>
+                <ActivityIndicator size="large" color="#44344D" />
+              </View>
+              <Text style={styles.modalText}>group creating...</Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+
       {/* Group created confirmation modal */}
       <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>
         <View style={styles.fullScreenContainer}>
@@ -408,35 +430,30 @@ function CreateGroup() {
               <Feather name="check-circle" size={25} color="green" />
               <Text style={styles.modalText}>group created.</Text>
             </View>
-            
-            {
-              groupCreateLoading ? (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <ActivityIndicator size="large" color="#44344D" />
-                </View>
-              ) : (
-                  <>
-                    <Text style={styles.groupCodeText}>{groupCode}</Text>
-                    <View style={styles.buttonRow}>
-                      <TouchableOpacity
-                        style={styles.modalButton}
-                        onPress={() => {
-                          setGroupCreatedModalVisible(false);
-                          setIsButtonActive(false);
-                          Clipboard.setStringAsync(groupCode);
-                          if (Platform.OS === 'android') {
-                            ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
-                          } else {
-                            Alert.alert('Text copied to clipboard!');
-                          }
-                        }}
-                      >
-                        <Text style={styles.buttonText}>copy code</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )
-            }
+          </View>
+        </View>
+      </Modal>
+
+      {/* Failure Modal */}
+      <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
+        <View style={styles.fullScreenContainer}>
+          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
+        </View>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.iconSuccessFailTextContainer}>
+              <Feather name="x-circle" size={25} color="red" />
+              <Text style={styles.modalText}>group creation error</Text>
+            </View>
+
+            <View style={styles.successFailButtonRow}>
+              <TouchableOpacity onPress={() => { setFailureModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
+                <Text style={styles.buttonText}>cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { setFailureModalVisible(false); setModalVisible(true); setIsButtonActive(true); }} style={[styles.modalButton, styles.secondaryButton]}>
+                <Text style={styles.buttonText}>try again</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -688,6 +705,20 @@ const styles = StyleSheet.create({
     color: '#9680B6',
     fontSize: 16,
     fontFamily: 'Work Sans',
+  },
+  iconSuccessFailTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  successFailButtonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
+  },
+  secondaryButton: {
+    backgroundColor: '#44344D',
   },
 });
 
