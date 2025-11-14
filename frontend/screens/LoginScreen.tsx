@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { $api } from '../types/constants';
+import { $api, setTokens } from '../types/constants';
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
@@ -51,9 +51,7 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
       onSuccess: (response) => {
         // redirect to user page
         setUser(true);
-        // TODO: save this somewhere
-        // response.access;
-        // response.refresh
+        setTokens(response.access, response.refresh);
         navigation.navigate("HomeScreen");
       },
       onError: (error) => {
