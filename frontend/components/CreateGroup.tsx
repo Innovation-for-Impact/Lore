@@ -18,7 +18,7 @@ function CreateGroup() {
   const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [location, setLocation] = useState('');
   const [imageModalVisible, setImageModalVisible] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
@@ -83,7 +83,7 @@ function CreateGroup() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0]);
     }
   };
 
@@ -148,7 +148,7 @@ function CreateGroup() {
           setGroupName('');
           setSelectedMembers([]);
           setLocation('');
-          setImage('');
+          setImage(null);
           setSearchQuery('');
           setSearchResults([]);
         }}
@@ -267,7 +267,7 @@ function CreateGroup() {
               {/* Image preview */}
               {image ? (
                 <View style={styles.imagePreviewContainer}>
-                  <Image source={{ uri: image }} style={styles.imagePreview} />
+                  <Image source={{ uri: image.uri }} style={styles.imagePreview} />
                   <TouchableOpacity 
                     style={styles.removeImageButton}
                     onPress={() => setImage(null)}
@@ -386,8 +386,8 @@ function CreateGroup() {
                     });
                     if (image) {
                       formData.append("avatar", {
-                        uri: image,
-                        name: "avatar.jpg",
+                        uri: image.uri,
+                        name: image.fileName,
                         type: "image/jpeg",
                       });    
                     }
