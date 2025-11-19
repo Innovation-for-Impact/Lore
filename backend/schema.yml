@@ -3013,6 +3013,12 @@ components:
           type: integer
         pinned:
           type: boolean
+        group:
+          type: integer
+        created:
+          type: string
+          format: date-time
+          readOnly: true
         said_by_url:
           type: string
           format: uri
@@ -3020,12 +3026,6 @@ components:
         group_url:
           type: string
           format: uri
-          readOnly: true
-        group:
-          type: integer
-        created:
-          type: string
-          format: date-time
           readOnly: true
         url:
           type: string
@@ -3078,6 +3078,12 @@ components:
           type: integer
         pinned:
           type: boolean
+        group:
+          type: integer
+        created:
+          type: string
+          format: date-time
+          readOnly: true
         said_by_url:
           type: string
           format: uri
@@ -3085,12 +3091,6 @@ components:
         group_url:
           type: string
           format: uri
-          readOnly: true
-        group:
-          type: integer
-        created:
-          type: string
-          format: date-time
           readOnly: true
         url:
           type: string
