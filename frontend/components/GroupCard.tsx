@@ -33,7 +33,6 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
   const navigation = useNavigation<NavigationProp>();
-  const [modalVisible, setModalVisible] = useState(false);
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

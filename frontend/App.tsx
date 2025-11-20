@@ -7,7 +7,6 @@ import { UserProvider } from './context/UserContext';
 import RootStack from './RootStack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-// const Stack = createStackNavigator();
 const queryClient = new QueryClient();
 
 export default function App() {
