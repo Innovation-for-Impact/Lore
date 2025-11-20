@@ -17,7 +17,7 @@ function CommunityStack() {
       <Stack.Screen 
         name="CommunityScreen"
         component={CommunityScreen} 
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name="QuoteBoardScreen"

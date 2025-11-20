@@ -1,8 +1,10 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
-import { GroupModal } from './GroupModal';
+import { RootStackParamList } from '../types/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -26,34 +28,25 @@ type GroupCardProps = {
   group: Group;
 };
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
+
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
+  const navigation = useNavigation<NavigationProp>();
   const [modalVisible, setModalVisible] = useState(false);
-  // const queryClient = useQueryClient();
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()}`;
   };
 
-  // const { mutateAsync: deleteGroup } = $api.useMutation(
-  //   "delete",
-  //   "/api/v1/groups/{id}/",
-  //   {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
-  //     },
-  //     onError: () => {
-  //       Alert.alert("Failed to delete group!");
-  //     }
-  //   }
-  // )
+  function pressGroup() {
+    navigation.navigate('GroupInfoScreen', { group });
+  }
 
   return (
     <>
-      <GroupModal group={group} visible={modalVisible} setVisible={setModalVisible} />
-
-      <TouchableOpacity onPress={() => {setModalVisible(true)}}>
+      <TouchableOpacity onPress={pressGroup}>
         <View style={styles.card}>
           {/* image container */}
           <View style={styles.imageContainer}>
