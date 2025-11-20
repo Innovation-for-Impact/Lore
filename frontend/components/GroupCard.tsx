@@ -45,6 +45,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   function pressGroup(group: Group) {
     console.log(group);
+
+    // navigate to group info screen
+    
   }
   
   return (

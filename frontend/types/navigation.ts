@@ -4,7 +4,6 @@ import { Quote } from "../components/ViewQuotes";
 
 export type RootStackParamList = {
   LoginScreen: undefined;
-  HomeScreen: undefined;
   RegistrationScreen: undefined;
   CreateAccountScreen: undefined;
   CreateAccountEmailScreen: undefined;
@@ -14,6 +13,9 @@ export type RootStackParamList = {
   WelcomeBack: { setUser: React.Dispatch<SetStateAction<boolean>> };
   CreateAccountNameScreen: undefined;
   ForgotPasswordScreen: undefined;
+
+  HomeScreen: undefined;
+  GroupInfoScreen: undefined;
 
   CommunityScreen: undefined;
   QuoteBoardScreen: undefined;
