@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable, Modal, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable, Modal, KeyboardAvoidingView, Platform, Alert, Dimensions } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import { Dimensions } from 'react-native';
 import { components } from '../types/backend-schema';
 import { $api } from '../types/constants';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,10 +31,14 @@ type GroupCardProps = {
   group: Group;
 };
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
+
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
+  const navigation = useNavigation<NavigationProp>();
   const [modalVisible, setModalVisible] = useState(false);
   const queryClient = useQueryClient();
+
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -44,7 +50,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
     console.log(group);
 
     // navigate to group info screen
-    
+    navigation.navigate('GroupInfoScreen', { group });
   }
 
   const { mutateAsync: deleteGroup } = $api.useMutation(

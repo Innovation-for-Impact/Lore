@@ -1,5 +1,4 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
 import HomeScreen from '../screens/HomeScreen';
 import GroupInfoScreen from '../screens/GroupInfoScreen';
 import { RootStackParamList } from '../types/navigation';

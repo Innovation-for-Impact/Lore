@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CommunityStack from './CommunityStack';
-import HomeScreen from '../screens/HomeScreen';
+import HomeStack from './HomeStack';
 import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles, getTabBarStyle } from '../styles/global';
 
@@ -48,11 +48,11 @@ function Navigation() {
                         tabBarActiveTintColor: '#000',
                         tabBarShowLabel: false,
                         tabBarStyle: getTabBarStyle(insets, tabBarWidth),
-                        headerShown: false,
+                        // headerShown: false,
                     })}
                 >
                     <Tab.Screen name="Community" component={CommunityStack} />
-                    <Tab.Screen name="Home" component={HomeScreen} />
+                    <Tab.Screen name="Home" component={HomeStack} />
                     <Tab.Screen name="Profile" component={ProfileScreen} />
                 </Tab.Navigator>
             </View>
