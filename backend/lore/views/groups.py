@@ -11,6 +11,7 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_401_UNAUTHORIZED,
+    HTTP_409_CONFLICT,
 )
 from rest_framework.views import Response
 
@@ -70,7 +71,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     def destroy(self, _: HttpRequest, pk: int | None = None) -> Response:
         """Destroy the group if it exists and there is at most 1 member."""
         group: models.LoreGroup | None = cast(
-            models.LoreGroup | None,
+            "models.LoreGroup | None",
             models.LoreGroup.groups.filter(pk=pk).first(),
         )
         if group is None:
@@ -105,7 +106,14 @@ class GroupViewSet(viewsets.ModelViewSet):
             msg = "Expected join code"
             raise ParseError(msg)
 
-        group = models.LoreGroup.groups.join_group(join_code, user)
+        try:
+            group = models.LoreGroup.groups.join_group(join_code, user)
+        except models.Http409Error:
+            return Response(
+                status=HTTP_409_CONFLICT,
+                data="User is already in group",
+            )
+
         context = {"request": request}
         serializer = self.serializer_class(group, many=False, context=context)
         return Response(serializer.data, status=HTTP_201_CREATED)

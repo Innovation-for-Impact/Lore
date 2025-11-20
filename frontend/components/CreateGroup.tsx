@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Modal, View, TextInput, ScrollView, ToastAndroid, Alert, ActivityIndicator, Image } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { BlurView } from 'expo-blur';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
-import { Feather } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import { $api } from '../types/constants';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
-import { useQueryClient } from '@tanstack/react-query';
+import { $api } from '../types/constants';
 
 type User = components["schemas"]["User"];
 
@@ -19,7 +18,7 @@ function CreateGroup() {
   const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [location, setLocation] = useState('');
   const [imageModalVisible, setImageModalVisible] = useState(false);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
@@ -31,7 +30,6 @@ function CreateGroup() {
 
   const queryClient = useQueryClient();
 
-  // Get all users. Should this be for "friends"?
   const { data } = $api.useQuery(
     "get",
     "/api/v1/users/",
@@ -85,11 +83,16 @@ function CreateGroup() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0]);
     }
   };
 
   const handleContinueWithImage = () => {
+    if (!image) {
+      setError("Pick an image");
+      return;
+    }
+    if (error) setError('');
     setImageModalVisible(false);
     setQuickAddModalVisible(true);
   };
@@ -145,7 +148,7 @@ function CreateGroup() {
           setGroupName('');
           setSelectedMembers([]);
           setLocation('');
-          setImage('');
+          setImage(null);
           setSearchQuery('');
           setSearchResults([]);
         }}
@@ -229,6 +232,7 @@ function CreateGroup() {
                 <TouchableOpacity 
                   style={[styles.button, styles.clearButton]} 
                   onPress={() => {
+                    if (error) setError('');
                     setLocationModalVisible(false);
                     setModalVisible(true);
                   }}
@@ -263,7 +267,7 @@ function CreateGroup() {
               {/* Image preview */}
               {image ? (
                 <View style={styles.imagePreviewContainer}>
-                  <Image source={{ uri: image }} style={styles.imagePreview} />
+                  <Image source={{ uri: image.uri }} style={styles.imagePreview} />
                   <TouchableOpacity 
                     style={styles.removeImageButton}
                     onPress={() => setImage(null)}
@@ -277,10 +281,13 @@ function CreateGroup() {
                 </TouchableOpacity>
               )}
 
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
               <View style={styles.buttonRow}>
                 <TouchableOpacity 
                   style={[styles.button, styles.clearButton]} 
                   onPress={() => {
+                    if (error) setError('');
                     setImageModalVisible(false);
                     setLocationModalVisible(true);
                   }}
@@ -370,24 +377,22 @@ function CreateGroup() {
                   onPress={async () => {
                     setQuickAddModalVisible(false);
                     setIsButtonActive(true);
+                    // Some hack to get avatar to show up
+                    const formData = new FormData();
+                    formData.append("name", groupName);
+                    formData.append("location", location);
+                    selectedMembers.forEach((m) => {
+                      formData.append("members", m.id.toString());
+                    });
+                    if (image) {
+                      formData.append("avatar", {
+                        uri: image.uri,
+                        name: image.fileName,
+                        type: "image/jpeg",
+                      });    
+                    }
                     const s = await handleCreateGroup({
-                      body: {
-                        name: groupName,
-                        location: location,
-                        members: [...selectedMembers.map(member => member.id)],
-                        // TODO: fix this
-                        avatar: image,
-                        // quotes_url: '',
-                        // images_url: '',
-                        // url: '',
-                        // num_members: selectedMembers.length,
-                        // members_url: '',
-                        // logged_in_member_url: '',
-                        // join_code: '',
-                        // created: '',
-                        // achievements_url: '',
-                        // id: 0
-                      }
+                      body: formData
                     });
                     setGroupCode(s.data.join_code);
                   }}>
@@ -417,7 +422,6 @@ function CreateGroup() {
         </View>
       </Modal>
 
-
       {/* Group created confirmation modal */}
       <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>
         <View style={styles.fullScreenContainer}>
@@ -430,6 +434,26 @@ function CreateGroup() {
               <Feather name="check-circle" size={25} color="green" />
               <Text style={styles.modalText}>group created.</Text>
             </View>
+            <>
+              <Text style={styles.groupCodeText}>{groupCode}</Text>
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={styles.modalButton}
+                  onPress={() => {
+                    setGroupCreatedModalVisible(false);
+                    setIsButtonActive(false);
+                    Clipboard.setStringAsync(groupCode);
+                    if (Platform.OS === 'android') {
+                      ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
+                    } else {
+                      Alert.alert('Text copied to clipboard!');
+                    }
+                  }}
+                >
+                  <Text style={styles.buttonText}>copy code</Text>
+                </TouchableOpacity>
+              </View>
+            </>
           </View>
         </View>
       </Modal>

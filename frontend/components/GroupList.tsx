@@ -1,7 +1,7 @@
 import React from 'react';
-import { FlatList, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import GroupCard from './GroupCard';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { $api } from '../types/constants';
+import GroupCard from './GroupCard';
 
 const GroupList = () => {
   const emptyGroupData = {
