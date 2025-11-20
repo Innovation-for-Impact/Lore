@@ -107,10 +107,10 @@ function CreateGroup() {
     // TODO: backend needs to fix this for openAPI
     // TODO: filter out logged in user
     const filteredResults = data?.results.filter(user => {
-      const fullName = `${user.data.first_name} ${user.data.last_name}`.toLowerCase();
+      const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
       return fullName.includes(query.toLowerCase());
     });
-    const flattenedResults = filteredResults?.map(item => item.data);
+    const flattenedResults = filteredResults?.map(item => item);
     setSearchResults(flattenedResults === undefined ? [] : flattenedResults);
   };
 
@@ -394,7 +394,7 @@ function CreateGroup() {
                     const s = await handleCreateGroup({
                       body: formData
                     });
-                    setGroupCode(s.data.join_code);
+                    setGroupCode(s.join_code);
                   }}>
                   <Text style={styles.buttonText}>create group</Text>
                 </TouchableOpacity>

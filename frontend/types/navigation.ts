@@ -1,5 +1,4 @@
 import { NavigationProp } from "@react-navigation/native";
-import { SetStateAction } from "react";
 import { Quote } from "../components/ViewQuotes";
 
 export type RootStackParamList = {
@@ -10,8 +9,8 @@ export type RootStackParamList = {
   CreateAccountEmailScreen: undefined;
   CreateAccountGroupScreen: undefined;
   CreateAccountProfileScreen: undefined;
-  CreateAccountWelcomeScreen: { setUser: React.Dispatch<SetStateAction<boolean>> };
-  WelcomeBack: { setUser: React.Dispatch<SetStateAction<boolean>> };
+  CreateAccountWelcomeScreen: undefined;
+  WelcomeBack: undefined;
   CreateAccountNameScreen: undefined;
   ForgotPasswordScreen: undefined;
 

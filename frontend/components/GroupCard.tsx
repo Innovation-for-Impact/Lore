@@ -1,11 +1,8 @@
+import { FontAwesome } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable, Modal, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons';
-import { Dimensions } from 'react-native';
+import { Dimensions, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
-import { $api } from '../types/constants';
-import { useQueryClient } from '@tanstack/react-query';
-import { BlurView } from 'expo-blur';
+import { GroupModal } from './GroupModal';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -32,71 +29,31 @@ type GroupCardProps = {
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()}`;
   };
 
-  function pressGroup(group: Group) {
-    // TODO: group details here
-    console.log(group);
-  }
-
-  const { mutateAsync: deleteGroup } = $api.useMutation(
-    "delete",
-    "/api/v1/groups/{id}/",
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
-      },
-      onError: () => {
-        Alert.alert("Failed to delete group!");
-      }
-    }
-  )
+  // const { mutateAsync: deleteGroup } = $api.useMutation(
+  //   "delete",
+  //   "/api/v1/groups/{id}/",
+  //   {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
+  //     },
+  //     onError: () => {
+  //       Alert.alert("Failed to delete group!");
+  //     }
+  //   }
+  // )
 
   return (
     <>
-      <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.fullScreenContainer}>
-          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-        </View>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.iconTextContainer}>
-                <Text style={styles.modalTitle}>delete group?</Text>
-                <TouchableOpacity onPress={() => { setModalVisible(false); }}>
-                  <Feather name="x-square" size={25} color="black" />
-                </TouchableOpacity>
-              </View>
+      <GroupModal group={group} visible={modalVisible} setVisible={setModalVisible} />
 
-              <View style={styles.buttonRow}>
-                <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.buttonText}>cancel</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.button} onPress={() => {
-                  deleteGroup({
-                    params: {
-                      path: {
-                        id: String(group.id)
-                      },
-                    }
-                  })
-                  setModalVisible(false);
-                }}>
-                  <Text style={styles.buttonText}>delete</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-
-      <TouchableOpacity onPress={() => pressGroup(group)}>
+      <TouchableOpacity onPress={() => {setModalVisible(true)}}>
         <View style={styles.card}>
           {/* image container */}
           <View style={styles.imageContainer}>
@@ -125,15 +82,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
               <Text style={styles.locationText}>{group.location}</Text>
             </View>
           </View>
-          <Pressable
-            style={({ pressed }) => [
-              styles.deleteButton,
-              { backgroundColor: pressed ? "#ff5555" : "red" },
-            ]}
-            onPress={() => setModalVisible(true)}
-          >
-            <FontAwesome name="trash" size={20} color="white" />
-          </Pressable>
+
         </View>
       </TouchableOpacity>
     </>
@@ -217,23 +166,6 @@ const styles = StyleSheet.create({
     color: '#44344D',
     fontFamily: 'Work Sans',
     fontSize: fontSize.location,
-  },
-  deleteButton: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    borderRadius: 20,
-    padding: 6,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-    // optional: shadow for iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // optional: elevation for Android
-    elevation: 5,
   },
   fullScreenContainer: {
     ...StyleSheet.absoluteFillObject,

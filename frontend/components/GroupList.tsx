@@ -48,8 +48,8 @@ const GroupList = () => {
       ) : (
         <FlatList
           data={groupData.results}
-          keyExtractor={(item) => String(item.data.id)}
-          renderItem={({ item }) => <GroupCard group={item.data} />}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => <GroupCard group={item} />}
           contentContainerStyle={styles.listContainer} // ensures even spacing
           keyboardShouldPersistTaps="handled" // allows smooth scrolling
           showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI

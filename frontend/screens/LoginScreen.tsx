@@ -1,31 +1,27 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from 'expo-secure-store';
 import React, { useState } from "react";
 import {
-  Alert,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { $api, setTokens } from '../types/constants';
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
+import { useUser } from '../context/UserContext';
 import { Navigation } from '../types/navigation';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-type LoginScreenProps = {
-  setUser: (value: boolean) => void;
-};
-
-const LoginScreen = ({ setUser }: LoginScreenProps) => {
+const LoginScreen = () => {
+  const {setUser} = useUser();
   const navigation = useNavigation<Navigation>();
 
   // State for email/password
@@ -50,7 +46,7 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
     {
       onSuccess: (response) => {
         // redirect to user page
-        setUser(true);
+        setUser(response.user);
         setTokens(response.access, response.refresh);
         navigation.navigate("HomeScreen");
       },
@@ -89,6 +85,18 @@ const LoginScreen = ({ setUser }: LoginScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={async () => {
+        await login(
+          {
+            body: {
+              email: "test@test.com",
+              password: "test123test123"
+            }
+          }
+        );
+      }}>
+        <Text> DEBUG LOG IN </Text>
+      </TouchableOpacity>
       {/* Back Arrow */}
       <TouchableOpacity
         style={styles.backButton}

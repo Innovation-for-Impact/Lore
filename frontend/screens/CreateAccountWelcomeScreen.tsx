@@ -8,11 +8,7 @@ import { Navigation } from '../types/navigation';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-interface CreateAccountWelcomeScreenProps {
-  setUser: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const CreateAccountWelcomeScreen = ({setUser}: CreateAccountWelcomeScreenProps) => {
+const CreateAccountWelcomeScreen = () => {
   const navigation = useNavigation<Navigation>();
 
   // Back arrow logic (if you want the arrow at the top left)
@@ -22,7 +18,8 @@ const CreateAccountWelcomeScreen = ({setUser}: CreateAccountWelcomeScreenProps) 
 
   // Navigate to HomeScreen
   const handleContinue = () => {
-    setUser(true)
+    // TODO: fix this (auto login)
+    // setUser(true)
     navigation.navigate("HomeScreen");
   };
 

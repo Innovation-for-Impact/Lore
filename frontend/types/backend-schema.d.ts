@@ -1276,13 +1276,13 @@ export interface components {
             text?: string;
             said_by?: number;
             pinned?: boolean;
+            group?: number;
+            /** Format: date-time */
+            readonly created?: string;
             /** Format: uri */
             readonly said_by_url?: string;
             /** Format: uri */
             readonly group_url?: string;
-            group?: number;
-            /** Format: date-time */
-            readonly created?: string;
             /** Format: uri */
             readonly url?: string;
         };
@@ -1312,13 +1312,13 @@ export interface components {
             text: string;
             said_by: number;
             pinned?: boolean;
+            group: number;
+            /** Format: date-time */
+            readonly created: string;
             /** Format: uri */
             readonly said_by_url: string;
             /** Format: uri */
             readonly group_url: string;
-            group: number;
-            /** Format: date-time */
-            readonly created: string;
             /** Format: uri */
             readonly url: string;
         };
