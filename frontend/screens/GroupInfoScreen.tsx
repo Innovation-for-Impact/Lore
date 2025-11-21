@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Platform, ToastAndroid, Alert } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { Navigation, RootStackParamList } from '../types/navigation';
 import { useUser } from '../context/UserContext';
@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { $api } from '../types/constants';
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import * as Clipboard from 'expo-clipboard';
 
 type GroupInfoScreenRouteProp = RouteProp<RootStackParamList, 'GroupInfoScreen'>;
 
@@ -59,14 +60,32 @@ const GroupInfoScreen = ({ route }: Props) => {
             <Ionicons name="arrow-back" size={35} color="#44344D" />
           </TouchableOpacity>
         </View>
-        {group.avatar && (
-          <Image source={{ uri: group.avatar }} style={styles.avatar} />
-        )}
-        <Text style={styles.name}>{group.name}</Text>
-        <Text style={styles.info}>Location: {group.location}</Text>
-        <Text style={styles.info}>Members: {group.num_members}</Text>
-        <Text style={styles.info}>Join Code: {group.join_code}</Text>
-        <Text style={styles.info}>Created: {new Date(group.created).toLocaleDateString()}</Text>
+        <View style={styles.contentWrapper}>
+          {group.avatar && (
+            <Image source={{ uri: group.avatar }} style={styles.avatar} />
+          )}
+          <Text style={styles.name}>{group.name}</Text>
+          <Text style={styles.info}>Location: {group.location}</Text>
+          <Text style={styles.info}>Members: {group.num_members}</Text>
+          <View style={styles.codeRow}>
+            <Text style={styles.info}> Join Code: {group.join_code}</Text>
+            <TouchableOpacity
+              style={styles.copyButton}
+              activeOpacity={0.7}
+              onPress={() => {
+                Clipboard.setStringAsync(group.join_code);
+                if (Platform.OS === 'android') {
+                  ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
+                } else {
+                  Alert.alert('Text copied to clipboard!');
+                }
+              }}
+            >
+              <Ionicons name="clipboard-outline" size={17} color="#9680B6" />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.info}>Created: {new Date(group.created).toLocaleDateString()}</Text>
+        </View>
         <Pressable
           style={({ pressed }) => [
             styles.leaveButton,
@@ -82,6 +101,9 @@ const GroupInfoScreen = ({ route }: Props) => {
 };
 
 const styles = StyleSheet.create({
+  contentWrapper: {
+    flex: 0.8,
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -115,8 +137,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   leaveButton: {
-    borderRadius: 20,
-    padding: 6,
+    borderRadius: 10,
+    padding: 12,
     justifyContent: "center",
     alignItems: "center",
     // optional: shadow for iOS
@@ -126,6 +148,16 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     // optional: elevation for Android
     elevation: 5,
+  },
+  codeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 4,
+    width: '100%',
+  },
+  copyButton: {
+    padding: 4,
   },
 });
 
