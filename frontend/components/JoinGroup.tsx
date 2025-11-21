@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Modal, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import * as SecureStore from 'expo-secure-store';
 import { $api } from '../types/constants';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -19,8 +17,7 @@ function JoinGroup() {
     "post",
     "/api/v1/groups/join/",
     {
-      onError: (error) => {
-        console.log(JSON.stringify(error));
+      onError: () => {
         setFailureModalVisible(true);
       },
       onSuccess: () => {

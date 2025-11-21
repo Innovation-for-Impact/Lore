@@ -11,14 +11,13 @@ import LoginScreen from '../screens/LoginScreen';
 import WelcomeBackScreen from '../screens/WelcomeBackScreen';
 import HomeScreen from '../screens/HomeScreen';
 import { RootStackParamList } from '../types/navigation';
+import { useUser } from '../context/UserContext';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-interface RegistrationStackProps {
-  setUser: (user: boolean) => void;
-}
+function RegistrationStack() {
+  const {setUser} = useUser();
 
-function RegistrationStack({ setUser }: RegistrationStackProps) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
@@ -57,9 +56,7 @@ function RegistrationStack({ setUser }: RegistrationStackProps) {
       <Stack.Screen name="CreateAccountWelcomeScreen" options={{ headerShown: false }}>
         {(props) => <CreateAccountWelcomeScreen {...props} setUser={setUser} />}
       </Stack.Screen>
-      <Stack.Screen name="WelcomeBack" options={{ headerShown: false }}>
-        {(props) => <WelcomeBackScreen {...props} setUser={setUser} />}
-      </Stack.Screen>
+      <Stack.Screen name="WelcomeBack" options={{ headerShown: false }} component={WelcomeBackScreen}/>
       <Stack.Screen
         name="HomeScreen" 
         component={HomeScreen} 

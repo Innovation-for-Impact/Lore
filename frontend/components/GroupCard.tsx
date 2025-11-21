@@ -1,8 +1,10 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
+import { RootStackParamList } from '../types/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -21,60 +23,61 @@ const fontSize = {
 };
 
 type Group = components["schemas"]["Group"];
-// TODO: use components["schemas"]["Group"]
-// export type Group = {
-//   id: number;
-//   name: string;
-//   avatar: string;
-//   num_members: number;
-//   created: string;
-//   location: string;
-// };
 
 type GroupCardProps = {
   group: Group;
 };
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
+
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
+  const navigation = useNavigation<NavigationProp>();
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()}`;
   };
 
-  function pressGroup(group: Group) {
-    console.log(group);
+  function pressGroup() {
+    navigation.navigate('GroupInfoScreen', { group });
   }
-  
+
   return (
-    <TouchableOpacity onPress={() => pressGroup(group)}>
-      <View style={styles.card}>
-        {/* image container */}
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: group.avatar }} style={styles.image} />
+    <>
+      <TouchableOpacity onPress={pressGroup}>
+        <View style={styles.card}>
+          {/* image container */}
+          <View style={styles.imageContainer}>
+            { 
+              group.avatar ? (
+                <Image source={{ uri: group.avatar }} style={styles.image} />
+              ) : <View style={styles.image}/>
+            }
 
-          {/* overlay the member count */}
-          <View style={styles.overlay}>
-            <Text style={styles.memberCount}>+{group.num_members}</Text>
-            <FontAwesome name="users" size={isSmallScreen ? 14 : 16} color="white" />
+            {/* overlay the member count */}
+            <View style={styles.overlay}>
+              <Text style={styles.memberCount}>+{group.num_members}</Text>
+              <FontAwesome name="users" size={isSmallScreen ? 14 : 16} color="white" />
+            </View>
           </View>
-        </View>
 
-        {/* info for each card */}
-        <View style={styles.textContainer}>
-          <Text>
-            <Text style={styles.title}>{group.name}</Text>
-            <Text style={styles.separator}> | </Text>
-            <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
-          </Text>
-          <View style={styles.location}>
-            <FontAwesome name="map-marker" size={fontSize.location} color="#44344D" />
-            <Text style={styles.locationText}>{group.location}</Text>
+          {/* info for each card */}
+          <View style={styles.textContainer}>
+            <Text>
+              <Text style={styles.title}>{group.name}</Text>
+              <Text style={styles.separator}> | </Text>
+              <Text style={styles.subtitle}>created: {formatDate(group.created)}</Text>
+            </Text>
+            <View style={styles.location}>
+              <FontAwesome name="map-marker" size={fontSize.location} color="#44344D" />
+              <Text style={styles.locationText}>{group.location}</Text>
+            </View>
           </View>
+
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </>
   );
 };
 
@@ -155,6 +158,61 @@ const styles = StyleSheet.create({
     color: '#44344D',
     fontFamily: 'Work Sans',
     fontSize: fontSize.location,
+  },
+  fullScreenContainer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  fullScreenBlur: {
+    flex: 1,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+    backgroundColor: '#44344D',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  clearButton: {
+    backgroundColor: '#9680B6',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '500',
+    fontFamily: 'Work Sans'
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#9680B6',
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginRight: 51,
+    fontFamily: 'Work Sans'
+  },
+  iconTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
   },
 });
 
