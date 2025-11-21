@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { $api } from '../types/constants';
 import * as ImagePicker from 'expo-image-picker';
+import { LoadingModal } from '../components/LoadingModal';
+import { pickImage } from '../utils/GroupUtils';
 
 type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'EditGroupScreen'>;
 
@@ -28,7 +30,7 @@ const EditGroupScreen = ({ route }: Props) => {
     "/api/v1/groups/{id}/",
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["get", "/api/v1/groups/"] });
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
         Alert.alert("Success", "Group updated successfully!");
         navigation.goBack();
       },
@@ -60,7 +62,7 @@ const EditGroupScreen = ({ route }: Props) => {
     const formData = new FormData();
     formData.append("name", name.trim());
     formData.append("location", location.trim());
-    
+
     if (image) {
       formData.append("avatar", {
         uri: image.uri,
@@ -77,107 +79,102 @@ const EditGroupScreen = ({ route }: Props) => {
       },
       body: formData as any
     });
-  };
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please grant camera roll permissions to upload an image');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 0.8,
+    queryClient.invalidateQueries({
+      queryKey: $api.queryOptions("get", "/api/v1/groups/{id}/", {
+        params: {
+          path: {
+            id: String(group.id)
+          }
+        }
+      }).queryKey
     });
-
-    if (!result.canceled && result.assets[0]) {
-      setImage(result.assets[0]);
-    }
+    queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
   };
 
   const currentAvatarUri = image ? image.uri : group.avatar;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={35} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Feather name="check" size={28} color="white" />
-        </TouchableOpacity>
+    <>
+      <LoadingModal title='updating group...' visible={isUpdating} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={35} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+            <Feather name="check" size={28} color="white" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.title}>edit group</Text>
+
+        <ScrollView style={styles.contentWrapper} showsVerticalScrollIndicator={false}>
+          <TouchableOpacity style={styles.avatarContainer} onPress={ async () => {
+            setImage(await pickImage());
+          }}>
+            {currentAvatarUri ? (
+              <View style={styles.imagePreviewContainer}>
+                <Image source={{ uri: currentAvatarUri }} style={styles.avatar} />
+                {image && (
+                  <TouchableOpacity
+                    style={styles.removeImageButton}
+                    onPress={() => setImage(null)}
+                  >
+                    <Feather name="x-circle" size={24} color="#5F4078" />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              <View style={styles.uploadButton}>
+                <Feather name="upload" size={40} color="#9680B6" />
+              </View>
+            )}
+            {!image && (
+              <View style={styles.editOverlay}>
+                <Feather name="edit-2" size={20} color="white" />
+              </View>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>group name</Text>
+            <TextInput
+              style={[styles.input, error && error.includes('name') && styles.inputError]}
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                if (error) setError('');
+              }}
+              placeholder="enter group name"
+              placeholderTextColor="#BFBFBF"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>location</Text>
+            <TextInput
+              style={[styles.input, error && error.includes('location') && styles.inputError]}
+              value={location}
+              onChangeText={(text) => {
+                setLocation(text);
+                if (error) setError('');
+              }}
+              placeholder="enter location"
+              placeholderTextColor="#BFBFBF"
+            />
+          </View>
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          <View style={styles.infoBox}>
+            <Feather name="info" size={16} color="#44344D" />
+            <Text style={styles.infoText}>
+              changes will be visible to all group members
+            </Text>
+          </View>
+        </ScrollView>
       </View>
-      
-      <Text style={styles.title}>edit group</Text>
-      
-      <ScrollView style={styles.contentWrapper} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.avatarContainer} onPress={pickImage}>
-          {currentAvatarUri ? (
-            <View style={styles.imagePreviewContainer}>
-              <Image source={{ uri: currentAvatarUri }} style={styles.avatar} />
-              {image && (
-                <TouchableOpacity 
-                  style={styles.removeImageButton}
-                  onPress={() => setImage(null)}
-                >
-                  <Feather name="x-circle" size={24} color="#5F4078" />
-                </TouchableOpacity>
-              )}
-            </View>
-          ) : (
-            <View style={styles.uploadButton}>
-              <Feather name="upload" size={40} color="#9680B6" />
-            </View>
-          )}
-          {!image && (
-            <View style={styles.editOverlay}>
-              <Feather name="edit-2" size={20} color="white" />
-            </View>
-          )}
-        </TouchableOpacity>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>group name</Text>
-          <TextInput
-            style={[styles.input, error && error.includes('name') && styles.inputError]}
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-              if (error) setError('');
-            }}
-            placeholder="enter group name"
-            placeholderTextColor="#BFBFBF"
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>location</Text>
-          <TextInput
-            style={[styles.input, error && error.includes('location') && styles.inputError]}
-            value={location}
-            onChangeText={(text) => {
-              setLocation(text);
-              if (error) setError('');
-            }}
-            placeholder="enter location"
-            placeholderTextColor="#BFBFBF"
-          />
-        </View>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <View style={styles.infoBox}>
-          <Feather name="info" size={16} color="#44344D" />
-          <Text style={styles.infoText}>
-            changes will be visible to all group members
-          </Text>
-        </View>
-      </ScrollView>
-    </View>
+    </>
   );
 };
 

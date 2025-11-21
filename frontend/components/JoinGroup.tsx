@@ -24,7 +24,7 @@ function JoinGroup() {
       },
       onSuccess: () => {
         setSuccessModalVisible(true);
-        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
       }
     }
   );

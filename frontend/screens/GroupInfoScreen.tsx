@@ -23,20 +23,24 @@ const GroupInfoScreen = ({ route }: Props) => {
   const navigation = useNavigation<Navigation>();
 
   // fetch most recent group data
-  const { data: groupsData } = $api.useQuery(
+  const { data: group = initialGroup } = $api.useQuery(
     "get",
-    "/api/v1/groups/"
+    "/api/v1/groups/{id}/",
+    {
+      params: {
+        path: {
+          id: String(initialGroup.id)
+        }
+      }
+    }
   );
-
-  // find the current group from the fetched data
-  const group = groupsData?.results?.find(g => g.id === initialGroup.id) || initialGroup;
 
   const { mutateAsync: leaveGroup } = $api.useMutation(
     "delete",
     "/api/v1/groups/{loregroup_pk}/members/{id}/",
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["get", "/api/v1/groups/"] });
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
       }
     }
   )

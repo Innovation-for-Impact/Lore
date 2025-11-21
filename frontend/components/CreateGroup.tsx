@@ -4,11 +4,14 @@ import { BlurView } from 'expo-blur';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { $api, User } from '../types/constants';
 import { LoadingModal } from './LoadingModal';
+import { pickImage } from '../utils/GroupUtils';
+import { useUser } from '../context/UserContext';
 
 function CreateGroup() {
+  const {user} = useUser();
   const [modalVisible, setModalVisible] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [groupName, setGroupName] = useState('');
@@ -60,31 +63,6 @@ function CreateGroup() {
     setImageModalVisible(true);
   }
 
-  const pickImage = async () => {
-    // request camera roll permission
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      if (Platform.OS === 'android') {
-        Alert.alert('Please grant camera roll permissions to upload an image.');
-      } else {
-        Alert.alert('Please grant camera roll permissions to upload an image.');
-      }
-      return;
-    }
-
-    // image picker
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 0.8,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0]);
-    }
-  };
-
   const handleContinueWithImage = () => {
     if (!image) {
       setError("Pick an image");
@@ -102,14 +80,13 @@ function CreateGroup() {
     }
 
     // Filter results based on the search query
-    // TODO: backend needs to fix this for openAPI
-    // TODO: filter out logged in user
-    const filteredResults = data?.results.filter(user => {
-      const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
-      return fullName.includes(query.toLowerCase());
+    const filteredResults = data?.results.filter(userData => {
+      const fullName = `${userData.first_name} ${userData.last_name}`.toLowerCase();
+      const matchesQuery = fullName.includes(query.toLowerCase());
+      const notLoggedIn = user!.id !== userData.id;
+      return matchesQuery && notLoggedIn;
     });
-    const flattenedResults = filteredResults?.map(item => item);
-    setSearchResults(flattenedResults === undefined ? [] : flattenedResults);
+    setSearchResults(filteredResults === undefined ? [] : filteredResults);
   };
 
   const handleAddMember = (user: User) => {
@@ -127,11 +104,10 @@ function CreateGroup() {
     "/api/v1/groups/", {
       onError: (error) => {
         setFailureModalVisible(true);
-        console.log(error);
       },
       onSuccess: () => {
         setGroupCreatedModalVisible(true);
-        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
       }
     }
   )
@@ -275,7 +251,9 @@ function CreateGroup() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                <TouchableOpacity style={styles.uploadButton} onPress={ async () => {
+                    setImage(await pickImage());
+                }}>
                   <Feather name="upload" size={40} color="#9680B6" />
                 </TouchableOpacity>
               )}
@@ -404,23 +382,6 @@ function CreateGroup() {
       </Modal>
 
       <LoadingModal visible={groupCreateLoading} title={"group creating..."}/>
-      {/* Loading Modal */}
-      {/* <Modal animationType="fade" transparent={true} visible={groupCreateLoading}> */}
-      {/*   <View style={styles.fullScreenContainer}> */}
-      {/*     <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} /> */}
-      {/*   </View> */}
-      {/**/}
-      {/*   <View style={styles.modalContainer}> */}
-      {/*     <View style={styles.modalContent}> */}
-      {/*       <View style={styles.confirmView}> */}
-      {/*         <View> */}
-      {/*           <ActivityIndicator size="large" color="#44344D" /> */}
-      {/*         </View> */}
-      {/*         <Text style={styles.modalText}>group creating...</Text> */}
-      {/*       </View> */}
-      {/*     </View> */}
-      {/*   </View> */}
-      {/* </Modal> */}
 
       {/* Group created confirmation modal */}
       <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>
