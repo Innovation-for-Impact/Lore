@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import CreateGroup from '../components/CreateGroup';

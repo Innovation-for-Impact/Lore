@@ -1,12 +1,12 @@
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, Alert, Platform, ActivityIndicator, Modal } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation } from '@react-navigation/native';
-import { Navigation, RootStackParamList } from '../types/navigation';
-import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { $api } from '../types/constants';
 import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LoadingModal } from '../components/LoadingModal';
+import { $api } from '../types/constants';
+import { Navigation, RootStackParamList } from '../types/navigation';
 import { pickImage } from '../utils/GroupUtils';
 
 type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'EditGroupScreen'>;
@@ -34,9 +34,8 @@ const EditGroupScreen = ({ route }: Props) => {
         Alert.alert("Success", "Group updated successfully!");
         navigation.goBack();
       },
-      onError: (error) => {
+      onError: () => {
         Alert.alert("Error", "Failed to update group");
-        console.error(error);
       }
     }
   );
@@ -74,7 +73,7 @@ const EditGroupScreen = ({ route }: Props) => {
     await updateGroup({
       params: {
         path: {
-          id: String(group.id)
+          id: group.id
         }
       },
       body: formData as any
@@ -83,7 +82,7 @@ const EditGroupScreen = ({ route }: Props) => {
       queryKey: $api.queryOptions("get", "/api/v1/groups/{id}/", {
         params: {
           path: {
-            id: String(group.id)
+            id: group.id
           }
         }
       }).queryKey

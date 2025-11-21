@@ -35,7 +35,50 @@ class GroupMemberPermission(permissions.BasePermission):
         user: models.LoreUser = cast(models.LoreUser, request.user)
         return user.is_in_group(obj.pk)
 
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
 
+@extend_schema_view(
+    retrieve=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                location=OpenApiParameter.PATH,
+                required=True,
+            )
+        ]
+    ),
+    update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                location=OpenApiParameter.PATH,
+                required=True,
+            )
+        ]
+    ),
+    partial_update=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                location=OpenApiParameter.PATH,
+                required=True,
+            )
+        ]
+    ),
+    destroy=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                type=int,
+                location=OpenApiParameter.PATH,
+                required=True,
+            )
+        ]
+    ),
+)
 class GroupViewSet(viewsets.ModelViewSet):
     """Queryset for groups."""
 

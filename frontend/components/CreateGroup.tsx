@@ -102,7 +102,7 @@ function CreateGroup() {
   const { mutateAsync: handleCreateGroup, isPending: groupCreateLoading } = $api.useMutation(
     "post",
     "/api/v1/groups/", {
-      onError: (error) => {
+      onError: () => {
         setFailureModalVisible(true);
       },
       onSuccess: () => {
@@ -369,7 +369,7 @@ function CreateGroup() {
                       });    
                     }
                     const s = await handleCreateGroup({
-                      body: formData
+                      body: formData as any
                     });
                     setGroupCode(s.join_code);
                   }}>

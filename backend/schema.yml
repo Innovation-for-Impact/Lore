@@ -1412,6 +1412,14 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - in: query
+        name: pinned
+        schema:
+          type: boolean
+      - in: query
+        name: said_by_id
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -1485,7 +1493,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       - in: path
         name: loregroup_pk
@@ -1518,7 +1527,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       - in: path
         name: loregroup_pk
@@ -1563,7 +1573,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       - in: path
         name: loregroup_pk
@@ -1607,7 +1618,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       - in: path
         name: loregroup_pk
@@ -1630,7 +1642,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - groups
@@ -1651,7 +1663,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - groups
@@ -1684,7 +1696,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - groups
@@ -1716,7 +1728,7 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - groups
@@ -1980,6 +1992,14 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - in: query
+        name: pinned
+        schema:
+          type: boolean
+      - in: query
+        name: said_by_id
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -2047,7 +2067,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       tags:
       - quotes
@@ -2075,7 +2096,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       tags:
       - quotes
@@ -2115,7 +2137,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       tags:
       - quotes
@@ -2154,7 +2177,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this quote.
         required: true
       tags:
       - quotes

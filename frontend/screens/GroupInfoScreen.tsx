@@ -29,7 +29,7 @@ const GroupInfoScreen = ({ route }: Props) => {
     {
       params: {
         path: {
-          id: String(initialGroup.id)
+          id: initialGroup.id
         }
       }
     }

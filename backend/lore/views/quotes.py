@@ -12,7 +12,24 @@ from lore import serializers
 from lore.models import LoreGroup, LoreUser, Quote
 from lore.utils import GroupMemberItemPermission
 
+# from drf_spectacular.utils import extend_schema, OpenApiParameter
 
+# @extend_schema(
+#     parameters=[
+#         OpenApiParameter(
+#             name="id",
+#             type=int,
+#             location=OpenApiParameter.PATH,
+#             required=False,
+#         ),
+#         OpenApiParameter(
+#             name="loregroup_pk",
+#             type=int,
+#             location=OpenApiParameter.PATH,
+#             required=False,
+#         )
+#     ],
+# )
 class QuoteViewSet(viewsets.ModelViewSet):
     """Viewset for quotes.
 
@@ -40,6 +57,8 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Get all the quotes for the user's groups or the route's group."""
+        if getattr(self, "swagger_fake_view", False):
+            return Quote.objects.none()  # prevents schema generation from failing
         user: LoreUser = cast(LoreUser, self.request.user)
         queryset = Quote.quotes
         if self.kwargs.get("loregroup_pk") is not None:

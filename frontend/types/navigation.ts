@@ -25,15 +25,17 @@ export type RootStackParamList = {
   MemoryBoardScreen: undefined;
   AchievementBoardScreen: undefined;
 
-  QuoteScreen: {
-    activeTab?: 'viewQuotes' | 'otherTab';
-    showCreatedModal?: boolean;
-    quote?: {
-      text?: string;
-      author?: string;
-      timestamp?: string;
-    }
-  };
+  QuoteScreen: undefined;
+
+  // QuoteScreen: {
+  //   activeTab?: 'viewQuotes' | 'otherTab';
+  //   showCreatedModal?: boolean;
+  //   quote?: {
+  //     text?: string;
+  //     author?: string;
+  //     timestamp?: string;
+  //   }
+  // };
 
   QuoteDetailScreen: {
      quote: Quote; 

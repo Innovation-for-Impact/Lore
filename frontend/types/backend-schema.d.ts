@@ -2397,6 +2397,8 @@ export interface operations {
             query?: {
                 /** @description A page number within the paginated result set. */
                 page?: number;
+                pinned?: boolean;
+                said_by_id?: number;
                 /** @description A search term. */
                 search?: string;
             };
@@ -2450,7 +2452,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
                 loregroup_pk: string;
             };
             cookie?: never;
@@ -2472,7 +2475,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
                 loregroup_pk: string;
             };
             cookie?: never;
@@ -2500,7 +2504,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
                 loregroup_pk: string;
             };
             cookie?: never;
@@ -2521,7 +2526,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
                 loregroup_pk: string;
             };
             cookie?: never;
@@ -2549,7 +2555,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2570,7 +2576,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2597,7 +2603,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2617,7 +2623,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2813,6 +2819,8 @@ export interface operations {
             query?: {
                 /** @description A page number within the paginated result set. */
                 page?: number;
+                pinned?: boolean;
+                said_by_id?: number;
                 /** @description A search term. */
                 search?: string;
             };
@@ -2862,7 +2870,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
             };
             cookie?: never;
         };
@@ -2883,7 +2892,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
             };
             cookie?: never;
         };
@@ -2910,7 +2920,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
             };
             cookie?: never;
         };
@@ -2930,7 +2941,8 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this quote. */
+                id: number;
             };
             cookie?: never;
         };
