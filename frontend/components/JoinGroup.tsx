@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { $api } from '../types/constants';
 import { useQueryClient } from '@tanstack/react-query';
+import { LoadingModal } from './LoadingModal';
 
 function JoinGroup() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -13,7 +14,7 @@ function JoinGroup() {
   const [groupCode, setGroupCode] = useState('');
   const queryClient = useQueryClient();
 
-  const { mutateAsync: joinGroup } = $api.useMutation(
+  const { mutateAsync: joinGroup, isPending } = $api.useMutation(
     "post",
     "/api/v1/groups/join/",
     {
@@ -26,6 +27,7 @@ function JoinGroup() {
       }
     }
   );
+
   const handleJoinGroup = async () => {
     joinGroup({
       body: {
@@ -38,6 +40,7 @@ function JoinGroup() {
 
   return (
     <>
+      <LoadingModal visible={isPending} title={"joining group..."} />
       <TouchableOpacity
         style={[styles.joinButton, isButtonActive && styles.activeButton]}
         onPress={() => {
@@ -122,7 +125,7 @@ function JoinGroup() {
           <View style={styles.modalContent}>
             <View style={styles.iconSuccessFailTextContainer}>
               <Feather name="x-circle" size={25} color="red" />
-              <Text style={styles.modalText}>group cannot be found.</Text>
+              <Text style={styles.modalText}>failed to join group.</Text>
             </View>
 
             <View style={styles.successFailButtonRow}>

@@ -68,7 +68,7 @@ const GroupInfoScreen = ({ route }: Props) => {
           <Text style={styles.info}>Location: {group.location}</Text>
           <Text style={styles.info}>Members: {group.num_members}</Text>
           <View style={styles.codeRow}>
-            <Text style={styles.info}> Join Code: {group.join_code}</Text>
+            <Text style={styles.info}>Join Code: {group.join_code}</Text>
             <TouchableOpacity
               style={styles.copyButton}
               activeOpacity={0.7}

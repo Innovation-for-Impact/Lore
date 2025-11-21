@@ -5,10 +5,8 @@ import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import { components } from '../types/backend-schema';
-import { $api } from '../types/constants';
-
-type User = components["schemas"]["User"];
+import { $api, User } from '../types/constants';
+import { LoadingModal } from './LoadingModal';
 
 function CreateGroup() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -404,23 +402,24 @@ function CreateGroup() {
         </KeyboardAvoidingView>
       </Modal>
 
+      <LoadingModal visible={groupCreateLoading} title={"group creating..."}/>
       {/* Loading Modal */}
-      <Modal animationType="fade" transparent={true} visible={groupCreateLoading}>
-        <View style={styles.fullScreenContainer}>
-          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-        </View>
-
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.confirmView}>
-              <View>
-                <ActivityIndicator size="large" color="#44344D" />
-              </View>
-              <Text style={styles.modalText}>group creating...</Text>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* <Modal animationType="fade" transparent={true} visible={groupCreateLoading}> */}
+      {/*   <View style={styles.fullScreenContainer}> */}
+      {/*     <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} /> */}
+      {/*   </View> */}
+      {/**/}
+      {/*   <View style={styles.modalContainer}> */}
+      {/*     <View style={styles.modalContent}> */}
+      {/*       <View style={styles.confirmView}> */}
+      {/*         <View> */}
+      {/*           <ActivityIndicator size="large" color="#44344D" /> */}
+      {/*         </View> */}
+      {/*         <Text style={styles.modalText}>group creating...</Text> */}
+      {/*       </View> */}
+      {/*     </View> */}
+      {/*   </View> */}
+      {/* </Modal> */}
 
       {/* Group created confirmation modal */}
       <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>

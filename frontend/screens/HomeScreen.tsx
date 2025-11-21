@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import CreateGroup from '../components/CreateGroup';
@@ -26,7 +26,7 @@ const HomeScreen = () => {
   const groupData = data ?? emptyGroupData;
 
   const filteredGroups = useMemo(() => {
-    return groupData.results.filter(group => 
+    return groupData.results.filter(group =>
       group.name.toLowerCase().includes(query.toLowerCase())
     )
   }, [groupData, query])
@@ -42,7 +42,6 @@ const HomeScreen = () => {
     );
   }
 
-  // TODO: Fix loading errors
   if (isError) {
     return (
       <View style={styles.emptyContainer}>
@@ -71,15 +70,23 @@ const HomeScreen = () => {
           <JoinGroup />
           <CreateGroup />
         </View>
+        {
+          filteredGroups.length === 0 ?
+            <View style={styles.emptyContainer}>
+              <Text style={styles.noGroupsText}>
+                no groups to show
+              </Text>
+            </View> :
+            <FlatList
+              data={filteredGroups}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <GroupCard group={item} />}
+              contentContainerStyle={styles.listContainer} // ensures even spacing
+              keyboardShouldPersistTaps="handled" // allows smooth scrolling
+              showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+            />
+        }
 
-        <FlatList
-          data={filteredGroups}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <GroupCard group={item} />}
-          contentContainerStyle={styles.listContainer} // ensures even spacing
-          keyboardShouldPersistTaps="handled" // allows smooth scrolling
-          showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
-        />
       </View>
     </>
   );
