@@ -11,6 +11,7 @@ function JoinGroup() {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [error, setError] = useState('');
   const [groupCode, setGroupCode] = useState('');
   const queryClient = useQueryClient();
 
@@ -29,13 +30,16 @@ function JoinGroup() {
   );
 
   const handleJoinGroup = async () => {
+    if (!groupCode) {
+      setError("enter a group code");
+      return;
+    }
     joinGroup({
       body: {
         join_code: groupCode
       }
     })
     setModalVisible(false);
-    setGroupCode('');
   };
 
   return (
@@ -46,6 +50,8 @@ function JoinGroup() {
         onPress={() => {
           setModalVisible(true);
           setIsButtonActive(true);
+          setError('');
+          setGroupCode('');
         }}
       >
         <Text style={[styles.joinButtonText, (modalVisible || successModalVisible || failureModalVisible) && styles.activeButtonText]}>
@@ -71,13 +77,14 @@ function JoinGroup() {
               </View>
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, error && styles.inputError]}
                 placeholder="group code"
                 placeholderTextColor="#BFBFBF"
                 value={groupCode}
                 onChangeText={setGroupCode}
                 keyboardType="default"
               />
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
               <View style={styles.buttonRow}>
                 <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupCode('')}>
                   <Text style={styles.buttonText}>clear</Text>
@@ -256,6 +263,15 @@ const styles = StyleSheet.create({
   },
   fullScreenBlur: {
     flex: 1,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    marginTop: -10,
+    fontFamily: 'Work Sans'
+  },
+  inputError: {
+    borderColor: 'red',
   },
 });
 

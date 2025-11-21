@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Platform, ToastAndroid, Alert } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { Navigation, RootStackParamList } from '../types/navigation';
@@ -16,11 +16,20 @@ type Props = {
 };
 
 const GroupInfoScreen = ({ route }: Props) => {
-  const { group } = route.params;
+  const initialGroup = route.params.group;
   const [confirmationModal, setConfirmationModal] = useState(false);
   const { user } = useUser();
   const queryClient = useQueryClient();
   const navigation = useNavigation<Navigation>();
+
+  // fetch most recent group data
+  const { data: groupsData } = $api.useQuery(
+    "get",
+    "/api/v1/groups/"
+  );
+
+  // find the current group from the fetched data
+  const group = groupsData?.results?.find(g => g.id === initialGroup.id) || initialGroup;
 
   const { mutateAsync: leaveGroup } = $api.useMutation(
     "delete",
@@ -48,6 +57,10 @@ const GroupInfoScreen = ({ route }: Props) => {
     navigation.goBack();
   };
 
+  const handleEdit = () => {
+    navigation.navigate('EditGroupScreen', { group: group });
+  };
+
   return (
     <>
       <ConfirmationModal title={"leave group?"} left={"cancel"} right={"leave"} visible={confirmationModal} setVisible={setConfirmationModal} callback={handleLeaveGroup} />
@@ -57,21 +70,30 @@ const GroupInfoScreen = ({ route }: Props) => {
             onPress={handleBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={35} color="#44344D" />
+            <Ionicons name="arrow-back" size={35} color="white" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            onPress={handleEdit}
+          >
+            <Feather name="edit" size={28} color="white" />
           </TouchableOpacity>
         </View>
+        <Text style={styles.name}>{group.name}</Text>
         <View style={styles.contentWrapper}>
-          {group.avatar && (
+          {group.avatar ? (
             <Image source={{ uri: group.avatar }} style={styles.avatar} />
+          ) : (
+            <View style={styles.placeholderAvatar}>
+              <Feather name="image" size={40} color="#9680B6" />
+            </View>
           )}
-          <Text style={styles.name}>{group.name}</Text>
-          <Text style={styles.info}>Location: {group.location}</Text>
-          <Text style={styles.info}>Members: {group.num_members}</Text>
+          <Text style={styles.info}>location: {group.location}</Text>
+          <Text style={styles.info}>members: {group.num_members}</Text>
           <View style={styles.codeRow}>
-            <Text style={styles.info}>Join Code: {group.join_code}</Text>
+            <Text style={styles.info}>join code: {group.join_code}</Text>
             <TouchableOpacity
               style={styles.copyButton}
-              activeOpacity={0.7}
               onPress={() => {
                 Clipboard.setStringAsync(group.join_code);
                 if (Platform.OS === 'android') {
@@ -81,10 +103,10 @@ const GroupInfoScreen = ({ route }: Props) => {
                 }
               }}
             >
-              <Ionicons name="clipboard-outline" size={17} color="#9680B6" />
+              <Ionicons name="clipboard-outline" size={18} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.info}>Created: {new Date(group.created).toLocaleDateString()}</Text>
+          <Text style={styles.info}>created: {new Date(group.created).toLocaleDateString()}</Text>
         </View>
         <Pressable
           style={({ pressed }) => [
@@ -93,7 +115,7 @@ const GroupInfoScreen = ({ route }: Props) => {
           ]}
           onPress={() => setConfirmationModal(true)}
         >
-          <Text style={{ color: "white", fontWeight: "600" }}>Leave Group</Text>
+          <Text style={{ color: "white", fontWeight: "600", fontSize: 17 }}>leave group</Text>
         </Pressable>
       </View>
     </>
@@ -102,26 +124,38 @@ const GroupInfoScreen = ({ route }: Props) => {
 
 const styles = StyleSheet.create({
   contentWrapper: {
-    flex: 0.8,
+    flex: 0.85,
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#AFB0E4',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   backButton: {
-    paddingRight: 230,
-    paddingBottom: 20,
+    padding: 5,
   },
   avatar: {
-    width: 350,
+    width: '100%',
     height: 200,
     borderRadius: 20,
     alignSelf: 'center',
+    marginBottom: 20,
+  },
+  placeholderAvatar: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#9680B6',
+    borderStyle: 'dashed',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   name: {
@@ -130,6 +164,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Work Sans',
     textAlign: 'center',
     marginBottom: 20,
+    color: '#44344D',
   },
   info: {
     fontSize: 16,
@@ -141,12 +176,10 @@ const styles = StyleSheet.create({
     padding: 12,
     justifyContent: "center",
     alignItems: "center",
-    // optional: shadow for iOS
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    // optional: elevation for Android
     elevation: 5,
   },
   codeRow: {

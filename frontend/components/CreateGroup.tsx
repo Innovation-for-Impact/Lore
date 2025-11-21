@@ -149,6 +149,7 @@ function CreateGroup() {
           setImage(null);
           setSearchQuery('');
           setSearchResults([]);
+          setError('');
         }}
       >
         <Text style={[styles.createButtonText, (modalVisible || locationModalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
