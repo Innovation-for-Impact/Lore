@@ -95,7 +95,6 @@ const LoginScreen = () => {
           }
         );
       }}>
-        <Text> DEBUG LOG IN </Text>
       </TouchableOpacity>
       {/* Back Arrow */}
       <TouchableOpacity

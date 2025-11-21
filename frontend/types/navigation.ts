@@ -18,6 +18,7 @@ export type RootStackParamList = {
 
   HomeScreen: undefined;
   GroupInfoScreen: { group: Group };
+  EditGroupScreen: { group: Group };
 
   CommunityScreen: undefined;
   QuoteBoardScreen: undefined;
