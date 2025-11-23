@@ -86,6 +86,7 @@ function CreateGroup() {
       const notLoggedIn = user!.id !== userData.id;
       return matchesQuery && notLoggedIn;
     });
+    // console.log(JSON.stringify(data, null, 2));
     setSearchResults(filteredResults === undefined ? [] : filteredResults);
   };
 
@@ -354,22 +355,28 @@ function CreateGroup() {
                   onPress={async () => {
                     setQuickAddModalVisible(false);
                     setIsButtonActive(true);
-                    // Some hack to get avatar to show up
-                    const formData = new FormData();
-                    formData.append("name", groupName);
-                    formData.append("location", location);
-                    selectedMembers.forEach((m) => {
-                      formData.append("members", m.id.toString());
-                    });
-                    if (image) {
-                      formData.append("avatar", {
-                        uri: image.uri,
-                        name: image.fileName,
-                        type: "image/jpeg",
-                      });    
-                    }
                     const s = await handleCreateGroup({
-                      body: formData as any
+                      body: {
+                        name: groupName,
+                        location: location,
+                        members: [...selectedMembers.map(member => member.id)],
+                        avatar: {
+                          uri: image!.uri,
+                          name: image!.fileName,
+                          type: "image/jpeg",
+                        }
+                      },
+                      // https://openapi-ts.dev/openapi-fetch/api#bodyserializer
+                      bodySerializer: (body) => {
+                        const formData = new FormData();
+                        formData.append("name", body.name);
+                        formData.append("location", body.location);
+                        formData.append("avatar", body.avatar);
+                        body.members.forEach(memberId => {
+                          formData.append("members", memberId);
+                        })
+                        return formData;
+                      }
                     });
                     setGroupCode(s.join_code);
                   }}>

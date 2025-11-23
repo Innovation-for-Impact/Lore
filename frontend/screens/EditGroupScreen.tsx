@@ -57,27 +57,32 @@ const EditGroupScreen = ({ route }: Props) => {
 
     setError('');
 
-    // using formData like in CreateGroup
-    const formData = new FormData();
-    formData.append("name", name.trim());
-    formData.append("location", location.trim());
-
-    if (image) {
-      formData.append("avatar", {
-        uri: image.uri,
-        name: image.fileName || 'avatar.jpg',
-        type: "image/jpeg",
-      } as any);
-    }
-
     await updateGroup({
       params: {
         path: {
           id: group.id
         }
       },
-      body: formData as any
+      body: {
+        name: name.trim(),
+        location: location.trim(),
+        avatar: {
+          uri: image!.uri,
+          name: image!.fileName,
+          type: "image/jpeg",
+        }
+      },
+      bodySerializer: (body) => {
+        if (body) {
+          const formData = new FormData();
+          formData.append("name", body.name);
+          formData.append("location", body.location);
+          formData.append("avatar", body.avatar);
+          return formData;
+        }
+      }
     });
+
     queryClient.invalidateQueries({
       queryKey: $api.queryOptions("get", "/api/v1/groups/{id}/", {
         params: {
