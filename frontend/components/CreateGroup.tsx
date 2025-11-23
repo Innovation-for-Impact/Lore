@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BlurView } from 'expo-blur';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { $api, User } from '../types/constants';
 import { LoadingModal } from './LoadingModal';
@@ -31,17 +31,39 @@ function CreateGroup() {
 
   const queryClient = useQueryClient();
 
-  const { data } = $api.useQuery(
+  // const { data } = $api.useQuery(
+  //   "get",
+  //   "/api/v1/users/",
+  //   {
+  //     params: {
+  //       query: {
+  //         search: searchQuery
+  //       }
+  //     }
+  //   },
+  // );
+
+  const { data, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
     "/api/v1/users/",
+    {},
     {
-      params: {
-        query: {
-          search: searchQuery
-        }
-      }
+      pageParamName: "page",
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.next) return undefined;
+        const url = new URL(lastPage.next)
+        const page = url.searchParams.get("page");
+        return page ? Number(page) : undefined;
+      },
+      initialPageParam: 1
     },
-  );
+  )
+
+  useEffect(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetching])
 
   const handleCreateGroupName = () => {
     if (!groupName.trim()) {
@@ -80,7 +102,7 @@ function CreateGroup() {
     }
 
     // Filter results based on the search query
-    const filteredResults = data?.results.filter(userData => {
+    const filteredResults = data?.pages.flatMap(data => data.results).filter(userData => {
       const fullName = `${userData.first_name} ${userData.last_name}`.toLowerCase();
       const matchesQuery = fullName.includes(query.toLowerCase());
       const notLoggedIn = user!.id !== userData.id;
