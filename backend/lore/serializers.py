@@ -8,6 +8,7 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import serializers
+from rest_framework.fields import HiddenField
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from lore import models
@@ -220,17 +221,17 @@ class AchievementSerializer(serializers.ModelSerializer):
         lookup_url_kwarg="achievement_pk",
         many=False,
     )
-    logged_in_user_url = serializers.SerializerMethodField()
+    logged_in_member_url = serializers.SerializerMethodField()
 
     num_achieved = serializers.ReadOnlyField()
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        with contextlib.suppress(KeyError):
-            self.fields["group"] = serializers.PrimaryKeyRelatedField(
-                read_only=True,
-            )
+    # def __init__(self, *args, **kwargs) -> None:
+    #     super().__init__(*args, **kwargs)
+    #
+    #     with contextlib.suppress(KeyError):
+    #         self.fields["group"] = serializers.PrimaryKeyRelatedField(
+    #             read_only=True,
+    #         )
 
     def create(self, validated_data: dict[Any, Any]) -> models.Achievement:
         """Create an instane of an Image."""
@@ -242,7 +243,7 @@ class AchievementSerializer(serializers.ModelSerializer):
             group=validated_data["group"],
         )
 
-    def get_logged_in_user_url(self, obj: models.Achievement) -> str | None:
+    def get_logged_in_member_url(self, obj: models.Achievement) -> str | None:
         """Get the url for the authenticated user."""
         request: Request = self.context["request"]
         if not obj.has_achiever(request.user):
@@ -263,12 +264,11 @@ class AchievementSerializer(serializers.ModelSerializer):
             "description",
             "achieved_by",
             "num_achieved",
-            "group",
             "created",
             "url",
             "achievers_url",
             "group_url",
-            "logged_in_user_url",
+            "logged_in_member_url",
         ]
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
             "achieved_by": {"write_only": True, "allow_empty": True},
@@ -307,17 +307,17 @@ class ChallengeSerializer(serializers.ModelSerializer):
         lookup_url_kwarg="challenge_pk",
         many=False,
     )
-    logged_in_user_url = serializers.SerializerMethodField()
+    logged_in_participant_url = serializers.SerializerMethodField()
 
     achievement = AchievementSerializer(many=False)
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        with contextlib.suppress(KeyError):
-            self.fields["group"] = serializers.PrimaryKeyRelatedField(
-                read_only=True,
-            )
+    # def __init__(self, *args, **kwargs) -> None:
+    #     super().__init__(*args, **kwargs)
+    #
+    #     with contextlib.suppress(KeyError):
+    #         self.fields["group"] = serializers.PrimaryKeyRelatedField(
+    #             read_only=True,
+    #         )
 
     def create(self, validated_data: dict[Any, Any]) -> models.Challenge:
         """Create an instane of an Image."""
@@ -332,7 +332,10 @@ class ChallengeSerializer(serializers.ModelSerializer):
             group=validated_data["group"],
         )
 
-    def get_logged_in_user_url(self, obj: models.Challenge) -> str | None:
+    def get_logged_in_participant_url(
+        self,
+        obj: models.Challenge,
+    ) -> str | None:
         """Get the url for the authenticated user."""
         request: Request = self.context["request"]
         if not obj.has_participant(request.user):
@@ -354,15 +357,13 @@ class ChallengeSerializer(serializers.ModelSerializer):
             "description",
             "level",
             "achievement",
-            # "group",
             "start_date",
             "end_date",
             "created",
             "url",
             "participants_url",
-            # "achievement_url",
             "group_url",
-            "logged_in_user_url",
+            "logged_in_participant_url",
         ]
         # extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
         #     "participants": {"write_only": True, "allow_empty": True},
