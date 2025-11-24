@@ -1,8 +1,10 @@
 import pathlib
 import uuid
-from typing import ClassVar, cast
+from datetime import datetime
+from typing import ClassVar, Optional, cast
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.db import models
 from django.forms import ValidationError
@@ -13,6 +15,12 @@ from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
 
 class Http409Error(Exception):
     """HTTP conflict exception."""
+
+
+class AlreadyCompltedChallengeError(Exception):
+    """Thrown when a user has already completed a challenge."""
+
+    pass
 
 
 # https://stackoverflow.com/questions/25767787/django-cannot-create-migrations-for-imagefield-with-dynamic-upload-to-value
@@ -182,9 +190,10 @@ class LoreGroupManager(models.Manager):
                 msg = "Already in group"
                 raise Http409Error(msg)
             group.members.add(user.pk)
-            return group
         except ObjectDoesNotExist as e:
             raise Http404 from e
+        else:
+            return group
 
 
 class LoreGroup(models.Model):
@@ -473,3 +482,139 @@ class Achievement(GroupItem):
         Returns True if the user has achieved this
         """
         return self.achieved_by.contains(user)
+
+
+class ChallengeManager(models.Manager):
+    """Manager for handling achievement model functionalities."""
+
+    def create_challenge(
+        self,
+        title: str,
+        description: str,
+        level: int,
+        participants: list[LoreUser],
+        achievement: Achievement,
+        start_date: datetime,
+        end_date: datetime,
+        group: LoreGroup,
+    ) -> "Challenge":
+        """Create a challenge object.
+
+        The challenge is attached to the given group.
+        """
+        challenge_model = self.model(
+            title=title,
+            description=description,
+            level=level,
+            achievement=achievement,
+            start_date=start_date,
+            end_date=end_date,
+            group=group,
+        )
+
+        challenge_model.save(using=self._db)
+        challenge_model.participants.set(participants)
+        return challenge_model
+
+    def get_group_challenges(
+        self,
+        group: LoreGroup,
+    ) -> models.QuerySet["Challenge", "Challenge"]:
+        """Retrieve all challenges in the given group."""
+        return self.filter(group=group)
+
+
+class Challenge(GroupItem):
+    """Represents a groups achievements.
+
+    Requires a title with max length 128,
+    a description with max length 1024,
+    an image url with max length 128,
+    and a group foreign key
+    """
+
+    title = models.CharField(max_length=128)
+    description = models.CharField(max_length=1024)
+    group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
+    participants = models.ManyToManyField(
+        LoreUser,
+        through="ChallengeParticipant",
+    )
+    level = models.PositiveIntegerField()
+    # TODO: should this be do nothing? similar with the above?
+    achievement = models.ForeignKey(Achievement, on_delete=models.DO_NOTHING)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def num_participants(self) -> int:
+        """Get the number of users that achieved this."""
+        return self.participants.count()
+
+    REQUIRED_FIELDS: ClassVar[list[str]] = [
+        "title",
+        "descrption",
+        "level",
+        "achievement",
+        "start_date",
+        "end_date",
+    ]
+
+    challenges = ChallengeManager()
+
+    def add_participant(
+        self,
+        user: LoreUser,
+    ) -> Optional["ChallengeParticipant"]:
+        """Add the user to the participants list.
+
+        Return true if the user was added successfully
+        Will return false if the group doesn't exist, or the
+        user already achieved this.
+        """
+        if not self.group.has_member(user):
+            return None
+        if self.has_participant(user):
+            return None
+        self.participants.add(user)
+
+        return ChallengeParticipant.objects.get(challenge=self, lore_user=user)
+
+    def complete_challenge_for_user(self, user: LoreUser) -> None:
+        """Mark the user as having completed the challenge.
+
+        Throws a Http404 if the relation doesn't exist,
+        or an AlreadyCompltedChallengeError
+        """
+        relation = Challenge.challenges.get(
+            loreuser_pk=user.pk,
+            challenge_pk=self.pk,
+        )
+
+        if relation is None:
+            raise Http404
+
+        if relation.completed_challenge:
+            raise AlreadyCompltedChallengeError
+
+        relation.update(completed=True)
+        relation.save()
+
+    def has_participant(self, user: LoreUser) -> bool:
+        """Check if the user already achieved this.
+
+        Returns True if the user has achieved this
+        """
+        return self.participants.contains(user)
+
+
+class ChallengeParticipant(models.Model):
+    """The users in a challenge and if they completed it."""
+
+    lore_user = models.ForeignKey(
+        LoreUser,
+        on_delete=models.CASCADE,
+    )
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    completed_challenge = models.BooleanField(default=False)

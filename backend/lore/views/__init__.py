@@ -9,3 +9,5 @@ from lore.views.users import LoreUserViewSet
 from lore.views.users import MemberViewSet
 from lore.views.users import AchievedViewSet
 from lore.views.achievements import AchievementViewSet
+from lore.views.challenges import ChallengeViewSet
+from lore.views.challenges import ChallengeParticipantsViewSet
