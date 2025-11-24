@@ -2,6 +2,8 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
+from lore.views.challenges import ChallengeParticipantsViewSet
+
 from . import views
 
 router = routers.SimpleRouter()
@@ -17,7 +19,7 @@ router.register(
 router.register(r"users", views.LoreUserViewSet, basename="loreuser")
 router.register(
     r"challenges",
-    views.ChallengeViewSet,
+    views.AllChallengeViewSet,
     basename="challenge",
 )
 
@@ -43,7 +45,7 @@ groups_router.register(
 )
 groups_router.register(
     r"challenges",
-    views.ChallengeViewSet,
+    views.GroupChallengeViewSet,
     basename="loregroup-challenge",
 )
 groups_router.register(
@@ -70,7 +72,7 @@ challenge_router = routers.NestedSimpleRouter(
 )
 challenge_router.register(
     r"participants",
-    views.ChallengeParticipantsViewSet,
+    ChallengeParticipantsViewSet,
     basename="challengeparticipant",
 )
 

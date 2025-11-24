@@ -5,11 +5,13 @@ import typing
 from typing import Any, ClassVar, cast, override
 
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from django.forms import ValidationError
 from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import serializers
-from rest_framework.fields import HiddenField
-from rest_framework.relations import PrimaryKeyRelatedField
+from rest_framework.relations import (
+    PrimaryKeyRelatedField,
+)
 
 from lore import models
 
@@ -311,27 +313,6 @@ class ChallengeSerializer(serializers.ModelSerializer):
 
     achievement = AchievementSerializer(many=False)
 
-    # def __init__(self, *args, **kwargs) -> None:
-    #     super().__init__(*args, **kwargs)
-    #
-    #     with contextlib.suppress(KeyError):
-    #         self.fields["group"] = serializers.PrimaryKeyRelatedField(
-    #             read_only=True,
-    #         )
-
-    def create(self, validated_data: dict[Any, Any]) -> models.Challenge:
-        """Create an instane of an Image."""
-        return models.Challenge.challenges.create_challenge(
-            title=validated_data["title"],
-            description=validated_data["description"],
-            level=validated_data["level"],
-            participants=[],
-            achievement=validated_data["achievement"],
-            start_date=validated_data["start_date"],
-            end_date=validated_data["end_date"],
-            group=validated_data["group"],
-        )
-
     def get_logged_in_participant_url(
         self,
         obj: models.Challenge,
@@ -370,14 +351,80 @@ class ChallengeSerializer(serializers.ModelSerializer):
         # }
 
 
-class ChallengeParticipantSerializer(serializers.ModelSerializer):
+class ChallengeParticipantSerializer(serializers.HyperlinkedModelSerializer):
     """Serializes the user and whether they completed a challenge."""
 
     lore_user = UserSerializer(many=False, read_only=True)
+    # url = HyperlinkedIdentityField(
+    #     view_name="challenge-challengeparticipant",
+    # )
 
     class Meta:
         model = models.ChallengeParticipant
-        fields: ClassVar[list[str]] = ["lore_user", "completed_challenge"]
+        fields: ClassVar[list[str]] = [
+            "id",
+            "lore_user",
+            "completed_challenge",
+            # "url",
+        ]
+
+
+class ChallengeCreateSerializer(ChallengeSerializer):
+    """Limits what achievement fields can be created.
+
+    Participants is read only
+    """
+
+    # TODO: does not filter by the achievements in the group correctly
+    achievement = PrimaryKeyRelatedField(
+        queryset=models.Achievement.achievements.all(),
+    )
+
+    @override
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["achievement"] = AchievementSerializer(
+            models.Achievement.achievements.get(pk=rep["achievement"]),
+            context=self.context,
+        ).data
+
+        return rep
+
+    def validate(self, attrs: dict) -> dict:
+        if "end_date" not in attrs or "start_date" not in attrs:
+            return super().validate(attrs)
+
+        # TODO: needs to be timezone aware
+        if attrs["end_date"] < attrs["start_date"]:
+            raise ValidationError(
+                message={
+                    "end_date": "Ensure start time is earlier than end time",
+                },
+            )
+
+        return super().validate(attrs)
+
+    def create(self, validated_data: dict[Any, Any]) -> models.Challenge:
+        """Create an instane of an Image."""
+        return models.Challenge.challenges.create_challenge(
+            title=validated_data["title"],
+            description=validated_data["description"],
+            level=validated_data["level"],
+            participants=[],
+            achievement=validated_data["achievement"],
+            start_date=validated_data["start_date"],
+            end_date=validated_data["end_date"],
+            group=validated_data["group"],
+        )
+
+    class Meta(ChallengeSerializer.Meta):
+        fields: ClassVar[list[str]] = [
+            f
+            for f in ChallengeSerializer.Meta.fields
+            if f not in ["participants"]
+        ]
+        read_only_fields: ClassVar[list[str]] = ["participants"]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
 class ChallengeUpdateSerializer(ChallengeSerializer):

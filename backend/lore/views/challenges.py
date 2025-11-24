@@ -20,15 +20,17 @@ from rest_framework.views import Request, Response
 
 from lore import serializers
 from lore.models import Challenge, ChallengeParticipant, LoreGroup, LoreUser
-from lore.utils import GroupMemberItemPermission
+from lore.utils import (
+    GroupMemberItemPermission,
+    GroupMemberRoutePermissions,
+    create_is_group_action_permission,
+)
 from lore.views.users import (
-    BaseLoreUserViewSet,
-    MutualPermission,
     create_is_owner_permission,
 )
 
 
-class ChallengeViewSet(viewsets.ModelViewSet):
+class BaseChallengeViewSet(viewsets.ModelViewSet):
     """Viewset for challnges."""
 
     serializer_class = serializers.ChallengeSerializer
@@ -51,19 +53,26 @@ class ChallengeViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["update", "partial_update"]:
             return serializers.ChallengeUpdateSerializer
+        if self.action in ["create"]:
+            return serializers.ChallengeCreateSerializer
         return serializers.ChallengeSerializer
+
+
+class GroupChallengeViewSet(BaseChallengeViewSet):
+    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
+        *BaseChallengeViewSet.permission_classes,
+        GroupMemberRoutePermissions,
+    ]
 
     def get_queryset(self):
         """Get all challenges for the user's groups or the route's group."""
         user: LoreUser = cast("LoreUser", self.request.user)
         queryset = Challenge.challenges
-        if self.kwargs.get("loregroup_pk") is not None:
-            queryset = queryset.filter(
-                group_id=self.kwargs["loregroup_pk"],
-            )
-        else:
-            user_groups = LoreGroup.groups.get_groups_with_user(user)
-            queryset = queryset.filter(group__in=user_groups)
+        if self.kwargs.get("loregroup_pk") is None:
+            return None
+        queryset = queryset.filter(
+            group_id=self.kwargs["loregroup_pk"],
+        )
 
         return queryset.order_by("pk")
 
@@ -80,13 +89,34 @@ class ChallengeViewSet(viewsets.ModelViewSet):
         serializer.save(group=LoreGroup.groups.filter(pk=group_id).first())
 
 
+class AllChallengeViewSet(BaseChallengeViewSet):
+    permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
+        *BaseChallengeViewSet.permission_classes,
+        create_is_group_action_permission(["create"]),
+    ]
+
+    def get_queryset(self):
+        """Get all challenges for the user's groups or the route's group."""
+        user: LoreUser = cast("LoreUser", self.request.user)
+        queryset = Challenge.challenges
+        user_groups = LoreGroup.groups.get_groups_with_user(user)
+        queryset = queryset.filter(group__in=user_groups)
+
+        return queryset.order_by("pk")
+
+
 class ChallengeParticipantsViewSet(viewsets.ModelViewSet):
     queryset = ChallengeParticipant.objects.all().order_by("pk")
     serializer_class = serializers.ChallengeParticipantSerializer
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
-        MutualPermission,
-        create_is_owner_permission(["destroy", "update", "partial_update"]),
+        # GroupMemberRoutePermissions,
+        # MutualPermission,
+        create_is_owner_permission(
+            ["destroy", "update", "partial_update"],
+            lambda user, obj: user.pk
+            == cast("ChallengeParticipant", obj).lore_user.pk,
+        ),
     ]
     filter_backends: ClassVar[list[type[Any]]] = [
         filters.SearchFilter,

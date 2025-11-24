@@ -1,5 +1,6 @@
-from typing import cast
+from typing import Callable, cast
 
+from django.db.models import Model
 from django.http import HttpRequest
 from rest_framework import permissions, viewsets
 from rest_framework.exceptions import ParseError
@@ -54,3 +55,55 @@ class GroupMemberItemPermission(permissions.BasePermission):
             view.kwargs.get("group_id", obj.group.id),
         )
         return user.is_in_group(group_pk)
+
+
+def create_is_owner_permission(
+    actions: list[str],
+    is_owner: Callable[[LoreUser, Model], bool],
+) -> type[permissions.BasePermission]:
+    """Build an object level ownership permission for specific actions.
+
+    If the view's action is not in actions, then the user will have permission
+    to access the route. Otherwise, they can only access the route if the object
+    is owned by them.
+    """
+
+    class IsOwner(permissions.BasePermission):
+        def has_object_permission(
+            self,
+            request: HttpRequest,
+            view: viewsets.ViewSet,
+            obj: Model,
+        ) -> bool:
+            """Return true if the user owns the object."""
+            if view.action not in actions:
+                return True
+            user: LoreUser = cast(LoreUser, request.user)
+            return is_owner(user, obj)
+
+    return IsOwner
+
+
+def create_is_group_action_permission(
+    actions: list[str],
+) -> type[permissions.BasePermission]:
+    """Build an object level ownership permission for specific actions.
+
+    If the view's action is not in actions, then the user will have permission
+    to access the route. Otherwise, they can only access the route if the object
+    is owned by them.
+    """
+
+    class CanPerformGroupAction(permissions.BasePermission):
+        def has_permission(
+            self,
+            _: HttpRequest,
+            view: viewsets.ViewSet,
+        ) -> bool:
+            """Return true if the user owns the object."""
+            if view.action not in actions:
+                return True
+            group_pk = view.kwargs.get("loregroup_pk")
+            return group_pk is not None
+
+    return CanPerformGroupAction

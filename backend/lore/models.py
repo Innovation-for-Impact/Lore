@@ -1,6 +1,7 @@
+import datetime
 import pathlib
 import uuid
-from datetime import datetime
+from django.utils import timezone
 from typing import ClassVar, Optional, cast
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
@@ -10,7 +11,12 @@ from django.db import models
 from django.forms import ValidationError
 from django.http import Http404
 from django.utils.deconstruct import deconstructible
-from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
+from rest_framework.fields import (
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
+    ObjectDoesNotExist,
+)
 
 
 class Http409Error(Exception):
@@ -494,8 +500,8 @@ class ChallengeManager(models.Manager):
         level: int,
         participants: list[LoreUser],
         achievement: Achievement,
-        start_date: datetime,
-        end_date: datetime,
+        start_date: datetime.date,
+        end_date: datetime.date,
         group: LoreGroup,
     ) -> "Challenge":
         """Create a challenge object.
@@ -527,7 +533,7 @@ class ChallengeManager(models.Manager):
 class Challenge(GroupItem):
     """Represents a groups achievements.
 
-    Requires a title with max length 128,
+    Requires a title with max length ,
     a description with max length 1024,
     an image url with max length 128,
     and a group foreign key
@@ -540,10 +546,12 @@ class Challenge(GroupItem):
         LoreUser,
         through="ChallengeParticipant",
     )
-    level = models.PositiveIntegerField()
+    level = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
     # TODO: should this be do nothing? similar with the above?
     achievement = models.ForeignKey(Achievement, on_delete=models.DO_NOTHING)
-    start_date = models.DateField()
+    start_date = models.DateField(
+        validators=[MinValueValidator(timezone.now().today().date())],
+    )
     end_date = models.DateField()
     created = models.DateTimeField(auto_now_add=True)
 

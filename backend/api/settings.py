@@ -77,6 +77,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    # "lore.middleware.TimezoneMiddleware",
 ]
 
 ROOT_URLCONF = "api.urls"
@@ -226,7 +227,7 @@ AUTHENTICATION_BACKENDS = (
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_COOKIE": "jwt-auth",
-    "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
+    "JWT_AUTH_REFRESH_COOKIE": "refresh",
     "USER_DETAILS_SERIALIZER": "lore.serializers.UserSerializer",
     "REGISTER_SERIALIZER": "lore.serializers.UserRegisterSerializer",
     "JWT_AUTH_HTTPONLY": False,  # TODO: security vulnerability

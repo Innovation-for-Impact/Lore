@@ -10,7 +10,11 @@ from rest_framework.exceptions import ParseError
 
 from lore import serializers
 from lore.models import LoreGroup, LoreUser, Quote
-from lore.utils import GroupMemberItemPermission, GroupMemberRoutePermissions
+from lore.utils import (
+    GroupMemberItemPermission,
+    GroupMemberRoutePermissions,
+    create_is_group_action_permission,
+)
 
 
 class BaseQuoteViewSet(viewsets.ModelViewSet):
@@ -54,6 +58,7 @@ class AllUserGroupsQuoteViewSet(BaseQuoteViewSet):
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         GroupMemberItemPermission,
+        create_is_group_action_permission(["create"]),
     ]
 
     def get_queryset(self):

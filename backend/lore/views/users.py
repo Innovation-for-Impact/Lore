@@ -1,8 +1,9 @@
 """Describes the viewsets for Lore Users."""
 
-from typing import Any, ClassVar, cast
+from typing import Any, Callable, ClassVar, cast
 
 from dj_rest_auth.views import IsAuthenticated, Response
+from django.db.models import Model
 from django.http import Http404, HttpRequest
 from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.response import Serializer
@@ -18,7 +19,7 @@ from rest_framework.views import Request
 
 from lore import serializers
 from lore.models import Achievement, LoreGroup, LoreUser, Quote
-from lore.utils import GroupMemberItemPermission
+from lore.utils import GroupMemberItemPermission, create_is_owner_permission
 
 
 class MutualPermission(permissions.BasePermission):
@@ -88,32 +89,6 @@ class MutualPermission(permissions.BasePermission):
         return mutual_users.filter(pk=obj.pk).exists()
 
 
-def create_is_owner_permission(
-    actions: list[str],
-) -> type[permissions.BasePermission]:
-    """Build an object level ownership permission for specific actions.
-
-    If the view's action is not in actions, then the user will have permission
-    to access the route. Otherwise, they can only access the route if the object
-    is owned by them.
-    """
-
-    class IsOwner(permissions.BasePermission):
-        def has_object_permission(
-            self,
-            request: HttpRequest,
-            view: viewsets.ViewSet,
-            obj: LoreUser,
-        ) -> bool:
-            """Return true if the user owns the object."""
-            if view.action not in actions:
-                return True
-            user: LoreUser = cast(LoreUser, request.user)
-            return user.pk == obj.pk
-
-    return IsOwner
-
-
 class BaseLoreUserViewSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
@@ -132,7 +107,10 @@ class BaseLoreUserViewSet(
     permission_classes: ClassVar[list[type[permissions.BasePermission]]] = [
         IsAuthenticated,
         MutualPermission,
-        create_is_owner_permission(["destroy", "update", "partial_update"]),
+        create_is_owner_permission(
+            ["destroy", "update", "partial_update"],
+            lambda user, obj: user.pk == obj.pk,
+        ),
     ]
     filter_backends: ClassVar[list[type[Any]]] = [
         filters.SearchFilter,
