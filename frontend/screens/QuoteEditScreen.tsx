@@ -16,6 +16,7 @@ import { SuccessModal } from '../components/SuccessModal';
 import { globalStyles } from '../styles/global';
 import { $api } from '../types/constants';
 import { Navigation, RootStackParamList } from '../types/navigation';
+import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -115,8 +116,12 @@ const QuoteDetailScreen = () => {
               onChangeText={setQuoteText}
               multiline={true}
               returnKeyType="default"
+              maxLength={MAX_QUOTE_LENGTH}
             />
             <Text style={styles.author}>{quote.said_by_username}</Text>
+            <Text style={styles.counter}>
+              {MAX_QUOTE_LENGTH - quoteText.length} characters remaining
+            </Text>
           </View>
 
           {/* AUTHOR / CONTEXT (Optional) */}
@@ -134,7 +139,7 @@ const QuoteDetailScreen = () => {
 
           {/* BUTTONS: show Edit & Delete */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.editButton} onPress={handleSave}>
+            <TouchableOpacity style={[styles.editButton, !quoteText.trim() && styles.disabledButton]} onPress={handleSave}>
               <Text style={styles.buttonText}>save quote</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => setConfirmDelete(true)}>
@@ -255,5 +260,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
+  },
+  counter: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#BFBFBF',
+    fontFamily: 'Work Sans'
+  },
+  disabledButton: {
+    backgroundColor: '#9680B6',
   },
 });

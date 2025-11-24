@@ -11,7 +11,6 @@ import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
 import { globalStyles } from '../styles/global';
 import { Navigation } from '../types/navigation';
-import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
 
 enum Tabs {
   viewQuotes = "viewQuotes",
