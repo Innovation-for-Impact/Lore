@@ -16,8 +16,6 @@ import { Navigation, RootStackParamList } from '../types/navigation';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-// Ethan: Should decide if quote is required or not. The code would be cleaner if quote is required.
-
 const QuoteDetailScreen = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();

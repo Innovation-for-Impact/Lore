@@ -1,5 +1,31 @@
 import { Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { $api, infiniteQueryParams } from '../types/constants';
+import { useEffect } from 'react';
+
+export function useGroups() {
+  const {data, isLoading, isError, hasNextPage, isFetching, fetchNextPage} = $api.useInfiniteQuery(
+    "get",
+    "/api/v1/groups/",
+    {},
+    infiniteQueryParams
+  )
+
+  useEffect(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetching, fetchNextPage]);
+
+  const groups = data?.pages.flatMap(page => page.results || page) || [];
+
+  return {
+    groups,
+    isLoading,
+    isError,
+    rawData: data
+  };
+}
 
 export async function pickImage() {
   // request camera roll permission

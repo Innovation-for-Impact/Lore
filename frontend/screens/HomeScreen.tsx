@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { FlatList, Text, TextInput } from 'react-native-gesture-handler';
 import CreateGroup from '../components/CreateGroup';
 import GroupCard from '../components/GroupCard';
 import JoinGroup from '../components/JoinGroup';
 import { globalStyles } from '../styles/global';
-import { $api } from '../types/constants';
+import { useGroups } from '../utils/GroupUtils';
 
 const HomeScreen = () => {
   const [query, setQuery] = useState('');
@@ -18,32 +18,12 @@ const HomeScreen = () => {
     results: []
   }];
 
-  const { data, isLoading, isError, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
-    "get",
-    "/api/v1/groups/",
-    {},
-    {
-      pageParamName: "page",
-      getNextPageParam: (lastPage) => {
-        if (!lastPage.next) return undefined;
-        const url = new URL(lastPage.next)
-        const page = url.searchParams.get("page");
-        return page ? Number(page) : undefined;
-      },
-      initialPageParam: 1
-    },
-  )
+  const {groups, isLoading, isError } = useGroups();
 
-  const groupData = data?.pages ?? emptyGroupData;
-
-  useEffect(() => {
-    if (hasNextPage && !isFetching) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetching])
+  const groupData = groups ?? emptyGroupData;
 
   const filteredGroups = useMemo(() => {
-    return groupData.flatMap(data => data.results).filter(group =>
+    return groupData.filter(group => 
       group.name.toLowerCase().includes(query.toLowerCase())
     )
   }, [groupData, query])

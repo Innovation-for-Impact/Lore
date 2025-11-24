@@ -13,6 +13,12 @@ import { globalStyles } from '../styles/global';
 import { Navigation, RootStackParamList } from '../types/navigation';
 // import { $api, BACKEND_URL } from '../types/constants';
 // import { useUser } from '../context/UserContext';
+//
+
+enum Tabs {
+  viewQuotes = "viewQuotes",
+  createQuote = "createQuote"
+};
 
 const QuoteBoardScreen = () => {
   // const { user } = useUser();
@@ -45,7 +51,7 @@ const QuoteBoardScreen = () => {
   // }, [quotesData, isError, error])
   // const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
 
-  const [activeTab, setActiveTab] = useState('viewQuotes');
+  const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
   const [showCreatedModal, setShowCreatedModal] = useState(false);
 
   // useEffect(() => {
@@ -81,14 +87,14 @@ const QuoteBoardScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === 'viewQuotes' && styles.activeTabItem,
+            activeTab === Tabs.viewQuotes && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab('viewQuotes')}
+          onPress={() => setActiveTab(Tabs.viewQuotes)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === 'viewQuotes' && styles.activeTabText,
+              activeTab === Tabs.viewQuotes && styles.activeTabText,
             ]}
           >
             view quotes
@@ -98,14 +104,14 @@ const QuoteBoardScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === 'createQuotes' && styles.activeTabItem,
+            activeTab === Tabs.createQuote && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab('createQuotes')}
+          onPress={() => setActiveTab(Tabs.createQuote)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === 'createQuotes' && styles.activeTabText,
+              activeTab === Tabs.createQuote && styles.activeTabText,
             ]}
           >
             create quotes
@@ -115,7 +121,7 @@ const QuoteBoardScreen = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        {activeTab === 'viewQuotes' ? (
+        {activeTab === Tabs.viewQuotes ? (
           <ViewQuotes
             // showCreatedModal={showCreatedModal}
             // onHideModal={() => setShowCreatedModal(false)}

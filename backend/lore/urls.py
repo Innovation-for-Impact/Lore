@@ -7,7 +7,7 @@ from . import views
 router = routers.SimpleRouter()
 
 router.register(r"groups", views.GroupViewSet, basename="loregroup")
-router.register(r"quotes", views.QuoteViewSet, basename="quote")
+router.register(r"quotes", views.AllUserGroupsQuoteViewSet, basename="quote")
 router.register(r"images", views.ImageViewSet, basename="image")
 router.register(
     r"achievements",
@@ -23,7 +23,7 @@ groups_router = routers.NestedSimpleRouter(
 )
 groups_router.register(
     r"quotes",
-    views.QuoteViewSet,
+    views.GroupQuoteViewSet,
     basename="loregroup-quote",
 )
 groups_router.register(

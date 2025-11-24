@@ -88,3 +88,18 @@ const fetchClient = createFetchClient<paths>({
 })
 
 export const $api = createClient(fetchClient);
+
+export const infiniteQueryParams = {
+  pageParamName: "page",
+  getNextPageParam: (lastPage:
+    components["schemas"]["PaginatedUserList"] |
+    components["schemas"]["PaginatedGroupList"]|
+    components["schemas"]["PaginatedQuoteList"]
+  ) => {
+    if (!lastPage.next) return undefined;
+    const url = new URL(lastPage.next)
+    const page = url.searchParams.get("page");
+    return page ? Number(page) : undefined;
+  },
+  initialPageParam: 1
+}

@@ -281,8 +281,8 @@ class QuoteManager(models.Manager):
         """Get all quotes in the given group."""
         return cast(list["Quote"], self.filter(group_id=group.pk))
 
-    def none(self):
-        return super().get_queryset().none()
+    # def none(self):
+    #     return super().get_queryset().none()
 
 
 class GroupItem(models.Model):
@@ -314,7 +314,7 @@ class Quote(GroupItem):
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
 
     quotes = QuoteManager()
-    objects = models.Manager()
+    # objects = models.Manager()
 
     def clean(self) -> None:
         """Validate that said_by is in the same group as the quote."""

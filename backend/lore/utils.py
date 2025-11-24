@@ -7,9 +7,7 @@ from rest_framework.exceptions import ParseError
 from lore.models import GroupItem, LoreUser
 
 
-class GroupMemberItemPermission(permissions.BasePermission):
-    """Permission to only allow user to view a group they are in."""
-
+class GroupMemberRoutePermissions(permissions.BasePermission):
     def has_permission(
         self,
         request: HttpRequest,
@@ -34,6 +32,10 @@ class GroupMemberItemPermission(permissions.BasePermission):
         except ValueError as e:
             msg = "Expected an integer group id."
             raise ParseError(msg) from e
+
+
+class GroupMemberItemPermission(permissions.BasePermission):
+    """Permission to only allow user to view a group they are in."""
 
     def has_object_permission(
         self,

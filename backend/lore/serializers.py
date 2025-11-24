@@ -44,6 +44,10 @@ class QuoteSerializer(serializers.ModelSerializer):
         source="group",
     )
 
+    said_by_username = serializers.SerializerMethodField();
+    def get_said_by_username(self, obj):
+        return obj.said_by.get_full_name()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -82,6 +86,7 @@ class QuoteSerializer(serializers.ModelSerializer):
             "id",
             "text",
             "said_by",
+            "said_by_username",
             "pinned",
             "group",
             "created",

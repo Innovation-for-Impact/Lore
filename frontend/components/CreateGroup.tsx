@@ -5,7 +5,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import { $api, User } from '../types/constants';
+import { $api, infiniteQueryParams, User } from '../types/constants';
 import { LoadingModal } from './LoadingModal';
 import { pickImage } from '../utils/GroupUtils';
 import { useUser } from '../context/UserContext';
@@ -31,32 +31,11 @@ function CreateGroup() {
 
   const queryClient = useQueryClient();
 
-  // const { data } = $api.useQuery(
-  //   "get",
-  //   "/api/v1/users/",
-  //   {
-  //     params: {
-  //       query: {
-  //         search: searchQuery
-  //       }
-  //     }
-  //   },
-  // );
-
   const { data, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
     "/api/v1/users/",
     {},
-    {
-      pageParamName: "page",
-      getNextPageParam: (lastPage) => {
-        if (!lastPage.next) return undefined;
-        const url = new URL(lastPage.next)
-        const page = url.searchParams.get("page");
-        return page ? Number(page) : undefined;
-      },
-      initialPageParam: 1
-    },
+    infiniteQueryParams
   )
 
   useEffect(() => {
@@ -108,7 +87,6 @@ function CreateGroup() {
       const notLoggedIn = user!.id !== userData.id;
       return matchesQuery && notLoggedIn;
     });
-    // console.log(JSON.stringify(data, null, 2));
     setSearchResults(filteredResults === undefined ? [] : filteredResults);
   };
 
