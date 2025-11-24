@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   FlatList,
   StyleSheet,
@@ -13,6 +14,7 @@ import {
 import { components } from '../types/backend-schema';
 import { $api, infiniteQueryParams } from '../types/constants';
 import { Navigation } from '../types/navigation';
+import { useUser } from '../context/UserContext';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -21,6 +23,7 @@ type Quote = components["schemas"]["Quote"];
 
 const ViewQuotes = () => {
   const navigation = useNavigation<Navigation>();
+  const {user} = useUser();
 
   const { mutateAsync: patchQuote } = $api.useMutation(
     "patch",
@@ -71,11 +74,21 @@ const ViewQuotes = () => {
 
   const renderItem = ({ item }: { item: Quote }) => {
     const isPinned = pinnedQuotes.includes(item);
-
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('QuoteDetailScreen', { quote: item })}
+        onPress={() => {
+          if (item.said_by === user!.id) {
+            navigation.navigate('QuoteDetailScreen', { quote: item })
+          }
+          else {
+            Alert.alert(
+              "Cannot Edit",
+              "You can only edit quotes that you created.",
+              [{ text: "OK" }]
+            );
+          }
+        }}
       >
         {/* Top row with pin icon and timestamp */}
         <View style={styles.topRow}>
@@ -115,17 +128,18 @@ const ViewQuotes = () => {
 
   return (
     <>
-      {
-        orderedQuotes.length === 0 ?
-          <View style={styles.emptyContainer}>
-            <Text style={styles.noQuoteText}> no quotes to show. make some! </Text>
-          </View > :
-          <FlatList
-            data={orderedQuotes}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={styles.container}
-          />
+      {orderedQuotes.length === 0 ?
+        <View style={styles.emptyContainer}>
+          <Text style={styles.noQuoteText}> no quotes to show. make some! </Text>
+        </View > :
+        <FlatList
+          data={orderedQuotes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        />
       }
     </>
   );

@@ -5,13 +5,15 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SuccessModalProps {
   title: string
-  isVisible: boolean,
+  visible: boolean,
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
+  buttonText: string
+  callback?: () => void
 }
 
-export function SuccessModal({ title, isVisible, setVisible }: SuccessModalProps) {
+export function SuccessModal({ title, visible, setVisible, buttonText, callback }: SuccessModalProps) {
   return (
-    <Modal visible={isVisible} transparent={true} animationType="fade" onRequestClose={() => setVisible(false)}>
+    <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={() => setVisible(false)}>
       <View style={styles.fullScreenContainer}>
         <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
       </View>
@@ -24,8 +26,11 @@ export function SuccessModal({ title, isVisible, setVisible }: SuccessModalProps
 
           <TouchableOpacity onPress={() => {
             setVisible(false);
+            if (callback) {
+              callback();
+            }
           }} style={[styles.modalButton]}>
-            <Text style={styles.buttonText}>close</Text>
+            <Text style={styles.buttonText}>{buttonText}</Text>
           </TouchableOpacity>
         </View>
       </View>

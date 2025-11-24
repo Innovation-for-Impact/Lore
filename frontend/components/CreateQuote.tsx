@@ -21,9 +21,8 @@ type Group = components["schemas"]["Group"];
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-// Adjust these if needed
-const MAX_QUOTE_LENGTH = 100;
-const MAX_CONTEXT_LENGTH = 200;
+export const MAX_QUOTE_LENGTH = 100;
+export const MAX_CONTEXT_LENGTH = 200;
 
 enum Step {
   quote = "quote",
@@ -46,14 +45,6 @@ const CreateQuote = () => {
   const [sucessModal, setSuccessModal] = useState(false);
 
   const {groups} = useGroups();
-
-  // const groups = [
-  //   { id: '1', name: 'Family' },
-  //   { id: '2', name: 'Friends' },
-  //   { id: '3', name: 'Work Team' },
-  //   { id: '4', name: 'Book Club' },
-  //   { id: '5', name: 'Study Group' },
-  // ];
 
   // Step 1: Quote
   const handleQuoteContinue = () => {
@@ -106,7 +97,7 @@ const CreateQuote = () => {
   return (
     <>
       <LoadingModal title={'creating quote...'} visible={loadingCreate} />
-      <SuccessModal title={"quote creatad"} isVisible={sucessModal} setVisible={setSuccessModal} />
+      <SuccessModal title={"quote creatad"} visible={sucessModal} setVisible={setSuccessModal} buttonText='close'/>
       <View style={styles.container}>
         {/* STEP 1: QUOTE */}
 

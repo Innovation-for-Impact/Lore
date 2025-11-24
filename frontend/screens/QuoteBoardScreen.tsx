@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -10,10 +10,8 @@ import {
 import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
 import { globalStyles } from '../styles/global';
-import { Navigation, RootStackParamList } from '../types/navigation';
-// import { $api, BACKEND_URL } from '../types/constants';
-// import { useUser } from '../context/UserContext';
-//
+import { Navigation } from '../types/navigation';
+import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
 
 enum Tabs {
   viewQuotes = "viewQuotes",
@@ -21,51 +19,9 @@ enum Tabs {
 };
 
 const QuoteBoardScreen = () => {
-  // const { user } = useUser();
   const navigation = useNavigation<Navigation>();
-  // const { data: quotesData, isError, error } = $api.useQuery(
-  //   "get",
-  //   "/api/v1/groups/{loregroup_pk}/quotes/",
-  //   {
-  //     params: {
-  //       path: {
-  //         loregroup_pk: 23,
-  //         id: 2
-  //       }
-  //     }
-  //   },
-  // );
-  // useEffect(() => {
-  //   // const init = async () => {
-  //   //   const response = await fetch(`${BACKEND_URL}/api/v1/groups/?group_id=2&loregroup_pk=23`);
-  //   //   const body = await response.json();
-  //   //   console.log(body);
-  //   // }
-  //   // init();
-  //   if (quotesData) {
-  //     console.log(quotesData);
-  //   }
-  //   if (isError) {
-  //     console.log(error);
-  //   }
-  // }, [quotesData, isError, error])
-  // const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
 
   const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
-  const [showCreatedModal, setShowCreatedModal] = useState(false);
-
-  // useEffect(() => {
-  //   // If route.params?.activeTab is provided, set it
-  //   if (route.params?.activeTab) {
-  //     setActiveTab(route.params.activeTab);
-  //   }
-  //   // If route.params?.showCreatedModal is provided, show the popup
-  //   if (route.params?.showCreatedModal) {
-  //     // Force user onto "view quotes" tab
-  //     setActiveTab('viewQuotes');
-  //     setShowCreatedModal(true);
-  //   }
-  // }, [route.params]);
 
   const handleBack = () => {
     navigation.goBack();
@@ -122,10 +78,7 @@ const QuoteBoardScreen = () => {
       {/* Content */}
       <View style={styles.content}>
         {activeTab === Tabs.viewQuotes ? (
-          <ViewQuotes
-            // showCreatedModal={showCreatedModal}
-            // onHideModal={() => setShowCreatedModal(false)}
-          />
+          <ViewQuotes />
         ) : (
           <CreateQuote />
         )}
