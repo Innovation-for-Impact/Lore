@@ -15,6 +15,11 @@ router.register(
     basename="achievement",
 )
 router.register(r"users", views.LoreUserViewSet, basename="loreuser")
+router.register(
+    r"challenges",
+    views.ChallengeViewSet,
+    basename="challenge",
+)
 
 groups_router = routers.NestedSimpleRouter(
     router,
@@ -37,6 +42,11 @@ groups_router.register(
     basename="loregroup-achievement",
 )
 groups_router.register(
+    r"challenges",
+    views.ChallengeViewSet,
+    basename="loregroup-challenge",
+)
+groups_router.register(
     r"members",
     views.MemberViewSet,
     basename="loregroup-loreuser",
@@ -53,10 +63,22 @@ achievements_router.register(
     basename="achievement-loreuser",
 )
 
+challenge_router = routers.NestedSimpleRouter(
+    router,
+    r"challenges",
+    lookup="challenge",
+)
+challenge_router.register(
+    r"participants",
+    views.ChallengeParticipantsViewSet,
+    basename="challengeparticipant",
+)
+
 urlpatterns = [
     path("auth/google/", views.GoogleLogin.as_view(), name="google_login"),
     path("feed/", views.FeedView.as_view(), name="feed"),
     path("", include(router.urls)),
     path("", include(groups_router.urls)),
     path("", include(achievements_router.urls)),
+    path("", include(challenge_router.urls)),
 ]
