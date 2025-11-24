@@ -32,6 +32,16 @@ const EditGroupScreen = ({ route }: Props) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
         Alert.alert("Success", "Group updated successfully!");
+        queryClient.invalidateQueries({
+          queryKey: $api.queryOptions("get", "/api/v1/groups/{id}/", {
+            params: {
+              path: {
+                id: group.id
+              }
+            }
+          }).queryKey
+        });
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
         navigation.goBack();
       },
       onError: () => {
@@ -67,9 +77,9 @@ const EditGroupScreen = ({ route }: Props) => {
         name: name.trim(),
         location: location.trim(),
         avatar: {
-          uri: image!.uri,
-          name: image!.fileName,
-          type: "image/jpeg",
+          uri: image ? image.uri : group.avatar,
+          name: image ? image.fileName : "",
+          type: "image/jpeg"
         }
       },
       bodySerializer: (body) => {
@@ -77,22 +87,14 @@ const EditGroupScreen = ({ route }: Props) => {
           const formData = new FormData();
           formData.append("name", body.name);
           formData.append("location", body.location);
-          formData.append("avatar", body.avatar);
+          if (image) {
+            formData.append("avatar", body.avatar);
+          }
           return formData;
         }
       }
     });
 
-    queryClient.invalidateQueries({
-      queryKey: $api.queryOptions("get", "/api/v1/groups/{id}/", {
-        params: {
-          path: {
-            id: group.id
-          }
-        }
-      }).queryKey
-    });
-    queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
   };
 
   const currentAvatarUri = image ? image.uri : group.avatar;

@@ -77,7 +77,6 @@ const QuoteDetailScreen = () => {
     })
   };
 
-  // Placeholder for delete logic
   const handleDelete = async () => {
     await deleteQuote({
       params: {
