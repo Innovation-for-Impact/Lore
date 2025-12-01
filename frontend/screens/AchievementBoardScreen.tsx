@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  Image,
 } from "react-native";
 import { TextInput } from 'react-native-gesture-handler';
 
@@ -18,10 +19,10 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BASE_WIDTH = 390; // iPhone 16 Pro width
 const SCALE = SCREEN_WIDTH / BASE_WIDTH;
 
-// small scaling helper (keeps size reasonable)
+// small scaling helper
 const s = (size: number) => Math.round(size * SCALE);
 
-// shared horizontal padding to align everything
+// universal left/right page padding
 const CONTENT_PADDING = SCREEN_WIDTH * 0.06;
 
 
@@ -34,11 +35,13 @@ const AchievementBoardScreen = () => {
   const [submitted, setSubmitted] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
 
+  // -------------------------------
+  // YOUR PNG BADGES HERE
+  // -------------------------------
   const badges = [
-    { bg: '#FFD46A', ring: '#E7B85A', icon: 'medal' as const },
-    { bg: '#7AD1FF', ring: '#5DB7E6', icon: 'planet' as const },
-    { bg: '#B0EFA5', ring: '#8CD07F', icon: 'leaf' as const },
-    { bg: '#F6A6C9', ring: '#D57AA4', icon: 'sparkles' as const },
+    { image: require('../assets/badges/badge1.png') },
+    { image: require('../assets/badges/badge2.png') },
+    // add more PNGs if needed
   ];
 
   const prev = () => setIndex((i) => (i === 0 ? badges.length - 1 : i - 1));
@@ -87,33 +90,25 @@ const AchievementBoardScreen = () => {
         <Text style={styles.sectionTitle}>select a badge cover</Text>
 
         <View style={styles.card}>
-          <TouchableOpacity
-            onPress={prev}
-            style={styles.chevronBtn}
-            hitSlop={10}
-          >
+          
+          {/* LEFT ARROW */}
+          <TouchableOpacity onPress={prev} style={styles.chevronBtn}>
             <Ionicons name="chevron-back" size={s(36)} color="#3A3241" />
           </TouchableOpacity>
 
+          {/* PNG BADGE */}
           <View style={styles.previewWrap}>
-            <View style={[styles.badgeOuter, { backgroundColor: current.bg }]}>
-              <View
-                style={[styles.badgeInner, { backgroundColor: current.ring }]}
-              >
-                <Ionicons name={current.icon} size={s(72)} color="white" />
-              </View>
-
-              <View style={styles.ribbon} />
-            </View>
+            <Image
+              source={current.image}
+              style={styles.badgeImage}
+            />
           </View>
 
-          <TouchableOpacity
-            onPress={next}
-            style={styles.chevronBtn}
-            hitSlop={10}
-          >
+          {/* RIGHT ARROW */}
+          <TouchableOpacity onPress={next} style={styles.chevronBtn}>
             <Ionicons name="chevron-forward" size={s(36)} color="#3A3241" />
           </TouchableOpacity>
+
         </View>
       </View>
 
@@ -144,16 +139,16 @@ const AchievementBoardScreen = () => {
         </Text>
       </TouchableOpacity>
 
-      <View style={{ height: 24 }} />
-
-      {/* Success Toast */}
+      {/* Toast */}
       {showSuccess && (
         <View style={styles.successOverlay}>
           <View style={styles.successCard}>
             <View style={styles.successIconCircle}>
               <Ionicons name="checkmark" size={s(22)} color="#4CAF50" />
             </View>
-            <Text style={styles.successText}>achievement badge posted!</Text>
+            <Text style={styles.successText}>
+              achievement badge posted!
+            </Text>
           </View>
         </View>
       )}
@@ -176,23 +171,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: s(12),
-    paddingHorizontal: CONTENT_PADDING - 10
+    paddingHorizontal: CONTENT_PADDING - 10,
   },
 
   achievName: {
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: -20,
     alignSelf: 'flex-start',
     marginLeft: CONTENT_PADDING,
+    marginTop: -20,
     marginBottom: -5,
   },
 
   badgeName: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: CONTENT_PADDING,
     width: '100%',
   },
@@ -211,11 +200,9 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    flexDirection: 'column',
-    marginTop: 8,
-    alignItems: 'center',
     width: '100%',
     paddingHorizontal: CONTENT_PADDING,
+    marginTop: 8,
   },
 
   sectionTitle: {
@@ -223,18 +210,15 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#44344D',
     marginBottom: 5,
-    alignSelf: 'flex-start',
   },
 
   card: {
-    alignSelf: 'stretch',
     width: '100%',
     height: s(250),
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(12),
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 12,
@@ -243,7 +227,8 @@ const styles = StyleSheet.create({
   },
 
   chevronBtn: {
-    padding: s(8),
+    paddingHorizontal: s(12),
+    paddingVertical: s(8),
   },
 
   previewWrap: {
@@ -252,37 +237,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  badgeOuter: {
-    width: s(130),
-    height: s(130),
-    borderRadius: s(130) / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  badgeInner: {
-    width: s(80),
-    height: s(80),
-    borderRadius: s(80) / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: 0.9,
-  },
-
-  ribbon: {
-    position: 'absolute',
-    bottom: -s(8),
-    width: s(50),
-    height: s(34),
-    backgroundColor: '#F0753E',
-    borderBottomLeftRadius: 6,
-    borderBottomRightRadius: 6,
+  badgeImage: {
+    width: s(160),
+    height: s(160),
+    resizeMode: 'contain',
   },
 
   descriptionWrapper: {
-    alignItems: 'center',
-    marginTop: 16,
     paddingHorizontal: CONTENT_PADDING,
+    marginTop: 16,
     width: '100%',
   },
 
@@ -298,31 +261,24 @@ const styles = StyleSheet.create({
   },
 
   createBadgeButton: {
-  height: 56,                     // keep a nice fixed height
-  backgroundColor: '#5A3E7A',
-  borderRadius: 10,
-  justifyContent: 'center',
-  alignItems: 'center',
+    height: 56,
+    backgroundColor: '#5A3E7A',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: CONTENT_PADDING,
+    marginTop: 20,
+  },
 
-  // instead of width: '100%' + padding,
-  // we stretch and add margin so the purple
-  // background matches the text fields
-  alignSelf: 'stretch',
-  marginHorizontal: CONTENT_PADDING,
-  marginTop: 20,
-},
+  createBadgeButtonDisabled: {
+    opacity: 0.8,
+  },
 
-createBadgeButtonDisabled: {
-  opacity: 0.8,
-},
-
-createBadgeText: {
-  fontFamily: 'Work Sans',
-  fontSize: 20,                   // a bit smaller than before
-  color: '#FFFFFF',
-  fontWeight: '400',
-},
-
+  createBadgeText: {
+    fontFamily: 'Work Sans',
+    fontSize: s(20),
+    color: '#FFFFFF',
+  },
 
   successOverlay: {
     position: 'absolute',
