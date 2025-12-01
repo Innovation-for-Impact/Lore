@@ -50,7 +50,7 @@ const AchievementBoardScreen = () => {
       </View>
 
     <View style={styles.achievName}>
-      <Text style={{fontSize: 30, fontFamily: 'Work Sans'}}>create achievement</Text>
+      <Text style={{fontSize: 23, fontFamily: 'Work Sans'}}>create achievement</Text>
     </View>
 
     <View style={styles.badgeName}>
@@ -155,9 +155,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: -10,
+    marginTop: -20,
     alignSelf: 'flex-start',
-    marginLeft: 25
+    marginLeft: 25,
+    marginBottom: -5
   },
   badgeName: {
     flexDirection: 'row',
