@@ -3,44 +3,48 @@ import { useQueryClient } from '@tanstack/react-query';
 import { BlurView } from 'expo-blur';
 import * as Clipboard from 'expo-clipboard';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import { components } from '../types/backend-schema';
-import { $api } from '../types/constants';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { $api, infiniteQueryParams, User } from '../types/constants';
+import { LoadingModal } from './LoadingModal';
+import { pickImage } from '../utils/GroupUtils';
+import { useUser } from '../context/UserContext';
 
-type User = components["schemas"]["User"];
+enum Step {
+  name = "name",
+  location = "location",
+  image = "image",
+  members = "members",
+  success = "success",
+  fail = "fail"
+};
 
 function CreateGroup() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [isButtonActive, setIsButtonActive] = useState(false);
+  const { user } = useUser();
   const [groupName, setGroupName] = useState('');
-  const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [location, setLocation] = useState('');
-  const [imageModalVisible, setImageModalVisible] = useState(false);
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [quickAddModalVisible, setQuickAddModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [groupCreatedModalVisible, setGroupCreatedModalVisible] = useState(false);
   const [groupCode, setGroupCode] = useState('');
   const [error, setError] = useState('');
-
+  const [step, setStep] = useState<Step | null>(null);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
 
   const queryClient = useQueryClient();
 
-  const { data } = $api.useQuery(
+  const { data, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
     "/api/v1/users/",
-    {
-      params: {
-        query: {
-          search: searchQuery
-        }
-      }
-    },
-  );
+    {},
+    infiniteQueryParams
+  )
+
+  useEffect(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetching])
 
   const handleCreateGroupName = () => {
     if (!groupName.trim()) {
@@ -48,8 +52,7 @@ function CreateGroup() {
       return;
     }
     setError('');
-    setModalVisible(false);
-    setLocationModalVisible(true);
+    setStep(Step.location);
   }
 
   const handleSetLocation = () => {
@@ -58,34 +61,8 @@ function CreateGroup() {
       return;
     }
     setError('');
-    setLocationModalVisible(false);
-    setImageModalVisible(true);
+    setStep(Step.image);
   }
-
-  const pickImage = async () => {
-    // request camera roll permission
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      if (Platform.OS === 'android') {
-        Alert.alert('Please grant camera roll permissions to upload an image.');
-      } else {
-        Alert.alert('Please grant camera roll permissions to upload an image.');
-      }
-      return;
-    }
-
-    // image picker
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [3, 3],
-      quality: 0.8,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0]);
-    }
-  };
 
   const handleContinueWithImage = () => {
     if (!image) {
@@ -93,8 +70,7 @@ function CreateGroup() {
       return;
     }
     if (error) setError('');
-    setImageModalVisible(false);
-    setQuickAddModalVisible(true);
+    setStep(Step.members);
   };
 
   const handleSearch = (query: string) => {
@@ -104,14 +80,13 @@ function CreateGroup() {
     }
 
     // Filter results based on the search query
-    // TODO: backend needs to fix this for openAPI
-    // TODO: filter out logged in user
-    const filteredResults = data?.results.filter(user => {
-      const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
-      return fullName.includes(query.toLowerCase());
+    const filteredResults = data?.pages.flatMap(data => data.results).filter(userData => {
+      const fullName = `${userData.first_name} ${userData.last_name}`.toLowerCase();
+      const matchesQuery = fullName.includes(query.toLowerCase());
+      const notLoggedIn = user!.id !== userData.id;
+      return matchesQuery && notLoggedIn;
     });
-    const flattenedResults = filteredResults?.map(item => item);
-    setSearchResults(flattenedResults === undefined ? [] : flattenedResults);
+    setSearchResults(filteredResults === undefined ? [] : filteredResults);
   };
 
   const handleAddMember = (user: User) => {
@@ -127,39 +102,40 @@ function CreateGroup() {
   const { mutateAsync: handleCreateGroup, isPending: groupCreateLoading } = $api.useMutation(
     "post",
     "/api/v1/groups/", {
-      onError: (error) => {
-        setFailureModalVisible(true);
-        console.log(error);
-      },
-      onSuccess: () => {
-        setGroupCreatedModalVisible(true);
-        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
-      }
+    onError: () => {
+      setStep(Step.fail);
+    },
+    onSuccess: () => {
+      setStep(Step.success);
+      queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
     }
+  }
   )
 
   return (
     <>
       <TouchableOpacity
-        style={[styles.createButton, isButtonActive && styles.activeButton]}
+        style={[styles.createButton, step !== null && styles.activeButton]}
         onPress={() => {
-          setModalVisible(true);
-          setIsButtonActive(true);
+          setStep(Step.name);
           setGroupName('');
           setSelectedMembers([]);
           setLocation('');
           setImage(null);
           setSearchQuery('');
           setSearchResults([]);
+          setError('');
         }}
       >
-        <Text style={[styles.createButtonText, (modalVisible || locationModalVisible || quickAddModalVisible || groupCreatedModalVisible) && styles.activeButtonText]}>
+        <Text style={[styles.createButtonText, step !== null && styles.activeButtonText]}>
           create group
         </Text>
       </TouchableOpacity>
 
       {/* Modal for entering group name */}
-      <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+      <Modal animationType="fade" transparent={true} visible={step === Step.name} onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -168,7 +144,7 @@ function CreateGroup() {
             <View style={styles.modalContent}>
               <View style={styles.iconTextContainer}>
                 <Text style={styles.modalTitle}>create group name</Text>
-                <TouchableOpacity onPress={() => { setModalVisible(false); setIsButtonActive(false); }}>
+                <TouchableOpacity onPress={() => { setStep(null); }}>
                   <Feather name="x-square" size={25} color="black" />
                 </TouchableOpacity>
               </View>
@@ -201,7 +177,9 @@ function CreateGroup() {
       </Modal>
 
       {/* Modal for entering location */}
-      <Modal animationType="fade" transparent={true} visible={locationModalVisible} onRequestClose={() => setLocationModalVisible(false)}>
+      <Modal animationType="fade" transparent={true} visible={step === Step.location} onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -210,7 +188,9 @@ function CreateGroup() {
             <View style={styles.modalContent}>
               <View style={styles.iconTextContainer}>
                 <Text style={styles.searchModalTitle}>set location</Text>
-                <TouchableOpacity onPress={() => { setLocationModalVisible(false); setIsButtonActive(false); }}>
+                <TouchableOpacity onPress={() => {
+                  setStep(null);
+                }}>
                   <Feather name="x-square" size={25} color="black" />
                 </TouchableOpacity>
               </View>
@@ -229,12 +209,11 @@ function CreateGroup() {
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
               <View style={styles.buttonRow}>
-                <TouchableOpacity 
-                  style={[styles.button, styles.clearButton]} 
+                <TouchableOpacity
+                  style={[styles.button, styles.clearButton]}
                   onPress={() => {
                     if (error) setError('');
-                    setLocationModalVisible(false);
-                    setModalVisible(true);
+                    setStep(Step.name);
                   }}
                 >
                   <Text style={styles.buttonText}>back</Text>
@@ -250,7 +229,9 @@ function CreateGroup() {
       </Modal>
 
       {/* Modal for uploading image */}
-      <Modal animationType="fade" transparent={true} visible={imageModalVisible} onRequestClose={() => setImageModalVisible(false)}>
+      <Modal animationType="fade" transparent={true} visible={step === Step.image} onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -259,7 +240,9 @@ function CreateGroup() {
             <View style={styles.modalContent}>
               <View style={styles.iconTextContainer}>
                 <Text style={styles.imageModalTitle}>upload image</Text>
-                <TouchableOpacity onPress={() => { setImageModalVisible(false); setIsButtonActive(false); }}>
+                <TouchableOpacity onPress={() => {
+                  setStep(null);
+                }}>
                   <Feather name="x-square" size={25} color="black" />
                 </TouchableOpacity>
               </View>
@@ -268,7 +251,7 @@ function CreateGroup() {
               {image ? (
                 <View style={styles.imagePreviewContainer}>
                   <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.removeImageButton}
                     onPress={() => setImage(null)}
                   >
@@ -276,7 +259,9 @@ function CreateGroup() {
                   </TouchableOpacity>
                 </View>
               ) : (
-                <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                <TouchableOpacity style={styles.uploadButton} onPress={async () => {
+                  setImage(await pickImage());
+                }}>
                   <Feather name="upload" size={40} color="#9680B6" />
                 </TouchableOpacity>
               )}
@@ -284,12 +269,11 @@ function CreateGroup() {
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
               <View style={styles.buttonRow}>
-                <TouchableOpacity 
-                  style={[styles.button, styles.clearButton]} 
+                <TouchableOpacity
+                  style={[styles.button, styles.clearButton]}
                   onPress={() => {
                     if (error) setError('');
-                    setImageModalVisible(false);
-                    setLocationModalVisible(true);
+                    setStep(Step.location);
                   }}
                 >
                   <Text style={styles.buttonText}>back</Text>
@@ -305,7 +289,9 @@ function CreateGroup() {
       </Modal>
 
       {/* Quick add members modal */}
-      <Modal animationType="fade" transparent={true} visible={quickAddModalVisible} onRequestClose={() => setQuickAddModalVisible(false)}>
+      <Modal animationType="fade" transparent={true} visible={step === Step.members} onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -366,8 +352,7 @@ function CreateGroup() {
                 <TouchableOpacity
                   style={[styles.button, styles.clearButton]}
                   onPress={() => {
-                    setQuickAddModalVisible(false);
-                    setImageModalVisible(true);
+                    setStep(Step.image);
                   }}>
                   <Text style={styles.buttonText}>back</Text>
                 </TouchableOpacity>
@@ -375,24 +360,29 @@ function CreateGroup() {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={async () => {
-                    setQuickAddModalVisible(false);
-                    setIsButtonActive(true);
-                    // Some hack to get avatar to show up
-                    const formData = new FormData();
-                    formData.append("name", groupName);
-                    formData.append("location", location);
-                    selectedMembers.forEach((m) => {
-                      formData.append("members", m.id.toString());
-                    });
-                    if (image) {
-                      formData.append("avatar", {
-                        uri: image.uri,
-                        name: image.fileName,
-                        type: "image/jpeg",
-                      });    
-                    }
+                    setStep(null);
                     const s = await handleCreateGroup({
-                      body: formData
+                      body: {
+                        name: groupName,
+                        location: location,
+                        members: [...selectedMembers.map(member => member.id)],
+                        avatar: {
+                          uri: image!.uri,
+                          name: image!.fileName,
+                          type: "image/jpeg",
+                        }
+                      },
+                      // https://openapi-ts.dev/openapi-fetch/api#bodyserializer
+                      bodySerializer: (body) => {
+                        const formData = new FormData();
+                        formData.append("name", body.name);
+                        formData.append("location", body.location);
+                        formData.append("avatar", body.avatar);
+                        body.members.forEach(memberId => {
+                          formData.append("members", memberId);
+                        })
+                        return formData;
+                      }
                     });
                     setGroupCode(s.join_code);
                   }}>
@@ -404,26 +394,12 @@ function CreateGroup() {
         </KeyboardAvoidingView>
       </Modal>
 
-      {/* Loading Modal */}
-      <Modal animationType="fade" transparent={true} visible={groupCreateLoading}>
-        <View style={styles.fullScreenContainer}>
-          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-        </View>
-
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.confirmView}>
-              <View>
-                <ActivityIndicator size="large" color="#44344D" />
-              </View>
-              <Text style={styles.modalText}>group creating...</Text>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <LoadingModal visible={groupCreateLoading} title={"group creating..."} />
 
       {/* Group created confirmation modal */}
-      <Modal animationType="fade" transparent={true} visible={groupCreatedModalVisible} onRequestClose={() => setGroupCreatedModalVisible(false)}>
+      <Modal animationType="fade" transparent={true} visible={step === Step.success} onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -440,8 +416,7 @@ function CreateGroup() {
                 <TouchableOpacity
                   style={styles.modalButton}
                   onPress={() => {
-                    setGroupCreatedModalVisible(false);
-                    setIsButtonActive(false);
+                    setStep(null);
                     Clipboard.setStringAsync(groupCode);
                     if (Platform.OS === 'android') {
                       ToastAndroid.show('Text copied to clipboard!', ToastAndroid.SHORT);
@@ -459,7 +434,9 @@ function CreateGroup() {
       </Modal>
 
       {/* Failure Modal */}
-      <Modal visible={failureModalVisible} transparent={true} animationType="fade" onRequestClose={() => setFailureModalVisible(false)}>
+      <Modal visible={step === Step.fail} transparent={true} animationType="fade" onRequestClose={() => {
+        setStep(null);
+      }}>
         <View style={styles.fullScreenContainer}>
           <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
         </View>
@@ -471,10 +448,10 @@ function CreateGroup() {
             </View>
 
             <View style={styles.successFailButtonRow}>
-              <TouchableOpacity onPress={() => { setFailureModalVisible(false); setIsButtonActive(false); }} style={styles.modalButton}>
+              <TouchableOpacity onPress={() => { setStep(null); }} style={styles.modalButton}>
                 <Text style={styles.buttonText}>cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => { setFailureModalVisible(false); setModalVisible(true); setIsButtonActive(true); }} style={[styles.modalButton, styles.secondaryButton]}>
+              <TouchableOpacity onPress={() => { setStep(Step.name); }} style={[styles.modalButton, styles.secondaryButton]}>
                 <Text style={styles.buttonText}>try again</Text>
               </TouchableOpacity>
             </View>

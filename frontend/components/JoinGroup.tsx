@@ -4,16 +4,18 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { $api } from '../types/constants';
 import { useQueryClient } from '@tanstack/react-query';
+import { LoadingModal } from './LoadingModal';
 
 function JoinGroup() {
   const [modalVisible, setModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [error, setError] = useState('');
   const [groupCode, setGroupCode] = useState('');
   const queryClient = useQueryClient();
 
-  const { mutateAsync: joinGroup } = $api.useMutation(
+  const { mutateAsync: joinGroup, isPending } = $api.useMutation(
     "post",
     "/api/v1/groups/join/",
     {
@@ -22,27 +24,34 @@ function JoinGroup() {
       },
       onSuccess: () => {
         setSuccessModalVisible(true);
-        queryClient.invalidateQueries({queryKey: ["get", "/api/v1/groups/"]});
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
       }
     }
   );
+
   const handleJoinGroup = async () => {
+    if (!groupCode) {
+      setError("enter a group code");
+      return;
+    }
     joinGroup({
       body: {
         join_code: groupCode
       }
     })
     setModalVisible(false);
-    setGroupCode('');
   };
 
   return (
     <>
+      <LoadingModal visible={isPending} title={"joining group..."} />
       <TouchableOpacity
         style={[styles.joinButton, isButtonActive && styles.activeButton]}
         onPress={() => {
           setModalVisible(true);
           setIsButtonActive(true);
+          setError('');
+          setGroupCode('');
         }}
       >
         <Text style={[styles.joinButtonText, (modalVisible || successModalVisible || failureModalVisible) && styles.activeButtonText]}>
@@ -68,13 +77,14 @@ function JoinGroup() {
               </View>
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, error && styles.inputError]}
                 placeholder="group code"
                 placeholderTextColor="#BFBFBF"
                 value={groupCode}
                 onChangeText={setGroupCode}
                 keyboardType="default"
               />
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
               <View style={styles.buttonRow}>
                 <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={() => setGroupCode('')}>
                   <Text style={styles.buttonText}>clear</Text>
@@ -122,7 +132,7 @@ function JoinGroup() {
           <View style={styles.modalContent}>
             <View style={styles.iconSuccessFailTextContainer}>
               <Feather name="x-circle" size={25} color="red" />
-              <Text style={styles.modalText}>group cannot be found.</Text>
+              <Text style={styles.modalText}>failed to join group.</Text>
             </View>
 
             <View style={styles.successFailButtonRow}>
@@ -253,6 +263,15 @@ const styles = StyleSheet.create({
   },
   fullScreenBlur: {
     flex: 1,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+    marginTop: -10,
+    fontFamily: 'Work Sans'
+  },
+  inputError: {
+    borderColor: 'red',
   },
 });
 

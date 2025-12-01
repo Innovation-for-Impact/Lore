@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
 import { RootStackParamList } from '../types/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { $api } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -33,6 +35,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
   const navigation = useNavigation<NavigationProp>();
+  const queryClient = useQueryClient();
   // fixes created date from db
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -40,6 +43,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
   };
 
   function pressGroup() {
+    queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/").queryKey });
     navigation.navigate('GroupInfoScreen', { group });
   }
 

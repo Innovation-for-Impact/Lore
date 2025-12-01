@@ -5,7 +5,8 @@ import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View,
 import Logo from '../assets/logo-transparent-white.png';
 import { useNavigation } from '@react-navigation/native';
 import { Navigation } from '../types/navigation';
-import { $api } from '../types/constants';
+import { $api, setTokens } from '../types/constants';
+import { useUser } from '../context/UserContext';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -21,39 +22,40 @@ const CreateAccountEmailScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation<Navigation>();
 
+  const { setUser } = useUser();
+
   const isEmailValid = email.includes("@") && email.includes(".");
 
   const {mutateAsync: register} = $api.useMutation(
     "post",
     "/api/v1/auth/registration/",
     {
-      onSuccess: () => {
-        navigation.navigate('CreateAccountProfileScreen');
-      },
       onError: (error) => {
         setError(error.password1[0]); // TODO: Get openAPI spec to generate this
       }
     }
   )
 
-  // const { data } = $api.useQuery(
-  //   "get",
-  //   "/api/v1/users/",
-  //   {
-  //     params: {
-  //       query: {
-  //         search: email
-  //       }
-  //     }
-  //   },
-  // );
+  const { mutateAsync: login } = $api.useMutation(
+    "post",
+    "/api/v1/auth/login/",
+    {
+      onSuccess: (response) => {
+        // redirect to user page
+        setUser(response.user);
+        setTokens(response.access, response.refresh);
+        navigation.navigate('CreateAccountProfileScreen');
+      },
+      onError: (error) => {
+        setError(error.non_field_errors);
+      }
+    }
+  )
 
   const goBack = () => {
     navigation.goBack();
   };
 
-  // TODO: this whole flow is a problem, what if somebody quits in the middle of account creation? then only half of the user info exists in the DB...
-  // To fix: collect all info, then make one request to DB. there needs to be an API endpoint for this.
   const handleRegister = async () => {
     if (!first_name || !last_name || !email || !password || !confirmPassword) {
       setError("All fields are required.");
@@ -70,7 +72,6 @@ const CreateAccountEmailScreen = () => {
       return;
     }
 
-    // TODO: error handling
     await register({
       body: {
         email: email,
@@ -81,7 +82,14 @@ const CreateAccountEmailScreen = () => {
       }
     })
 
-    // console.log(data);
+    await login(
+      {
+        body: {
+          email: email,
+          password: password
+        }
+      }     
+    );
 
     // TODO: API endpoint to check email
     // if email already exists in database - X mark

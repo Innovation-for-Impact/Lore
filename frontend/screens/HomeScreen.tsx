@@ -6,27 +6,24 @@ import CreateGroup from '../components/CreateGroup';
 import GroupCard from '../components/GroupCard';
 import JoinGroup from '../components/JoinGroup';
 import { globalStyles } from '../styles/global';
-import { $api } from '../types/constants';
+import { useGroups } from '../utils/GroupUtils';
 
 const HomeScreen = () => {
   const [query, setQuery] = useState('');
 
-  const emptyGroupData = {
+  const emptyGroupData = [{
     count: 0,
     next: null,
     previous: null,
     results: []
-  };
+  }];
 
-  const { data, isLoading, isError } = $api.useQuery(
-    "get",
-    "/api/v1/groups/",
-  )
+  const {groups, isLoading, isError } = useGroups();
 
-  const groupData = data ?? emptyGroupData;
+  const groupData = groups ?? emptyGroupData;
 
   const filteredGroups = useMemo(() => {
-    return groupData.results.filter(group => 
+    return groupData.filter(group => 
       group.name.toLowerCase().includes(query.toLowerCase())
     )
   }, [groupData, query])
@@ -42,7 +39,6 @@ const HomeScreen = () => {
     );
   }
 
-  // TODO: Fix loading errors
   if (isError) {
     return (
       <View style={styles.emptyContainer}>
@@ -71,15 +67,23 @@ const HomeScreen = () => {
           <JoinGroup />
           <CreateGroup />
         </View>
+        {
+          filteredGroups.length === 0 ?
+            <View style={styles.emptyContainer}>
+              <Text style={styles.noGroupsText}>
+                no groups to show
+              </Text>
+            </View> :
+            <FlatList
+              data={filteredGroups}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <GroupCard group={item} />}
+              contentContainerStyle={styles.listContainer} // ensures even spacing
+              keyboardShouldPersistTaps="handled" // allows smooth scrolling
+              showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+            />
+        }
 
-        <FlatList
-          data={filteredGroups}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <GroupCard group={item} />}
-          contentContainerStyle={styles.listContainer} // ensures even spacing
-          keyboardShouldPersistTaps="handled" // allows smooth scrolling
-          showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
-        />
       </View>
     </>
   );

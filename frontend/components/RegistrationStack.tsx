@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import CreateAccountScreen from '../screens/CreateAccountScreen';
 import CreateAccountEmailScreen from '../screens/CreateAccountEmailScreen';
-import CreateAccountNameScreen from '../screens/CreateAccountNameScreen';
 import CreateAccountProfileScreen from '../screens/CreateAccountProfileScreen';
 import CreateAccountGroupScreen from '../screens/CreateAccountGroupScreen';
 import CreateAccountWelcomeScreen from '../screens/CreateAccountWelcomeScreen';
@@ -30,17 +29,10 @@ function RegistrationStack() {
         component={CreateAccountScreen} 
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="LoginScreen" options={{ headerShown: false }}>
-        {(props) => <LoginScreen {...props} setUser={setUser} />}
-      </Stack.Screen>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
       <Stack.Screen 
         name="CreateAccountEmailScreen"
         component={CreateAccountEmailScreen} 
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen 
-        name="CreateAccountNameScreen"
-        component={CreateAccountNameScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 
@@ -53,9 +45,7 @@ function RegistrationStack() {
         component={CreateAccountGroupScreen} 
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="CreateAccountWelcomeScreen" options={{ headerShown: false }}>
-        {(props) => <CreateAccountWelcomeScreen {...props} setUser={setUser} />}
-      </Stack.Screen>
+      <Stack.Screen name="CreateAccountWelcomeScreen" component={CreateAccountWelcomeScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="WelcomeBack" options={{ headerShown: false }} component={WelcomeBackScreen}/>
       <Stack.Screen
         name="HomeScreen" 

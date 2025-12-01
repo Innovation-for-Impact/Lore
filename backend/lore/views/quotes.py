@@ -12,7 +12,6 @@ from lore import serializers
 from lore.models import LoreGroup, LoreUser, Quote
 from lore.utils import GroupMemberItemPermission, GroupMemberRoutePermissions
 
-
 class BaseQuoteViewSet(viewsets.ModelViewSet):
     """Viewset for quotes.
 

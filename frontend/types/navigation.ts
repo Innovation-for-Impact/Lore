@@ -1,8 +1,8 @@
 import { NavigationProp } from "@react-navigation/native";
-import { Quote } from "../components/ViewQuotes";
 import { components } from './backend-schema';
 
 type Group = components["schemas"]["Group"];
+type Quote = components["schemas"]["Quote"];
 
 export type RootStackParamList = {
   LoginScreen: undefined;
@@ -25,16 +25,7 @@ export type RootStackParamList = {
   MemoryBoardScreen: undefined;
   AchievementBoardScreen: undefined;
 
-  QuoteScreen: {
-    activeTab?: 'viewQuotes' | 'otherTab';
-    showCreatedModal?: boolean;
-    quote?: {
-      text?: string;
-      author?: string;
-      timestamp?: string;
-    }
-  };
-
+  QuoteScreen: undefined;
   QuoteDetailScreen: {
      quote: Quote; 
   };
