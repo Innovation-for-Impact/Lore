@@ -1202,6 +1202,7 @@ export interface components {
         PatchedQuote: {
             readonly id?: number;
             text?: string;
+            context?: string;
             said_by?: number;
             readonly said_by_username?: string;
             pinned?: boolean;
@@ -1239,6 +1240,7 @@ export interface components {
         Quote: {
             readonly id: number;
             text: string;
+            context: string;
             said_by: number;
             readonly said_by_username: string;
             pinned?: boolean;

@@ -9,6 +9,7 @@ import { $api, infiniteQueryParams, User } from '../types/constants';
 import { LoadingModal } from './LoadingModal';
 import { pickImage } from '../utils/GroupUtils';
 import { useUser } from '../context/UserContext';
+import { FailureModal } from './FailureModal';
 
 enum Step {
   name = "name",
@@ -433,31 +434,7 @@ function CreateGroup() {
         </View>
       </Modal>
 
-      {/* Failure Modal */}
-      <Modal visible={step === Step.fail} transparent={true} animationType="fade" onRequestClose={() => {
-        setStep(null);
-      }}>
-        <View style={styles.fullScreenContainer}>
-          <BlurView intensity={7} tint="light" style={styles.fullScreenBlur} />
-        </View>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.iconSuccessFailTextContainer}>
-              <Feather name="x-circle" size={25} color="red" />
-              <Text style={styles.modalText}>group creation error</Text>
-            </View>
-
-            <View style={styles.successFailButtonRow}>
-              <TouchableOpacity onPress={() => { setStep(null); }} style={styles.modalButton}>
-                <Text style={styles.buttonText}>cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => { setStep(Step.name); }} style={[styles.modalButton, styles.secondaryButton]}>
-                <Text style={styles.buttonText}>try again</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <FailureModal title={"group creation error"} visible={step === Step.fail} tryAgainCallback={() => {setStep(Step.name)}} cancelCallback={() => setStep(null)}/>
     </>
   );
 }

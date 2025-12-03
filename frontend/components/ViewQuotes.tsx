@@ -107,6 +107,11 @@ const ViewQuotes = () => {
         {/* Quote text in the middle */}
         <Text style={styles.quoteText}>{item.text}</Text>
 
+        {
+          item.context !== "" ? 
+            <Text style={styles.context}> context: {item.context} </Text> : null
+        }
+
         {/* Author at the bottom center */}
         <Text style={styles.author}>{item.said_by_username}</Text>
       </TouchableOpacity>
@@ -190,13 +195,13 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center',
     marginVertical: 10,
+    marginBottom: 50,
     fontFamily: 'Work Sans'
   },
   author: {
     fontSize: 14,
     color: '#6B6B6B',
     textAlign: 'center',
-    marginTop: 50,
     fontFamily: 'Work Sans'
   },
   noQuoteText: {
@@ -210,5 +215,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  context: {
+    fontSize: 18,
+    color: '#5F4078',
+    textAlign: 'center',
+    fontFamily: 'Work Sans',
+  },
 });

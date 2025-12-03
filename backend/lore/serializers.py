@@ -21,6 +21,7 @@ class QuoteSerializer(serializers.ModelSerializer):
     Serializes the quote's:
       - id
       - text
+      - context
       - said_by
       - said_by_url
       - group
@@ -77,7 +78,7 @@ class QuoteSerializer(serializers.ModelSerializer):
             text=validated_data["text"],
             context=validated_data["context"],
             said_by_pk=validated_data["said_by"].pk,
-            pinned=validated_data["pinned"],
+            is_pinned=validated_data["pinned"],
             group=validated_data["group"],
         )
 
@@ -86,6 +87,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = [
             "id",
             "text",
+            "context",
             "said_by",
             "said_by_username",
             "pinned",

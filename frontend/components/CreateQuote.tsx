@@ -15,6 +15,7 @@ import { LoadingModal } from './LoadingModal';
 import { useGroups } from '../utils/GroupUtils';
 import { components } from '../types/backend-schema';
 import { useUser } from '../context/UserContext';
+import { FailureModal } from './FailureModal';
 
 type Group = components["schemas"]["Group"];
 
@@ -31,7 +32,7 @@ enum Step {
 }
 
 const CreateQuote = () => {
-  const {user} = useUser();
+  const { user } = useUser();
   const [step, setStep] = useState<Step>(Step.quote);
   const [quoteText, setQuoteText] = useState('');
   const [contextText, setContextText] = useState('');
@@ -43,8 +44,9 @@ const CreateQuote = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [sucessModal, setSuccessModal] = useState(false);
+  const [failureModal, setFailureModal] = useState(false);
 
-  const {groups} = useGroups();
+  const { groups } = useGroups();
 
   // Step 1: Quote
   const handleQuoteContinue = () => {
@@ -61,9 +63,9 @@ const CreateQuote = () => {
     "post",
     "/api/v1/groups/{loregroup_pk}/quotes/",
     {
-      onError: (error) => {
-        // TODO: error
-        console.log(JSON.stringify(error))
+      onError: () => {
+        setFailureModal(true);
+        // console.log(JSON.stringify(error))
       }
     }
   )
@@ -78,7 +80,8 @@ const CreateQuote = () => {
         text: quoteText,
         said_by: user!.id,
         pinned: false,
-        group: selectedGroup!.id
+        group: selectedGroup!.id,
+        context: contextText
       },
       params: {
         path: {
@@ -96,8 +99,9 @@ const CreateQuote = () => {
 
   return (
     <>
+      <FailureModal title={"quote creation failed"} visible={failureModal} tryAgainCallback={finishAndNavigate} cancelCallback={() => setFailureModal(false)} />
       <LoadingModal title={'creating quote...'} visible={loadingCreate} />
-      <SuccessModal title={"quote creatad"} visible={sucessModal} setVisible={setSuccessModal} buttonText='close'/>
+      <SuccessModal title={"quote creatad"} visible={sucessModal} setVisible={setSuccessModal} buttonText='close' />
       <View style={styles.container}>
         {/* STEP 1: QUOTE */}
 
@@ -196,6 +200,11 @@ const CreateQuote = () => {
             <View style={styles.container}>
               <View style={styles.stepContainer}>
                 <View style={styles.whiteBox}>
+                  <TouchableOpacity
+                    onPress={() => setStep(Step.context)}
+                  >
+                    <Ionicons name="arrow-back" size={30} color="#44344D" />
+                  </TouchableOpacity>
                   <Text style={styles.label}>select a group</Text>
                   <TouchableOpacity
                     style={styles.dropdownButton}
