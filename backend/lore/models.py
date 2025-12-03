@@ -247,8 +247,9 @@ class QuoteManager(models.Manager):
     def create_quote(
         self,
         text: str,
+        context: str,
         said_by_pk: int,
-        pinned: bool,
+        is_pinned: bool,
         group: LoreGroup,
     ) -> "Quote":
         """Create a quote with the text, in the given group, said by the user.
@@ -269,8 +270,9 @@ class QuoteManager(models.Manager):
 
         quote = self.model(
             text=text,
+            context=context,
             said_by=said_by,
-            pinned=pinned,
+            pinned=is_pinned,
             group_id=group.pk,
         )
 
@@ -304,6 +306,10 @@ class Quote(GroupItem):
     """
 
     text = models.TextField(
+        max_length=2048,
+        validators=[MinLengthValidator(1)],
+    )
+    context = models.TextField(
         max_length=2048,
         validators=[MinLengthValidator(1)],
     )

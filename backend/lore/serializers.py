@@ -75,6 +75,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         """Create an instane of an Quote."""
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
+            context=validated_data["context"],
             said_by_pk=validated_data["said_by"].pk,
             pinned=validated_data["pinned"],
             group=validated_data["group"],

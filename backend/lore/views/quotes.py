@@ -35,7 +35,7 @@ class BaseQuoteViewSet(viewsets.ModelViewSet):
         "said_by_id",
         "pinned",
     ]
-    search_fields: ClassVar[list[str]] = ["text"]
+    search_fields: ClassVar[list[str]] = ["text", "context"]
 
     def perform_create(self, serializer: serializers.QuoteSerializer) -> None:
         """Create the item in the database."""
