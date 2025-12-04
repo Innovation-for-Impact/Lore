@@ -76,7 +76,7 @@ const CreateAccountScreen = () => {
 
       <TouchableOpacity style={styles.button2}>
         <View style={styles.buttonTextRow}>
-          <AntDesign name="apple1" size={24} color="white" />
+          <AntDesign name="apple" size={24} color="white" />
           <Text style={styles.buttonText}>Continue with Apple</Text>
         </View>
       </TouchableOpacity>

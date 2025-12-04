@@ -1,19 +1,24 @@
 import { NavigationProp } from "@react-navigation/native";
-import { SetStateAction } from "react";
-import { Quote } from "../components/ViewQuotes";
+import { components } from './backend-schema';
+
+type Group = components["schemas"]["Group"];
+type Quote = components["schemas"]["Quote"];
 
 export type RootStackParamList = {
   LoginScreen: undefined;
-  HomeScreen: undefined;
   RegistrationScreen: undefined;
   CreateAccountScreen: undefined;
   CreateAccountEmailScreen: undefined;
   CreateAccountGroupScreen: undefined;
   CreateAccountProfileScreen: undefined;
-  CreateAccountWelcomeScreen: { setUser: React.Dispatch<SetStateAction<boolean>> };
-  WelcomeBack: { setUser: React.Dispatch<SetStateAction<boolean>> };
+  CreateAccountWelcomeScreen: undefined;
+  WelcomeBack: undefined;
   CreateAccountNameScreen: undefined;
   ForgotPasswordScreen: undefined;
+
+  HomeScreen: undefined;
+  GroupInfoScreen: { group: Group };
+  EditGroupScreen: { group: Group };
 
   CommunityScreen: undefined;
   QuoteBoardScreen: undefined;
@@ -21,16 +26,7 @@ export type RootStackParamList = {
   AchievementBoardScreen: undefined;
   CreateAchievementScreen: undefined;
 
-  QuoteScreen: {
-    activeTab?: 'viewQuotes' | 'otherTab';
-    showCreatedModal?: boolean;
-    quote?: {
-      text?: string;
-      author?: string;
-      timestamp?: string;
-    }
-  };
-
+  QuoteScreen: undefined;
   QuoteDetailScreen: {
      quote: Quote; 
   };

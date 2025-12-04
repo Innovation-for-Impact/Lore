@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -10,27 +10,17 @@ import {
 import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
 import { globalStyles } from '../styles/global';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { Navigation } from '../types/navigation';
+
+enum Tabs {
+  viewQuotes = "viewQuotes",
+  createQuote = "createQuote"
+};
 
 const QuoteBoardScreen = () => {
   const navigation = useNavigation<Navigation>();
-  const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
 
-  const [activeTab, setActiveTab] = useState('viewQuotes');
-  const [showCreatedModal, setShowCreatedModal] = useState(false);
-
-  useEffect(() => {
-    // If route.params?.activeTab is provided, set it
-    if (route.params?.activeTab) {
-      setActiveTab(route.params.activeTab);
-    }
-    // If route.params?.showCreatedModal is provided, show the popup
-    if (route.params?.showCreatedModal) {
-      // Force user onto "view quotes" tab
-      setActiveTab('viewQuotes');
-      setShowCreatedModal(true);
-    }
-  }, [route.params]);
+  const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
 
   const handleBack = () => {
     navigation.goBack();
@@ -52,14 +42,14 @@ const QuoteBoardScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === 'viewQuotes' && styles.activeTabItem,
+            activeTab === Tabs.viewQuotes && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab('viewQuotes')}
+          onPress={() => setActiveTab(Tabs.viewQuotes)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === 'viewQuotes' && styles.activeTabText,
+              activeTab === Tabs.viewQuotes && styles.activeTabText,
             ]}
           >
             view quotes
@@ -69,14 +59,14 @@ const QuoteBoardScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === 'createQuotes' && styles.activeTabItem,
+            activeTab === Tabs.createQuote && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab('createQuotes')}
+          onPress={() => setActiveTab(Tabs.createQuote)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === 'createQuotes' && styles.activeTabText,
+              activeTab === Tabs.createQuote && styles.activeTabText,
             ]}
           >
             create quotes
@@ -86,11 +76,8 @@ const QuoteBoardScreen = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        {activeTab === 'viewQuotes' ? (
-          <ViewQuotes
-            // showCreatedModal={showCreatedModal}
-            // onHideModal={() => setShowCreatedModal(false)}
-          />
+        {activeTab === Tabs.viewQuotes ? (
+          <ViewQuotes />
         ) : (
           <CreateQuote />
         )}

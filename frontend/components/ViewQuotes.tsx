@@ -1,8 +1,9 @@
-import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   FlatList,
   StyleSheet,
@@ -10,107 +11,114 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { components } from '../types/backend-schema';
+import { $api, infiniteQueryParams } from '../types/constants';
 import { Navigation } from '../types/navigation';
+import { useUser } from '../context/UserContext';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export type Quote = {
-  id: string;
-  text: string;
-  author: string;
-  timestamp: string;
-};
-
-// Example dummy data (replace with your API data if needed)
-const initialQuotes: Quote[] = [
-  { id: '1', text: '“tickle the bottom.”', author: 'geo johnson', timestamp: '1 hour ago' },
-  { id: '2', text: '“lost taste in my left eye.”', author: 'ambrose brown', timestamp: '1 hour ago' },
-  { id: '3', text: '“wisdom chases you but you are faster.”', author: 'valentina tran', timestamp: '1 hour ago' },
-];
+type Quote = components["schemas"]["Quote"];
 
 const ViewQuotes = () => {
   const navigation = useNavigation<Navigation>();
+  const {user} = useUser();
 
-  // State for quotes array
-  const [quotes, setQuotes] = useState<Quote[]>([]);
-  // Optional: track loading or error states
-  const [loading, setLoading] = useState(true);
-  const [pinnedQuoteIds, setPinnedQuoteIds] = useState<string[]>([]);
+  const { mutateAsync: patchQuote } = $api.useMutation(
+    "patch",
+    "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
+  )
 
+  const { data: quotesData, isLoading, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
+    "get",
+    "/api/v1/quotes/",
+    {},
+    infiniteQueryParams,
+  )
 
-  // Simulate fetch or load
   useEffect(() => {
-    // Optionally fetch from an API
-    loadQuotes();
-  }, []);
-
-  const loadQuotes = async () => {
-    try {
-      setLoading(true);
-      // Simulate network delay
-      // await new Promise((resolve) => setTimeout(resolve, 100));
-      // Set dummy data
-      setQuotes(initialQuotes);
-    } catch (err) {
-      console.error('Error loading quotes:', err);
-    } finally {
-      setLoading(false);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetching, fetchNextPage]);
 
-  // Reorder quotes so pinned quote is at the top
-  // (If you allow multiple pinned, you can sort pinned first, then unpinned.)
-  const getOrderedQuotes = () => {
-    if (!pinnedQuoteIds || pinnedQuoteIds.length === 0) 
-      return quotes;
-    const pinned = quotes.filter((q) => pinnedQuoteIds.includes(q.id));
-    const unpinned = quotes.filter((q) => !pinnedQuoteIds.includes(q.id));
-    return [...pinned, ...unpinned];
-  };
+  const quotes = useMemo(
+    () => quotesData?.pages.flatMap(page => page.results || page) || [],
+    [quotesData]
+  );
 
-  const handlePinPress = (quoteId: string) => {
-    if (pinnedQuoteIds.includes(quoteId)) {
-      // Unpin if already pinned
-      setPinnedQuoteIds(pinnedQuoteIds.filter(id => id !== quoteId));
-    } else {
-      // Pin the quote
-      setPinnedQuoteIds([...pinnedQuoteIds, quoteId]);
-    }
+  const [pinnedQuotes, setPinnedQuotes] = useState<Quote[]>([]);
+
+  useEffect(() => {
+    const serverPinned = quotes.filter(q => q.pinned);
+    setPinnedQuotes(serverPinned);
+  }, [quotes]);
+
+  const handlePinPress = async (quote: Quote) => {
+    const isPinned = pinnedQuotes.includes(quote);
+    setPinnedQuotes(prev =>
+      isPinned ? prev.filter(q => q.id !== quote.id) : [...prev, quote]
+    );
+
+    await patchQuote({
+      params: {
+        path: {
+          id: quote.id.toString(),
+          loregroup_pk: quote.group.toString()
+        }
+      },
+      body: { pinned: !isPinned }
+    });
   };
 
   const renderItem = ({ item }: { item: Quote }) => {
-    const isPinned = pinnedQuoteIds.includes(item.id);
-
+    const isPinned = pinnedQuotes.includes(item);
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('QuoteDetailScreen', { quote: item })}
+        onPress={() => {
+          if (item.said_by === user!.id) {
+            navigation.navigate('QuoteDetailScreen', { quote: item })
+          }
+          else {
+            Alert.alert(
+              "Cannot Edit",
+              "You can only edit quotes that you created.",
+              [{ text: "OK" }]
+            );
+          }
+        }}
       >
         {/* Top row with pin icon and timestamp */}
         <View style={styles.topRow}>
-          <TouchableOpacity onPress={() => handlePinPress(item.id)}>
+          <TouchableOpacity onPress={() => handlePinPress(item)}>
             <Text>
-              {isPinned ? 
-                <AntDesign name="pushpin" size={25} color="#44344D" /> 
-              : 
-                <AntDesign name="pushpino" size={25} color="#44344D" />
+              {isPinned ?
+                <MaterialCommunityIcons name="pin" size={32} color="#44344D" />
+                :
+                <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" />
               }
             </Text>
           </TouchableOpacity>
-          <Text style={styles.timestamp}>{item.timestamp}</Text>
+          <Text style={styles.timestamp}>{new Date(item.created).toLocaleString()}</Text>
         </View>
 
         {/* Quote text in the middle */}
         <Text style={styles.quoteText}>{item.text}</Text>
 
+        {
+          item.context !== "" ? 
+            <Text style={styles.context}> context: {item.context} </Text> : null
+        }
+
         {/* Author at the bottom center */}
-        <Text style={styles.author}>{item.author}</Text>
+        <Text style={styles.author}>{item.said_by_username}</Text>
       </TouchableOpacity>
     );
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#7C57FE" />
@@ -118,15 +126,27 @@ const ViewQuotes = () => {
     );
   }
 
-  const orderedQuotes = getOrderedQuotes();
+  const orderedQuotes = [
+    ...quotes.filter(q => pinnedQuotes.includes(q)),
+    ...quotes.filter(q => !pinnedQuotes.includes(q))
+  ];
 
   return (
-    <FlatList
-      data={orderedQuotes}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      contentContainerStyle={styles.container}
-    />
+    <>
+      {orderedQuotes.length === 0 ?
+        <View style={styles.emptyContainer}>
+          <Text style={styles.noQuoteText}> no quotes to show. make some! </Text>
+        </View > :
+        <FlatList
+          data={orderedQuotes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        />
+      }
+    </>
   );
 };
 
@@ -175,13 +195,31 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center',
     marginVertical: 10,
+    marginBottom: 50,
     fontFamily: 'Work Sans'
   },
   author: {
     fontSize: 14,
     color: '#6B6B6B',
     textAlign: 'center',
-    marginTop: 50,
     fontFamily: 'Work Sans'
+  },
+  noQuoteText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#5F4078',
+    marginBottom: 150,
+    fontFamily: 'Work Sans'
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  context: {
+    fontSize: 18,
+    color: '#5F4078',
+    textAlign: 'center',
+    fontFamily: 'Work Sans',
   },
 });

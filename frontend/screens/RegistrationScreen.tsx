@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
-import * as SecureStore from 'expo-secure-store';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
 import { Navigation } from '../types/navigation';
@@ -108,8 +107,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    width: screenWidth * 0.85,
     paddingVertical: screenHeight * 0.015,
-    paddingHorizontal: screenWidth * 0.36,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
@@ -120,8 +119,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    width: screenWidth * 0.85,
     paddingVertical: screenHeight * 0.015,
-    paddingHorizontal: screenWidth * 0.25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,

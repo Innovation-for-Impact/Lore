@@ -619,22 +619,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
-        get: operations["groups_quotes_retrieve"];
+        /** @description Displays the quotes for a specific group. */
+        get: operations["groups_quotes_list"];
         put?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         post: operations["groups_quotes_create"];
         delete?: never;
         options?: never;
@@ -649,40 +637,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
-        get: operations["groups_quotes_retrieve_2"];
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
+        get: operations["groups_quotes_retrieve"];
+        /** @description Displays the quotes for a specific group. */
         put: operations["groups_quotes_update"];
         post?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         delete: operations["groups_quotes_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         patch: operations["groups_quotes_partial_update"];
         trace?: never;
     };
@@ -809,22 +773,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
-        get: operations["quotes_retrieve"];
+        /** @description Displays the quotes for all groups the user is in. */
+        get: operations["quotes_list"];
         put?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         post: operations["quotes_create"];
         delete?: never;
         options?: never;
@@ -839,40 +791,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
-        get: operations["quotes_retrieve_2"];
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
+        get: operations["quotes_retrieve"];
+        /** @description Displays the quotes for all groups the user is in. */
         put: operations["quotes_update"];
         post?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         delete: operations["quotes_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         patch: operations["quotes_partial_update"];
         trace?: never;
     };
@@ -1086,6 +1014,7 @@ export interface components {
             refresh: string;
             user: components["schemas"]["User"];
         };
+        /** @description A custom serializer for the group join endpoint. */
         Join: {
             join_code: string;
         };
@@ -1139,6 +1068,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Image"][];
+        };
+        PaginatedQuoteList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Quote"][];
         };
         PaginatedUserList: {
             /** @example 123 */
@@ -1244,6 +1188,35 @@ export interface components {
             /** Format: uri */
             readonly group_url?: string;
         };
+        /** @description Serializer for the quote detail.
+         *
+         *     Serializes the quote's:
+         *       - id
+         *       - text
+         *       - said_by
+         *       - said_by_url
+         *       - group
+         *       - group_url
+         *       - created
+         *       - url */
+        PatchedQuote: {
+            readonly id?: number;
+            text?: string;
+            context?: string;
+            said_by?: number;
+            readonly said_by_username?: string;
+            pinned?: boolean;
+            group?: number;
+            /** Format: date-time */
+            readonly created?: string;
+            /** Format: uri */
+            readonly said_by_url?: string;
+            /** Format: uri */
+            readonly group_url?: string;
+            /** Format: uri */
+            readonly url?: string;
+        };
+        /** @description A serializer for exposing public information about a user. */
         PatchedUser: {
             readonly id?: number;
             first_name?: string;
@@ -1253,12 +1226,33 @@ export interface components {
             /** Format: uri */
             readonly url?: string;
         };
-        Register: {
-            username?: string;
-            /** Format: email */
-            email: string;
-            password1: string;
-            password2: string;
+        /** @description Serializer for the quote detail.
+         *
+         *     Serializes the quote's:
+         *       - id
+         *       - text
+         *       - said_by
+         *       - said_by_url
+         *       - group
+         *       - group_url
+         *       - created
+         *       - url */
+        Quote: {
+            readonly id: number;
+            text: string;
+            context: string;
+            said_by: number;
+            readonly said_by_username: string;
+            pinned?: boolean;
+            group: number;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: uri */
+            readonly said_by_url: string;
+            /** Format: uri */
+            readonly group_url: string;
+            /** Format: uri */
+            readonly url: string;
         };
         ResendEmailVerification: {
             /** Format: email */
@@ -1279,6 +1273,7 @@ export interface components {
         TokenVerify: {
             token: string;
         };
+        /** @description A serializer for exposing public information about a user. */
         User: {
             readonly id: number;
             first_name: string;
@@ -1287,6 +1282,20 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url: string;
+        };
+        /** @description Custom serializer for user registration.
+         *
+         *     Adds the first/last name and avatar fields */
+        UserRegister: {
+            username?: string;
+            /** Format: email */
+            email: string;
+            password1: string;
+            password2: string;
+            first_name: string;
+            last_name: string;
+            /** Format: uri */
+            avatar?: string | null;
         };
         VerifyEmail: {
             key: string;
@@ -1688,9 +1697,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Register"];
-                "application/x-www-form-urlencoded": components["schemas"]["Register"];
-                "multipart/form-data": components["schemas"]["Register"];
+                "application/json": components["schemas"]["UserRegister"];
+                "application/x-www-form-urlencoded": components["schemas"]["UserRegister"];
+                "multipart/form-data": components["schemas"]["UserRegister"];
             };
         };
         responses: {
@@ -2315,9 +2324,14 @@ export interface operations {
             };
         };
     };
-    groups_quotes_retrieve: {
+    groups_quotes_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path: {
                 loregroup_pk: string;
@@ -2326,12 +2340,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PaginatedQuoteList"];
+                };
             };
         };
     };
@@ -2344,18 +2359,25 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Quote"];
+                "application/x-www-form-urlencoded": components["schemas"]["Quote"];
+                "multipart/form-data": components["schemas"]["Quote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
-    groups_quotes_retrieve_2: {
+    groups_quotes_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2367,12 +2389,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
@@ -2386,14 +2409,21 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Quote"];
+                "application/x-www-form-urlencoded": components["schemas"]["Quote"];
+                "multipart/form-data": components["schemas"]["Quote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
@@ -2428,14 +2458,21 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedQuote"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedQuote"];
+                "multipart/form-data": components["schemas"]["PatchedQuote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
@@ -2444,7 +2481,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2465,7 +2502,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2492,7 +2529,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2512,7 +2549,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2703,21 +2740,27 @@ export interface operations {
             };
         };
     };
-    quotes_retrieve: {
+    quotes_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PaginatedQuoteList"];
+                };
             };
         };
     };
@@ -2728,18 +2771,25 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Quote"];
+                "application/x-www-form-urlencoded": components["schemas"]["Quote"];
+                "multipart/form-data": components["schemas"]["Quote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
-    quotes_retrieve_2: {
+    quotes_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2750,12 +2800,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
@@ -2768,14 +2819,21 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Quote"];
+                "application/x-www-form-urlencoded": components["schemas"]["Quote"];
+                "multipart/form-data": components["schemas"]["Quote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };
@@ -2808,14 +2866,21 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedQuote"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedQuote"];
+                "multipart/form-data": components["schemas"]["PatchedQuote"];
+            };
+        };
         responses: {
-            /** @description No response body */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
             };
         };
     };

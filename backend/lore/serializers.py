@@ -15,39 +15,13 @@ if typing.TYPE_CHECKING:
     from rest_framework.views import Request
 
 
-class DataLinksSerializerMixin(serializers.Serializer):
-    """A mixin to partition a serializers's info into data and links.
-
-    Will automatically group any fields ending in "_url" into a "links"
-    group. Any mention of these urls will be removed elsewhere. All
-    other data is grouped into "data".
-    """
-
-    @override
-    def to_representation(self, instance: serializers.Serializer) -> dict:
-        res = super().to_representation(instance)
-
-        links = {}
-        data = {}
-        for key, value in res.items():
-            if key == getattr(self, "url_field_name", None):
-                links["self"] = value
-                continue
-            if not key.endswith("_url"):
-                data[key] = value
-                continue
-
-            name = key[:-4]
-            links[name] = value
-        return {"data": data, "links": links}
-
-
-class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
+class QuoteSerializer(serializers.ModelSerializer):
     """Serializer for the quote detail.
 
     Serializes the quote's:
       - id
       - text
+      - context
       - said_by
       - said_by_url
       - group
@@ -70,6 +44,10 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
         read_only=True,
         source="group",
     )
+
+    said_by_username = serializers.SerializerMethodField();
+    def get_said_by_username(self, obj):
+        return obj.said_by.get_full_name()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,8 +76,9 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
         """Create an instane of an Quote."""
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
+            context=validated_data["context"],
             said_by_pk=validated_data["said_by"].pk,
-            pinned=validated_data["pinned"],
+            is_pinned=validated_data["pinned"],
             group=validated_data["group"],
         )
 
@@ -108,17 +87,19 @@ class QuoteSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
         fields: ClassVar[list[str]] = [
             "id",
             "text",
+            "context",
             "said_by",
+            "said_by_username",
             "pinned",
-            "said_by_url",
-            "group_url",
             "group",
             "created",
+            "said_by_url",
+            "group_url",
             "url",
         ]
 
 
-class ImageSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
+class ImageSerializer(serializers.ModelSerializer):
     """Serializer for the image detail.
 
     Serializes the images's:
@@ -170,9 +151,7 @@ class ImageSerializer(serializers.ModelSerializer, DataLinksSerializerMixin):
 
 
 # TODO : add achieved urls to serializer
-class AchievementSerializer(
-    DataLinksSerializerMixin, serializers.ModelSerializer
-):
+class AchievementSerializer(serializers.ModelSerializer):
     """Serializer for the achievement detail.
 
     Serializes the images's:
@@ -275,7 +254,6 @@ class AchievementUpdateSerializer(AchievementSerializer):
 
 class GroupSerializer(
     serializers.ModelSerializer,
-    DataLinksSerializerMixin,
 ):
     """Serializes a group.
 
@@ -388,7 +366,6 @@ class JoinSerializer(serializers.Serializer):
 
 class UserSerializer(
     serializers.HyperlinkedModelSerializer,
-    DataLinksSerializerMixin,
 ):
     """A serializer for exposing public information about a user."""
 
