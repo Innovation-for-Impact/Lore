@@ -85,18 +85,18 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={async () => {
-        await login(
-          {
-            body: {
-              email: "test@test.com",
-              password: "test123test123"
-            }
-          }
-        );
-      }}>
-        <Text> DEBUG LOG IN </Text>
-      </TouchableOpacity>
+      {/* <TouchableOpacity onPress={async () => { */}
+      {/*   await login( */}
+      {/*     { */}
+      {/*       body: { */}
+      {/*         email: "test@test.com", */}
+      {/*         password: "test123test123" */}
+      {/*       } */}
+      {/*     } */}
+      {/*   ); */}
+      {/* }}> */}
+      {/*   <Text> DEBUG LOG IN </Text> */}
+      {/* </TouchableOpacity> */}
       {/* Back Arrow */}
       <TouchableOpacity
         style={styles.backButton}
