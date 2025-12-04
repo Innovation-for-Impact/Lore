@@ -1,4 +1,4 @@
-Demo
+Demo Notes
 
 Existing Account:
     lore@test.com
@@ -20,8 +20,9 @@ Join Group:
 
 Search Group
 
+Create Achievement
+
 Create Quote
 Edit Quote
-
-Create Achievement
+Delete Quote
 
