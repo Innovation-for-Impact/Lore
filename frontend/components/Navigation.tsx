@@ -35,7 +35,6 @@ function Navigation() {
                       'home' : 'home-outline'
                     : route.name === 'Profile' ? focused ?
                 'person' : 'person-outline' : 'compass';
-
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarInactiveTintColor: '#000',

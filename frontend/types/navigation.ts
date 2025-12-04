@@ -24,6 +24,7 @@ export type RootStackParamList = {
   QuoteBoardScreen: undefined;
   MemoryBoardScreen: undefined;
   AchievementBoardScreen: undefined;
+  CreateAchievementScreen: undefined;
 
   QuoteScreen: undefined;
   QuoteDetailScreen: {

@@ -9,6 +9,7 @@ import CreateAccountWelcomeScreen from '../screens/CreateAccountWelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import WelcomeBackScreen from '../screens/WelcomeBackScreen';
 import HomeScreen from '../screens/HomeScreen';
+import CreateAchievementScreen from '../screens/AcheivementScreens/CreateAchievementScreen';
 import { RootStackParamList } from '../types/navigation';
 import { useUser } from '../context/UserContext';
 
