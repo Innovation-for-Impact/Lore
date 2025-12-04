@@ -619,22 +619,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         get: operations["groups_quotes_list"];
         put?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         post: operations["groups_quotes_create"];
         delete?: never;
         options?: never;
@@ -649,40 +637,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         get: operations["groups_quotes_retrieve"];
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         put: operations["groups_quotes_update"];
         post?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         delete: operations["groups_quotes_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for a specific group. */
         patch: operations["groups_quotes_partial_update"];
         trace?: never;
     };
@@ -809,22 +773,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         get: operations["quotes_list"];
         put?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         post: operations["quotes_create"];
         delete?: never;
         options?: never;
@@ -839,40 +791,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         get: operations["quotes_retrieve"];
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         put: operations["quotes_update"];
         post?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         delete: operations["quotes_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
-         *
-         *     Supports filtering by group_id and said_by_id, and also searching by text
-         *     Quotes can only be created when querying by a specific group.
-         *
-         *     To create a quote, it expects a `text` and `said_by` field. The group
-         *     is automatically set by the query parameters. */
+        /** @description Displays the quotes for all groups the user is in. */
         patch: operations["quotes_partial_update"];
         trace?: never;
     };
@@ -1274,15 +1202,17 @@ export interface components {
         PatchedQuote: {
             readonly id?: number;
             text?: string;
+            context?: string;
             said_by?: number;
+            readonly said_by_username?: string;
             pinned?: boolean;
+            group?: number;
+            /** Format: date-time */
+            readonly created?: string;
             /** Format: uri */
             readonly said_by_url?: string;
             /** Format: uri */
             readonly group_url?: string;
-            group?: number;
-            /** Format: date-time */
-            readonly created?: string;
             /** Format: uri */
             readonly url?: string;
         };
@@ -1310,15 +1240,17 @@ export interface components {
         Quote: {
             readonly id: number;
             text: string;
+            context: string;
             said_by: number;
+            readonly said_by_username: string;
             pinned?: boolean;
+            group: number;
+            /** Format: date-time */
+            readonly created: string;
             /** Format: uri */
             readonly said_by_url: string;
             /** Format: uri */
             readonly group_url: string;
-            group: number;
-            /** Format: date-time */
-            readonly created: string;
             /** Format: uri */
             readonly url: string;
         };
@@ -2549,7 +2481,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2570,7 +2502,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2597,7 +2529,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };
@@ -2617,7 +2549,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                id: number;
             };
             cookie?: never;
         };

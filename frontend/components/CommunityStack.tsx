@@ -8,6 +8,7 @@ import QuoteDetailScreen from '../screens/QuoteEditScreen';
 import ChallengeListScreen from "../screens/ChallengeScreens/ChallengeListScreen";
 import ChallengeDetailScreen from "../screens/ChallengeScreens/ChallengeDetailScreen";
 import ChallengeCreateScreen from "../screens/ChallengeScreens/ChallengeCreateScreen";
+import CreateAchievementScreen from '../screens/AcheivementScreens/CreateAchievementScreen';
 import { RootStackParamList } from '../types/navigation';
 
 // Define type for your stack params
@@ -20,7 +21,7 @@ function CommunityStack() {
       <Stack.Screen 
         name="CommunityScreen"
         component={CommunityScreen} 
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name="QuoteBoardScreen"
@@ -55,6 +56,8 @@ function CommunityStack() {
       <Stack.Screen
         name="CreateChallenge"
         component={ChallengeCreateScreen}
+        name="CreateAchievementScreen"
+        component={CreateAchievementScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

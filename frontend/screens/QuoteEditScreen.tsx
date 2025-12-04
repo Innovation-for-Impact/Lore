@@ -1,118 +1,158 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { LoadingModal } from '../components/LoadingModal';
+import { SuccessModal } from '../components/SuccessModal';
 import { globalStyles } from '../styles/global';
+import { $api } from '../types/constants';
 import { Navigation, RootStackParamList } from '../types/navigation';
+import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-// Ethan: Should decide if quote is required or not. The code would be cleaner if quote is required.
-
 const QuoteDetailScreen = () => {
   const navigation = useNavigation<Navigation>();
-  const route = useRoute<RouteProp<RootStackParamList, "QuoteScreen">>();
+  const route = useRoute<RouteProp<RootStackParamList, "QuoteDetailScreen">>();
+  const queryClient = useQueryClient();
+  const [successModal, setSuccessModal] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // The 'quote' object was passed in from ViewQuotes:
-  // e.g. navigation.navigate('QuoteDetailScreen', { quote: item });
-  const { quote } = route.params || {};
-  // Fallback if quote is missing
-  const [quoteText, setQuoteText] = useState(quote?.text || '');
-  const [author, setAuthor] = useState(quote?.author || '');
-  const [context, setContext] = useState(''); // If you want to handle context locally
+  const { quote } = route.params;
+  const [quoteText, setQuoteText] = useState(quote.text);
+  const [context, setContext] = useState(quote.context);
 
-  // States to control edit mode
-  const [editedText, setEditedText] = useState(quoteText);
+  const { mutateAsync: saveQuote, isPending: loadingSave } = $api.useMutation(
+    "patch",
+    "/api/v1/quotes/{id}/",
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/quotes/").queryKey });
+        setSuccessModal(true);
+      },
+      onError: () => {
+        // TODO
+      }
+    }
+  );
+
+  const {mutateAsync: deleteQuote, isPending: loadingDelete } = $api.useMutation(
+    "delete",
+    "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
+    {
+      onSuccess: () => {
+        navigation.goBack();
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/quotes/").queryKey });
+      },
+      onError: () => {
+        // TODO
+      }
+    }
+
+  )
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  // Save updated text
-  const handleSave = () => {
-    // In a real app, you'd make an API call here:
-    // await updateQuoteOnServer(quote.id, editedText);
-    setQuoteText(editedText); // update local quote state
-    Alert.alert('Success', 'Quote updated!');
+  const handleSave = async () => {
+    await saveQuote({
+      params: {
+        path: {
+          id: quote.id.toString()
+        }
+      },
+      body: {
+        text: quoteText,
+        context: context
+      }
+    })
   };
 
-  // Placeholder for delete logic
-  const handleDelete = () => {
-    Alert.alert(
-      'Delete Quote',
-      'Are you sure you want to delete this quote?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            // In a real app, you'd remove the quote from your server or store
+  const handleDelete = async () => {
+    await deleteQuote({
+      params: {
+        path: {
+          id: quote.id.toString(),
+          loregroup_pk: quote.group.toString()
+        }
+      }
+    })
 
-            navigation.goBack();
-          },
-        },
-      ]
-    );
   };
 
   return (
-    <View style={[globalStyles.container, styles.container]}>
-      <View style={styles.content}>
-        {/* QUOTE DISPLAY / EDIT */}
-        <View style={styles.quoteCard}>
+    <>
+      <LoadingModal visible={loadingSave} title='saving quote...' />
+      <SuccessModal title='quote updated' visible={successModal} setVisible={setSuccessModal} buttonText={"go back"} callback={() => navigation.goBack()}/>
+      <LoadingModal visible={loadingDelete} title='deleting quote...' />
+      <ConfirmationModal title='delete quote?' visible={confirmDelete} setVisible={setConfirmDelete} left='cancel' right='delete' callback={handleDelete}/>
+      <View style={[globalStyles.container, styles.container]}>
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={handleBack}
+          >
+            <Ionicons name="arrow-back" size={35} color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.content}>
+          <View style={styles.quoteCard}>
             <View style={styles.header}>
-              <TouchableOpacity
-                  onPress={handleBack}
-                  style={styles.backButton}
-              >
-                  <Ionicons name="arrow-back" size={35} color="#44344D" />
-              </TouchableOpacity>
-              <Text style={styles.timestamp}>{quote?.timestamp || '1 hour ago'}</Text>
+              <Text style={styles.timestamp}>{new Date(quote.created).toLocaleString()}</Text>
+              <Feather name="edit-2" size={20} />
             </View>
             <TextInput
               style={styles.quoteText}
-              value={editedText}
-              onChangeText={setEditedText}
-              // multiline
+              value={quoteText}
+              onChangeText={setQuoteText}
+              multiline={true}
               returnKeyType="default"
+              maxLength={MAX_QUOTE_LENGTH}
             />
-            <Text style={styles.author}>{author}</Text>
+            <Text style={styles.author}>{quote.said_by_username}</Text>
+            <Text style={styles.counter}>
+              {MAX_QUOTE_LENGTH - quoteText.length} characters remaining
+            </Text>
           </View>
 
-        {/* AUTHOR / CONTEXT (Optional) */}
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>author: {author}</Text>
-          <Text style={styles.label}>creation date: march 20th, 2025</Text>
-          <Text style={styles.label}>context (optional):</Text>
-          <TextInput
-            style={styles.contextInput}
-            placeholder="enter context"
-            value={context}
-            onChangeText={setContext}
-          />
-        </View>
+          {/* AUTHOR / CONTEXT (Optional) */}
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>creation date: {new Date(quote.created).toLocaleDateString()}</Text>
+            <Text style={styles.label}>context:</Text>
+            <TextInput
+              style={styles.contextInput}
+              placeholder="enter context"
+              value={context}
+              onChangeText={setContext}
+              maxLength={MAX_CONTEXT_LENGTH}
+            />
+            <Text style={styles.counter}>
+              {MAX_CONTEXT_LENGTH - context.length} characters remaining
+            </Text>
+          </View>
 
-        {/* BUTTONS: show Edit & Delete */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.editButton} onPress={handleSave}>
-            <Text style={styles.buttonText}>save edits</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-            <Text style={styles.buttonText}>delete quote</Text>
-          </TouchableOpacity>
+          {/* BUTTONS: show Edit & Delete */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={[styles.editButton, !quoteText.trim() && styles.disabledButton]} onPress={handleSave}>
+              <Text style={styles.buttonText}>save quote</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => setConfirmDelete(true)}>
+              <Text style={styles.buttonText}>delete quote</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -126,9 +166,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  backButton: {
-    paddingRight: 230,
+    justifyContent: 'space-between'
   },
   content: {
     flex: 1,
@@ -220,5 +258,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     fontFamily: 'Work Sans'
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  counter: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#BFBFBF',
+    fontFamily: 'Work Sans'
+  },
+  disabledButton: {
+    backgroundColor: '#9680B6',
   },
 });

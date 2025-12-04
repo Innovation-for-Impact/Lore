@@ -256,8 +256,9 @@ class QuoteManager(models.Manager):
     def create_quote(
         self,
         text: str,
+        context: str,
         said_by_pk: int,
-        pinned: bool,
+        is_pinned: bool,
         group: LoreGroup,
     ) -> "Quote":
         """Create a quote with the text, in the given group, said by the user.
@@ -278,8 +279,9 @@ class QuoteManager(models.Manager):
 
         quote = self.model(
             text=text,
+            context=context,
             said_by=said_by,
-            pinned=pinned,
+            pinned=is_pinned,
             group_id=group.pk,
         )
 
@@ -289,6 +291,9 @@ class QuoteManager(models.Manager):
     def get_group_quotes(self, group: LoreGroup) -> list["Quote"]:
         """Get all quotes in the given group."""
         return cast(list["Quote"], self.filter(group_id=group.pk))
+
+    # def none(self):
+    #     return super().get_queryset().none()
 
 
 class GroupItem(models.Model):
@@ -313,6 +318,10 @@ class Quote(GroupItem):
         max_length=2048,
         validators=[MinLengthValidator(1)],
     )
+    context = models.TextField(
+        max_length=2048,
+        validators=[MinLengthValidator(1)],
+    )
     said_by = models.ForeignKey(LoreUser, on_delete=models.CASCADE)
     pinned = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -320,6 +329,7 @@ class Quote(GroupItem):
     REQUIRED_FIELDS: ClassVar[list[str]] = ["text"]
 
     quotes = QuoteManager()
+    # objects = models.Manager()
 
     def clean(self) -> None:
         """Validate that said_by is in the same group as the quote."""

@@ -2,12 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 // Replace with your actual logo import
@@ -17,12 +17,7 @@ import { Navigation } from '../types/navigation';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-interface WelcomeBackScreenProps {
-  setUser: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-
-const WelcomeBackScreen = ({ setUser }: WelcomeBackScreenProps) => {
+const WelcomeBackScreen = () => {
   const navigation = useNavigation<Navigation>();
 
   // Back arrow logic (if you want the arrow at the top left)
@@ -32,7 +27,8 @@ const WelcomeBackScreen = ({ setUser }: WelcomeBackScreenProps) => {
 
   // Navigate to HomeScreen
   const handleContinue = () => {
-    setUser(true);
+    // TODO: fix this (auto login) with usequery or something
+    // setUser(true);
     navigation.navigate('HomeScreen');
   };
 

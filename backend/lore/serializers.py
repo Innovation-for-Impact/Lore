@@ -68,6 +68,7 @@ class QuoteSerializer(serializers.ModelSerializer):
     Serializes the quote's:
       - id
       - text
+      - context
       - said_by
       - said_by_url
       - group
@@ -90,6 +91,10 @@ class QuoteSerializer(serializers.ModelSerializer):
         read_only=True,
         source="group",
     )
+
+    said_by_username = serializers.SerializerMethodField();
+    def get_said_by_username(self, obj):
+        return obj.said_by.get_full_name()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -118,8 +123,9 @@ class QuoteSerializer(serializers.ModelSerializer):
         """Create an instane of an Quote."""
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
+            context=validated_data["context"],
             said_by_pk=validated_data["said_by"].pk,
-            pinned=validated_data["pinned"],
+            is_pinned=validated_data["pinned"],
             group=validated_data["group"],
         )
 
@@ -128,7 +134,9 @@ class QuoteSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = [
             "id",
             "text",
+            "context",
             "said_by",
+            "said_by_username",
             "pinned",
             "group",
             "created",

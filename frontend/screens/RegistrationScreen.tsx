@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
-import * as SecureStore from 'expo-secure-store';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
 import { Navigation } from '../types/navigation';
