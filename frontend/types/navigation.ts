@@ -33,6 +33,10 @@ export type RootStackParamList = {
   QuoteDetailScreen: {
      quote: Quote; 
   };
+  ChallengeList: undefined;
+  ChallengeDetail: { id: string };
+  CreateChallenge: undefined;
+  ChallengeSuccess: undefined;
 };
 
 export type Navigation = NavigationProp<RootStackParamList>;

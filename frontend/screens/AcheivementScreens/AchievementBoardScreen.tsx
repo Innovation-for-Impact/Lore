@@ -20,8 +20,9 @@ const AchievementBoardScreen = () => {
   };
 
   const toggleToChallenges = () => {
-    //naviagation.navigate('ChallengeScreen');
+    navigation.navigate("ChallengeList");
   };
+
 
   return (
     <View style={styles.fullScreenContainer}>
