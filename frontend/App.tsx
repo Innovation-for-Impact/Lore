@@ -7,7 +7,9 @@ import Navigation from './components/Navigation';
 import RegistrationStack from './components/RegistrationStack';
 import WorkSans from './assets/fonts/WorkSans-VariableFont_wght.ttf';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; 
+import CreateAchievementScreen from './screens/createAchievementScreen';
 
+const SHOW_DEV_SCREEN = true;
 const Stack = createStackNavigator();
 const queryClient = new QueryClient();
 
@@ -26,7 +28,10 @@ export default function App() {
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            {!user ? (
+            {SHOW_DEV_SCREEN ? (
+              // ⭐ THIS BRANCH SHOWS YOUR DEV SCREEN
+              <Stack.Screen name="DevNewPage" component={CreateAchievementScreen} />
+            ): !user ? (
               <Stack.Screen name="Registration" options={{ headerShown: false }}>
                 {(props) => <RegistrationStack {...props} setUser={setUser} />}
               </Stack.Screen>
