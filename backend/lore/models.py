@@ -256,7 +256,7 @@ class QuoteManager(models.Manager):
     def create_quote(
         self,
         text: str,
-        context: str,
+        context: str | None,
         said_by_pk: int,
         is_pinned: bool,
         group: LoreGroup,
@@ -276,6 +276,9 @@ class QuoteManager(models.Manager):
         if said_by is None:
             msg = "Said by user does not exist"
             raise Http404(msg)
+
+        if context is None:
+            context = ""
 
         quote = self.model(
             text=text,
@@ -321,6 +324,7 @@ class Quote(GroupItem):
     context = models.TextField(
         max_length=2048,
         validators=[MinLengthValidator(1)],
+        default="",
     )
     said_by = models.ForeignKey(LoreUser, on_delete=models.CASCADE)
     pinned = models.BooleanField(default=False)
