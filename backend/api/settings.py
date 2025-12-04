@@ -34,7 +34,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8081",
@@ -228,6 +228,7 @@ REST_AUTH = {
     "JWT_AUTH_COOKIE": "jwt-auth",
     "JWT_AUTH_REFRESH_COOKIE": "my-refresh-token",
     "USER_DETAILS_SERIALIZER": "lore.serializers.UserSerializer",
+    "REGISTER_SERIALIZER": "lore.serializers.UserRegisterSerializer",
 }
 
 AUTH_USER_MODEL = "lore.LoreUser"
