@@ -1,12 +1,12 @@
 Demo
 
-Create Account:
-    user@lore.com
+Existing Account:
+    lore@test.com
     testpassword
 
-login w/ new account
+Create Account:
 
-list of existing join_codes:
+List of join_codes:
 lore: 802851dd
 IFI: 48216619
 Innofunds: c5f863e6

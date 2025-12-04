@@ -18,7 +18,7 @@ function CommunityStack() {
       <Stack.Screen 
         name="CommunityScreen"
         component={CommunityScreen} 
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name="QuoteBoardScreen"
@@ -43,7 +43,7 @@ function CommunityStack() {
       <Stack.Screen
         name="CreateAchievementScreen"
         component={CreateAchievementScreen}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
