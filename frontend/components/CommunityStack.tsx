@@ -5,6 +5,7 @@ import CommunityScreen from '../screens/CommunityScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
+import CreateAchievementScreen from '../screens/AcheivementScreens/CreateAchievementScreen';
 import { RootStackParamList } from '../types/navigation';
 
 // Define type for your stack params
@@ -38,6 +39,10 @@ function CommunityStack() {
         name="QuoteDetailScreen"
         component={QuoteDetailScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateAchievementScreen"
+        component={CreateAchievementScreen}
       />
     </Stack.Navigator>
   );

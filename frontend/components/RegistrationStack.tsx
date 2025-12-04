@@ -66,10 +66,6 @@ function RegistrationStack({ setUser }: RegistrationStackProps) {
         component={HomeScreen} 
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="CreateAchievementScreen"
-        component={CreateAchievementScreen}
-      />
     </Stack.Navigator>
   );
 }

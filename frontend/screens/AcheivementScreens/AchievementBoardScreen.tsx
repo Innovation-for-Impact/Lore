@@ -12,6 +12,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { $api } from '../../types/constants';
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../types/navigation";
+
+type NavProp = StackNavigationProp<RootStackParamList, "AchievementBoardScreen">;
+
+const navigation = useNavigation<NavProp>();
 
 // --- Mock Data for Achievements ---
 const BadgeAssets = {
@@ -87,7 +93,6 @@ const AchievementLevelSection: React.FC<AchievementLevelSectionProps> = ({
 );
 
 const AchievementBoardScreen = () => {
-  const navigation = useNavigation();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const containerWidth = screenWidth * 0.9;
