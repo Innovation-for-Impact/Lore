@@ -5,8 +5,23 @@ Existing Account:
     testpassword
 
 Create Account:
+    demo@IFI.com
+    testpassword
 
-List of join_codes:
-lore: 802851dd
-IFI: 48216619
-Innofunds: c5f863e6
+Create Group
+- Add users
+- Edit group
+
+Join Group:
+- Lore: c8892d32
+- Menlo: 90470a38
+- NewHaptics: 8931527d
+- Feonix: c88faf8d
+
+Search Group
+
+Create Quote
+Edit Quote
+
+Create Achievement
+

@@ -164,10 +164,10 @@ const AchievementBoardScreen = () => {
     <SafeAreaView style={styles.fullScreenContainer}>
       {/* Back Arrow */}
       <TouchableOpacity
-        style={{ position: 'absolute', top: scaleHeight(45, screenHeight), left: scaleWidth(15, screenWidth), zIndex: 10 }}
+        style={{ position: 'absolute', top: scaleHeight(30, screenHeight), left: scaleWidth(15, screenWidth), zIndex: 10 }}
         onPress={goBackToCommunity}
       >
-        <Ionicons name="arrow-back" size={scaleHeight(50, screenWidth)} color="white" />
+        <Ionicons name="arrow-back" size={scaleHeight(65, screenWidth)} color="white" />
       </TouchableOpacity>
     
       {/* Toggle Buttons */}
