@@ -17,8 +17,6 @@ import { RootStackParamList } from "../../types/navigation";
 
 type NavProp = StackNavigationProp<RootStackParamList, "AchievementBoardScreen">;
 
-const navigation = useNavigation<NavProp>();
-
 // --- Mock Data for Achievements ---
 const BadgeAssets = {
   ACTIVE: require('../../assets/achievement-badges/Badge_01_activated.png'),
@@ -93,6 +91,7 @@ const AchievementLevelSection: React.FC<AchievementLevelSectionProps> = ({
 );
 
 const AchievementBoardScreen = () => {
+  const navigation = useNavigation<NavProp>();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const containerWidth = screenWidth * 0.9;

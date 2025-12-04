@@ -48,7 +48,7 @@ function Navigation() {
                         tabBarActiveTintColor: '#000',
                         tabBarShowLabel: false,
                         tabBarStyle: getTabBarStyle(insets, tabBarWidth),
-                        // headerShown: false,
+                        headerShown: false,
                     })}
                 >
                     <Tab.Screen name="Community" component={CommunityStack} />
