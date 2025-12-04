@@ -30,7 +30,7 @@ const QuoteDetailScreen = () => {
 
   const { quote } = route.params;
   const [quoteText, setQuoteText] = useState(quote.text);
-  // const [context, setContext] = useState('');
+  const [context, setContext] = useState(quote.context);
 
   const { mutateAsync: saveQuote, isPending: loadingSave } = $api.useMutation(
     "patch",
@@ -73,7 +73,8 @@ const QuoteDetailScreen = () => {
         }
       },
       body: {
-        text: quoteText
+        text: quoteText,
+        context: context
       }
     })
   };
@@ -125,17 +126,20 @@ const QuoteDetailScreen = () => {
           </View>
 
           {/* AUTHOR / CONTEXT (Optional) */}
-          {/* <View style={styles.infoSection}> */}
-          {/*   <Text style={styles.label}>author: {author}</Text> */}
-          {/*   <Text style={styles.label}>creation date: {new Date(quote.created).toLocaleDateString()}</Text> */}
-          {/*   <Text style={styles.label}>context (optional):</Text> */}
-          {/*   <TextInput */}
-          {/*     style={styles.contextInput} */}
-          {/*     placeholder="enter context" */}
-          {/*     value={context} */}
-          {/*     onChangeText={setContext} */}
-          {/*   /> */}
-          {/* </View> */}
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>creation date: {new Date(quote.created).toLocaleDateString()}</Text>
+            <Text style={styles.label}>context:</Text>
+            <TextInput
+              style={styles.contextInput}
+              placeholder="enter context"
+              value={context}
+              onChangeText={setContext}
+              maxLength={MAX_CONTEXT_LENGTH}
+            />
+            <Text style={styles.counter}>
+              {MAX_CONTEXT_LENGTH - context.length} characters remaining
+            </Text>
+          </View>
 
           {/* BUTTONS: show Edit & Delete */}
           <View style={styles.buttonContainer}>
@@ -203,20 +207,20 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontFamily: 'Work Sans'
   },
-  // infoSection: {
-  //   backgroundColor: '#FFFFFF',
-  //   borderRadius: 12,
-  //   padding: 15,
-  //   marginHorizontal: 16,
-  //   marginBottom: 16,
-  //   width: screenWidth * 0.85,
-  //   minHeight: screenHeight * 0.20,
-  //   shadowColor: '#000',
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 4,
-  //   shadowOffset: { width: 0, height: 2 },
-  //   elevation: 2,
-  // },
+  infoSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 15,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    width: screenWidth * 0.85,
+    minHeight: screenHeight * 0.20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
   label: {
     fontSize: 14,
     color: '#333',
