@@ -206,7 +206,7 @@ const AchievementBoardScreen = () => {
             height: scaleHeight(50, screenHeight),
           },
         ]}
-        onPress={() => console.log("Create achievement")}
+        onPress={() => navigation.navigate("CreateAchievementScreen")}
       >
         <Text
           style={[
