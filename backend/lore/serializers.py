@@ -8,11 +8,58 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.http import HttpRequest
 from django.urls import reverse
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from lore import models
 
 if typing.TYPE_CHECKING:
     from rest_framework.views import Request
+
+
+class UserSerializer(
+    serializers.HyperlinkedModelSerializer,
+):
+    """A serializer for exposing public information about a user."""
+
+    class Meta:
+        model = models.LoreUser
+        fields: typing.ClassVar[list[str]] = [
+            "id",
+            "first_name",
+            "last_name",
+            "avatar",
+            "url",
+        ]
+
+
+class UserRegisterSerializer(RegisterSerializer):
+    """Custom serializer for user registration.
+
+    Adds the first/last name and avatar fields
+    """
+
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    avatar = serializers.ImageField(allow_null=True, required=False)
+
+    class Meta:
+        fields: typing.ClassVar[list[str]] = [
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "password1",
+            "password2",
+        ]
+
+    def save(self, request: HttpRequest) -> models.LoreUser:
+        """Manually handle saving of additional registration fields."""
+        user = super().save(request)
+        user.first_name = self.data.get("first_name", "")
+        user.last_name = self.data.get("last_name", None)
+        user.avatar = self.data.get("avatar", None)
+        user.save()
+        return user
 
 
 class QuoteSerializer(serializers.ModelSerializer):
@@ -154,7 +201,7 @@ class ImageSerializer(serializers.ModelSerializer):
 class AchievementSerializer(serializers.ModelSerializer):
     """Serializer for the achievement detail.
 
-    Serializes the images's:
+    Serializes the achievement's:
       - id (read only)
       - title
       - image
@@ -252,6 +299,114 @@ class AchievementUpdateSerializer(AchievementSerializer):
         extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
 
 
+class ChallengeSerializer(serializers.ModelSerializer):
+    """Serializer for the challenge detail."""
+
+    group_url = serializers.HyperlinkedRelatedField(
+        view_name="loregroup-detail",
+        lookup_field="pk",
+        many=False,
+        read_only=True,
+        source="group",
+    )
+    participants_url = serializers.HyperlinkedIdentityField(
+        view_name="challengeparticipant-list",
+        lookup_field="pk",
+        lookup_url_kwarg="challenge_pk",
+        many=False,
+    )
+    logged_in_user_url = serializers.SerializerMethodField()
+
+    achievement = AchievementSerializer(many=False)
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        with contextlib.suppress(KeyError):
+            self.fields["group"] = serializers.PrimaryKeyRelatedField(
+                read_only=True,
+            )
+
+    def create(self, validated_data: dict[Any, Any]) -> models.Challenge:
+        """Create an instane of an Image."""
+        return models.Challenge.challenges.create_challenge(
+            title=validated_data["title"],
+            description=validated_data["description"],
+            level=validated_data["level"],
+            participants=[],
+            achievement=validated_data["achievement"],
+            start_date=validated_data["start_date"],
+            end_date=validated_data["end_date"],
+            group=validated_data["group"],
+        )
+
+    def get_logged_in_user_url(self, obj: models.Challenge) -> str | None:
+        """Get the url for the authenticated user."""
+        request: Request = self.context["request"]
+        if not obj.has_participant(request.user):
+            return None
+        base_url = request.build_absolute_uri(
+            reverse(
+                "challengeparticipant-detail",
+                args=[obj.pk, request.user.pk],
+            ),
+        )
+
+        return f"{base_url}"
+
+    class Meta:
+        model = models.Challenge
+        fields: ClassVar[list[str]] = [
+            "id",
+            "title",
+            "description",
+            "level",
+            "achievement",
+            # "group",
+            "start_date",
+            "end_date",
+            "created",
+            "url",
+            "participants_url",
+            # "achievement_url",
+            "group_url",
+            "logged_in_user_url",
+        ]
+        # extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
+        #     "participants": {"write_only": True, "allow_empty": True},
+        # }
+
+
+class ChallengeParticipantSerializer(serializers.ModelSerializer):
+    """Serializes the user and whether they completed a challenge."""
+
+    lore_user = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = models.ChallengeParticipant
+        fields: ClassVar[list[str]] = ["lore_user", "completed_challenge"]
+
+
+class ChallengeUpdateSerializer(ChallengeSerializer):
+    """Limits what achievement fields can be updated.
+
+    Participants is read only
+    """
+
+    achievement = PrimaryKeyRelatedField(
+        queryset=models.Achievement.achievements.all(),
+    )
+
+    class Meta(ChallengeSerializer.Meta):
+        fields: ClassVar[list[str]] = [
+            f
+            for f in ChallengeSerializer.Meta.fields
+            if f not in ["participants"]
+        ]
+        read_only_fields: ClassVar[list[str]] = ["participants"]
+        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {}
+
+
 class GroupSerializer(
     serializers.ModelSerializer,
 ):
@@ -282,6 +437,12 @@ class GroupSerializer(
     )
     achievements_url = serializers.HyperlinkedIdentityField(
         view_name="loregroup-achievement-list",
+        lookup_field="pk",
+        lookup_url_kwarg="loregroup_pk",
+        many=False,
+    )
+    challenges_url = serializers.HyperlinkedIdentityField(
+        view_name="loregroup-challenge-list",
         lookup_field="pk",
         lookup_url_kwarg="loregroup_pk",
         many=False,
@@ -330,6 +491,7 @@ class GroupSerializer(
             "created",
             "url",
             "achievements_url",
+            "challenges_url",
             "quotes_url",
             "images_url",
             "members_url",
@@ -362,49 +524,3 @@ class JoinSerializer(serializers.Serializer):
     """A custom serializer for the group join endpoint."""
 
     join_code = serializers.CharField()
-
-
-class UserSerializer(
-    serializers.HyperlinkedModelSerializer,
-):
-    """A serializer for exposing public information about a user."""
-
-    class Meta:
-        model = models.LoreUser
-        fields: typing.ClassVar[list[str]] = [
-            "id",
-            "first_name",
-            "last_name",
-            "avatar",
-            "url",
-        ]
-
-
-class UserRegisterSerializer(RegisterSerializer):
-    """Custom serializer for user registration.
-
-    Adds the first/last name and avatar fields
-    """
-
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    avatar = serializers.ImageField(allow_null=True, required=False)
-
-    class Meta:
-        fields: typing.ClassVar[list[str]] = [
-            "first_name",
-            "last_name",
-            "email",
-            "avatar",
-            "password1",
-            "password2",
-        ]
-
-    def save(self, request: HttpRequest) -> models.LoreUser:
-        """Manually handle saving of additional registration fields."""
-        user = super().save(request)
-        user.first_name = self.data.get("first_name", "")
-        user.last_name = self.data.get("last_name", None)
-        user.avatar = self.data.get("avatar", None)
-        user.save()
-        return user

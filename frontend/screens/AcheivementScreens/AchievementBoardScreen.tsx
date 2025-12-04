@@ -112,6 +112,11 @@ const AchievementBoardScreen = () => {
     {}
   )
 
+  const toggleToChallenges = () => {
+    navigation.navigate("ChallengeList");
+  };
+
+
   const { data: groups } = $api.useQuery(
     "get",
     "/api/v1/groups/",

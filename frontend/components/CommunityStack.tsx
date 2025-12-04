@@ -5,6 +5,9 @@ import CommunityScreen from '../screens/CommunityScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
+import ChallengeListScreen from "../screens/ChallengeScreens/ChallengeListScreen";
+import ChallengeDetailScreen from "../screens/ChallengeScreens/ChallengeDetailScreen";
+import ChallengeCreateScreen from "../screens/ChallengeScreens/ChallengeCreateScreen";
 import CreateAchievementScreen from '../screens/AcheivementScreens/CreateAchievementScreen';
 import { RootStackParamList } from '../types/navigation';
 
@@ -41,6 +44,18 @@ function CommunityStack() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="ChallengeList"
+        component={ChallengeListScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChallengeDetail"
+        component={ChallengeDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateChallenge"
+        component={ChallengeCreateScreen}
         name="CreateAchievementScreen"
         component={CreateAchievementScreen}
         options={{ headerShown: false }}
