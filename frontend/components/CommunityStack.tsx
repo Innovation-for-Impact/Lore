@@ -43,7 +43,7 @@ function CommunityStack() {
       <Stack.Screen
         name="CreateAchievementScreen"
         component={CreateAchievementScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
     </Stack.Navigator>
   );
