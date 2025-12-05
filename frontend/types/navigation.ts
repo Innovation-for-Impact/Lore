@@ -32,7 +32,7 @@ export type RootStackParamList = {
   };
   ChallengeList: undefined;
   ChallengeDetail: { id: string };
-  CreateChallenge: undefined;
+  ChallengeCreateScreen: undefined;
   ChallengeSuccess: undefined;
 };
 

@@ -177,7 +177,7 @@ const AchievementBoardScreen = () => {
     
       {/* Toggle Buttons */}
       <View style={[styles.toggleButtonsContainer, { marginTop: scaleHeight(30, screenHeight) }]}>
-        <TouchableOpacity style={[styles.challengesToggle, { width: containerWidth / 2 - 10 }]}>
+        <TouchableOpacity onPress={() => navigation.navigate('ChallengeList')} style={[styles.challengesToggle, { width: containerWidth / 2 - 10 }]}>
           <Text style={styles.toggleText}>challenges</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.achievementsToggleActive, { width: containerWidth / 2 - 10 }]}>

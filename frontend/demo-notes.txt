@@ -20,9 +20,10 @@ Join Group:
 
 Search Group
 
-Create Achievement
-
 Create Quote
 Edit Quote
 Delete Quote
+
+Create Achievement
+Create Challenge
 

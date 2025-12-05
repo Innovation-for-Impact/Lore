@@ -1,16 +1,18 @@
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Navigation } from "../../types/navigation";
+
 
 const ChallengeListScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
 
   const goBack = () => navigation.goBack();
   const goToAchievements = () => navigation.navigate("AchievementBoardScreen" as never);
-  const createChallenge = () => navigation.navigate("CreateChallenge" as never);
-  const goToDetail = (id: number) =>
-    navigation.navigate("ChallengeDetail" as never, { id } as never);
+  const createChallenge = () => navigation.navigate("ChallengeCreateScreen");
+  const goToDetail = (id: string) =>
+    navigation.navigate('ChallengeDetail', { id });
 
   const challenges = [
     {
@@ -61,7 +63,7 @@ const ChallengeListScreen = () => {
       </Text>
 
       {/* Create Challenge */}
-      <TouchableOpacity style={styles.createChallengeButton} onPress={createChallenge}>
+      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate('ChallengeCreateScreen')}>
         <Text style={styles.createChallengeButtonText}>create challenge</Text>
       </TouchableOpacity>
 

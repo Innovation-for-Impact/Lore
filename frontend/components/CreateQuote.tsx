@@ -63,6 +63,13 @@ const CreateQuote = () => {
     "post",
     "/api/v1/groups/{loregroup_pk}/quotes/",
     {
+      onSuccess: () => {
+    setSuccessModal(true);
+    // Reset local state
+    setQuoteText('');
+    setContextText('');
+    setStep(Step.quote);
+      },
       onError: () => {
         setFailureModal(true);
         // console.log(JSON.stringify(error))
@@ -90,11 +97,7 @@ const CreateQuote = () => {
       }
     })
 
-    setSuccessModal(true);
-    // Reset local state
-    setQuoteText('');
-    setContextText('');
-    setStep(Step.quote);
+
   };
 
   return (
