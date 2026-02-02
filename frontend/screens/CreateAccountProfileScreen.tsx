@@ -21,7 +21,7 @@ const CreateAccountProfileScreen = () => {
 
   const handleContinue = () => {
     // Navigate to the next screen - join group
-    navigation.navigate('AuthStack', { screen: 'CreateAccountGroupScreen' })
+    navigation.navigate('CreateAccountGroupScreen')
   };
 
   const requestPermission = async () => {

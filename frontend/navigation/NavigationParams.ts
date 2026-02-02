@@ -40,6 +40,7 @@ export type CommunityStackParamList = {
 
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<RegistrationStackParamList>;
+  Navbar: undefined;
   Home: NavigatorScreenParams<HomeStackParamList>;
   Community: NavigatorScreenParams<CommunityStackParamList>;
   Profile: NavigatorScreenParams<ProfileStackParamList>;

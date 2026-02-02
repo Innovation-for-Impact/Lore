@@ -18,8 +18,6 @@ const CreateAccountGroupScreen = () => {
   const [isGroupJoined, setIsGroupJoined] = useState(false);
   const navigation = useNavigation<AuthNavigation>();
 
-  // const correctCode = '12345';
-
   const goBack = () => {
     navigation.goBack();
   };
@@ -55,15 +53,6 @@ const CreateAccountGroupScreen = () => {
 
     setModalVisible(false);
     setGroupCode('');
-
-    // testing Next button on successful join
-    // if (groupCode === correctCode) {
-    //        setIsGroupJoined(true);
-    //     setSuccessModalVisible(true);
-    // } else {
-    //     setFailureModalVisible(true);
-    // }
-
     setModalVisible(false);
     setGroupCode('');
   };

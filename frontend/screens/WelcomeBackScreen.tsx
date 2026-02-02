@@ -28,8 +28,6 @@ const WelcomeBackScreen = () => {
   // Navigate to HomeScreen
   const handleContinue = () => {
     // TODO: fix this (auto login) with usequery or something
-    // setUser(true);
-    // navigation.navigate('HomeStack', { screen: 'HomeScreen' })
   };
 
   return (

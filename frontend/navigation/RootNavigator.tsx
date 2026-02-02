@@ -16,7 +16,7 @@ export function RootNavigator() {
         <RootStack.Screen name="Auth" options={{ headerShown: false }} component={RegistrationNavigator} />
       ) : (
         <RootStack.Screen
-          name="Home"
+          name="Navbar"
           component={Navigation}
           options={{ headerShown: false }}
         />
