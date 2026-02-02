@@ -62,7 +62,7 @@ const GroupInfoScreen = ({ route }: Props) => {
   };
 
   const handleEdit = () => {
-    navigation.navigate('EditGroupScreen', { group: group });
+    navigation.navigate('GroupEditScreen', { group: group });
   };
 
   return (
@@ -76,7 +76,7 @@ const GroupInfoScreen = ({ route }: Props) => {
           >
             <Ionicons name="arrow-back" size={35} color="white" />
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={handleEdit}
           >

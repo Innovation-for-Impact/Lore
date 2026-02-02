@@ -9,13 +9,13 @@ import { $api } from '../types/constants';
 import { Navigation, RootStackParamList } from '../types/navigation';
 import { pickImage } from '../utils/GroupUtils';
 
-type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'EditGroupScreen'>;
+type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'GroupEditScreen'>;
 
 type Props = {
   route: EditGroupScreenRouteProp;
 };
 
-const EditGroupScreen = ({ route }: Props) => {
+const GroupEditScreen = ({ route }: Props) => {
   const { group } = route.params;
   const navigation = useNavigation<Navigation>();
   const queryClient = useQueryClient();
@@ -115,7 +115,7 @@ const EditGroupScreen = ({ route }: Props) => {
         <Text style={styles.title}>edit group</Text>
 
         <ScrollView style={styles.contentWrapper} showsVerticalScrollIndicator={false}>
-          <TouchableOpacity style={styles.avatarContainer} onPress={ async () => {
+          <TouchableOpacity style={styles.avatarContainer} onPress={async () => {
             setImage(await pickImage());
           }}>
             {currentAvatarUri ? (
@@ -303,4 +303,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditGroupScreen;
+export default GroupEditScreen;

@@ -18,7 +18,7 @@ export type RootStackParamList = {
 
   HomeScreen: undefined;
   GroupInfoScreen: { group: Group };
-  EditGroupScreen: { group: Group };
+  GroupEditScreen: { group: Group };
 
   CommunityScreen: undefined;
   QuoteBoardScreen: undefined;
@@ -28,12 +28,15 @@ export type RootStackParamList = {
 
   QuoteScreen: undefined;
   QuoteDetailScreen: {
-     quote: Quote; 
+    quote: Quote;
   };
   ChallengeList: undefined;
   ChallengeDetail: { id: string };
   ChallengeCreateScreen: undefined;
   ChallengeSuccess: undefined;
+
+  ProfileScreen: undefined;
+  ProfileEditScreen: undefined;
 };
 
 export type Navigation = NavigationProp<RootStackParamList>;

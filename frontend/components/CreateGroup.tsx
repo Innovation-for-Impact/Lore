@@ -103,7 +103,8 @@ function CreateGroup() {
   const { mutateAsync: handleCreateGroup, isPending: groupCreateLoading } = $api.useMutation(
     "post",
     "/api/v1/groups/", {
-    onError: () => {
+    onError: (e) => {
+      setError(e.name) // ??
       setStep(Step.fail);
     },
     onSuccess: () => {
@@ -434,7 +435,7 @@ function CreateGroup() {
         </View>
       </Modal>
 
-      <FailureModal title={"group creation error"} visible={step === Step.fail} tryAgainCallback={() => {setStep(Step.name)}} cancelCallback={() => setStep(null)}/>
+      <FailureModal title={error} visible={step === Step.fail} tryAgainCallback={() => { setStep(Step.name) }} cancelCallback={() => setStep(null)} />
     </>
   );
 }

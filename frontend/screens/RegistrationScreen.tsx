@@ -62,7 +62,7 @@ const RegistrationScreen = () => {
         <Text style={styles.buttonText}>log in</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.register} onPress={() => {
-        navigation.navigate('CreateAccountScreen');
+        navigation.navigate('CreateAccountEmailScreen');
       }}>
         <Text style={styles.buttonText} numberOfLines={1}>
           create account

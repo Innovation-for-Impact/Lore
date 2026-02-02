@@ -18,24 +18,24 @@ const Stack = createStackNavigator<RootStackParamList>();
 function CommunityStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen 
+      <Stack.Screen
         name="CommunityScreen"
-        component={CommunityScreen} 
+        component={CommunityScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="QuoteBoardScreen"
-        component={QuoteBoardScreen} 
+        component={QuoteBoardScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="MemoryBoardScreen"
-        component={MemoryBoardScreen} 
+        component={MemoryBoardScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="AchievementBoardScreen"
-        component={AchievementBoardScreen} 
+        component={AchievementBoardScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -54,12 +54,12 @@ function CommunityStack() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="CreateChallenge"
-        component={ChallengeCreateScreen}
         name="CreateAchievementScreen"
         component={CreateAchievementScreen}
         options={{ headerShown: false }}
       />
+      {/* name="CreateChallenge" */}
+      {/* component={ChallengeCreateScreen} */}
     </Stack.Navigator>
   );
 }

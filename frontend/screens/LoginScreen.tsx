@@ -1,14 +1,15 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
+
 import {
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { $api, setTokens } from '../types/constants';
 
@@ -21,7 +22,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const LoginScreen = () => {
-  const {setUser} = useUser();
+  const { setUser } = useUser();
   const navigation = useNavigation<Navigation>();
 
   // State for email/password
@@ -69,7 +70,7 @@ const LoginScreen = () => {
           email: email,
           password: password
         }
-      }     
+      }
     );
   };
 
@@ -85,18 +86,18 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity onPress={async () => { */}
-      {/*   await login( */}
-      {/*     { */}
-      {/*       body: { */}
-      {/*         email: "test@test.com", */}
-      {/*         password: "test123test123" */}
-      {/*       } */}
-      {/*     } */}
-      {/*   ); */}
-      {/* }}> */}
-      {/*   <Text> DEBUG LOG IN </Text> */}
-      {/* </TouchableOpacity> */}
+      <TouchableOpacity onPress={async () => {
+        await login(
+          {
+            body: {
+              email: "test3@test.com",
+              password: "test123test123"
+            }
+          }
+        );
+      }}>
+        <Text> DEBUG LOG IN </Text>
+      </TouchableOpacity>
       {/* Back Arrow */}
       <TouchableOpacity
         style={styles.backButton}

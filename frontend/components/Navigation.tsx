@@ -6,6 +6,7 @@ import CommunityStack from './CommunityStack';
 import HomeStack from './HomeStack';
 import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles } from '../styles/global';
+import ProfileStack from './ProfileStack';
 
 type RootTabParamList = {
   Community: undefined;
@@ -25,16 +26,16 @@ function Navigation() {
     <View style={navigationStyles.container}>
       <View style={navigationStyles.contentContainer}>
         <Tab.Navigator
-          screenOptions={({route}) => ({
+          screenOptions={({ route }) => ({
             tabBarIcon: ({ color, focused }) => {
               let size = 28;
               const iconName: keyof typeof Ionicons.glyphMap =
                 route.name === 'Community' ? focused ?
                   'compass' : 'compass-outline'
                   : route.name === 'Home' ? focused ?
-                      'home' : 'home-outline'
+                    'home' : 'home-outline'
                     : route.name === 'Profile' ? focused ?
-                'person' : 'person-outline' : 'compass';
+                      'person' : 'person-outline' : 'compass';
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarInactiveTintColor: '#000',
@@ -55,12 +56,11 @@ function Navigation() {
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
             }
-            // headerShown: false,
           })}
         >
-          <Tab.Screen name="Community" component={CommunityStack} />
           <Tab.Screen name="Home" component={HomeStack} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Community" component={CommunityStack} />
+          <Tab.Screen name="Profile" component={ProfileStack} />
         </Tab.Navigator>
       </View>
     </View>
