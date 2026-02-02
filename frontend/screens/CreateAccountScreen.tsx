@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Logo from '../assets/logo-transparent-white.png';
 import { ANDROID_CLIENT_ID, EXPO_CLIENT_ID, IOS_CLIENT_ID } from '../components/config';
-import { Navigation } from "../types/navigation";
+import { AuthNavigation } from "../navigation/Navigators";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -14,7 +14,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<AuthNavigation>();
   console.log(EXPO_CLIENT_ID)
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: ANDROID_CLIENT_ID,
@@ -44,26 +44,26 @@ const CreateAccountScreen = () => {
   };
 
   const goToLogin = () => {
-    navigation.navigate("LoginScreen");
+    navigation.navigate('LoginScreen')
   };
 
   const goToEmail = () => {
-    navigation.navigate("CreateAccountEmailScreen");
+    navigation.navigate('CreateAccountEmailScreen')
   };
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={{ position: 'absolute', top: 60, left: 15, zIndex: 10 }} 
+        style={{ position: 'absolute', top: 60, left: 15, zIndex: 10 }}
         onPress={goBackToRegistration}
       >
         <Ionicons name="arrow-back" size={35} color="white" />
       </TouchableOpacity>
 
       <Text style={styles.title}>What&apos;s Your</Text>
-      <Image source={Logo} style={styles.img}/>
+      <Image source={Logo} style={styles.img} />
       <Text style={styles.text}>Connect with friends, run up challenges, & do it for the plot</Text>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.button1}
         onPress={() => promptAsync()}
         disabled={!request}
@@ -82,7 +82,7 @@ const CreateAccountScreen = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button3} onPress={goToEmail}>
-        <View style={styles.buttonTextRow}> 
+        <View style={styles.buttonTextRow}>
           <MaterialIcons name="email" size={24} color="white" />
           <Text style={styles.buttonText}>Continue with Email</Text>
         </View>
@@ -101,18 +101,18 @@ const CreateAccountScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     backgroundColor: "#AFB0E4",
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: "center" 
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
   textRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   footerTextContainer: {
-    position: 'absolute',  
+    position: 'absolute',
     bottom: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -131,16 +131,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  title: { 
+  title: {
     color: "#5F4078",
-    fontSize: 48, 
+    fontSize: 48,
     fontWeight: "600",
     marginBottom: 20,
     fontFamily: 'Work Sans'
   },
   text: {
     color: "#2E5E76",
-    fontSize: 22, 
+    fontSize: 22,
     fontWeight: "bold",
     marginLeft: 45,
     marginRight: 45,

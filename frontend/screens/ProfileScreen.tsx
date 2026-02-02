@@ -11,14 +11,14 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation } from '../types/navigation';
+import { ProfileNavigation } from '../navigation/Navigators';
 
 const { width } = Dimensions.get('window');
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<Navigation>();
-  const { user } = useUser();
+  const navigation = useNavigation<ProfileNavigation>();
+  const { user, setUser } = useUser();
 
   return (
     <View style={styles.container}>
@@ -49,7 +49,7 @@ const ProfileScreen = () => {
         {/* Action Buttons */}
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.capsuleButton} onPress={() => {
-            navigation.navigate("ProfileEditScreen")
+            navigation.navigate('ProfileEditScreen')
           }}>
             <Text style={styles.capsuleText}>edit profile</Text>
           </TouchableOpacity>
@@ -93,7 +93,9 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.actionSection}>
-          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]}>
+          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={() => {
+            setUser(null)
+          }}>
             <Text style={styles.buttonText}>log out</Text>
           </TouchableOpacity>
 

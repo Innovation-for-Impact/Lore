@@ -1,21 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
-import { Navigation } from '../types/navigation';
+import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const RegistrationScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<AuthNavigation>();
 
   // Check if user is already logged in
   // useEffect(() => {
@@ -57,12 +57,12 @@ const RegistrationScreen = () => {
         Connect with friends, run up challenges, & do it for the plot
       </Text>
       <TouchableOpacity style={styles.login} onPress={() => {
-        navigation.navigate('LoginScreen');
+        navigation.navigate('LoginScreen')
       }}>
         <Text style={styles.buttonText}>log in</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.register} onPress={() => {
-        navigation.navigate('CreateAccountEmailScreen');
+        navigation.navigate('CreateAccountEmailScreen')
       }}>
         <Text style={styles.buttonText} numberOfLines={1}>
           create account

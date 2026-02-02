@@ -2,15 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
 import { globalStyles } from '../styles/global';
-import { Navigation } from '../types/navigation';
+import { CommunityNavigation } from '../navigation/Navigators';
 
 enum Tabs {
   viewQuotes = "viewQuotes",
@@ -18,7 +18,7 @@ enum Tabs {
 };
 
 const QuoteBoardScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<CommunityNavigation>();
 
   const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
 
@@ -31,9 +31,9 @@ const QuoteBoardScreen = () => {
       {/* Header */}
       <View style={styles.topBar}>
         <TouchableOpacity
-            onPress={handleBack}
+          onPress={handleBack}
         >
-            <Ionicons name="arrow-back" size={35} color="white" />
+          <Ionicons name="arrow-back" size={35} color="white" />
         </TouchableOpacity>
       </View>
 

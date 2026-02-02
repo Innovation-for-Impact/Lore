@@ -15,15 +15,16 @@ import { LoadingModal } from '../components/LoadingModal';
 import { SuccessModal } from '../components/SuccessModal';
 import { globalStyles } from '../styles/global';
 import { $api } from '../types/constants';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { CommunityStackParamList } from '../navigation/NavigationParams';
 import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
+import { CommunityNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const QuoteDetailScreen = () => {
-  const navigation = useNavigation<Navigation>();
-  const route = useRoute<RouteProp<RootStackParamList, "QuoteDetailScreen">>();
+  const navigation = useNavigation<CommunityNavigation>();
+  const route = useRoute<RouteProp<CommunityStackParamList, "QuoteDetailScreen">>();
   const queryClient = useQueryClient();
   const [successModal, setSuccessModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -46,7 +47,7 @@ const QuoteDetailScreen = () => {
     }
   );
 
-  const {mutateAsync: deleteQuote, isPending: loadingDelete } = $api.useMutation(
+  const { mutateAsync: deleteQuote, isPending: loadingDelete } = $api.useMutation(
     "delete",
     "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
     {
@@ -94,9 +95,9 @@ const QuoteDetailScreen = () => {
   return (
     <>
       <LoadingModal visible={loadingSave} title='saving quote...' />
-      <SuccessModal title='quote updated' visible={successModal} setVisible={setSuccessModal} buttonText={"go back"} callback={() => navigation.goBack()}/>
+      <SuccessModal title='quote updated' visible={successModal} setVisible={setSuccessModal} buttonText={"go back"} callback={() => navigation.goBack()} />
       <LoadingModal visible={loadingDelete} title='deleting quote...' />
-      <ConfirmationModal title='delete quote?' visible={confirmDelete} setVisible={setConfirmDelete} left='cancel' right='delete' callback={handleDelete}/>
+      <ConfirmationModal title='delete quote?' visible={confirmDelete} setVisible={setConfirmDelete} left='cancel' right='delete' callback={handleDelete} />
       <View style={[globalStyles.container, styles.container]}>
         <View style={styles.topBar}>
           <TouchableOpacity

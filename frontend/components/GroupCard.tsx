@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { components } from '../types/backend-schema';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../navigation/NavigationParams';
 import { useQueryClient } from '@tanstack/react-query';
 import { $api } from '../types/constants';
 
@@ -53,10 +53,10 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <View style={styles.card}>
           {/* image container */}
           <View style={styles.imageContainer}>
-            { 
+            {
               group.avatar ? (
                 <Image source={{ uri: group.avatar }} style={styles.image} />
-              ) : <View style={styles.image}/>
+              ) : <View style={styles.image} />
             }
 
             {/* overlay the member count */}

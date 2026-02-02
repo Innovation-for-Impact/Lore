@@ -2,19 +2,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CommunityStack from './CommunityStack';
-import HomeStack from './HomeStack';
-import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles } from '../styles/global';
-import ProfileStack from './ProfileStack';
+import { RootStackParamList } from './NavigationParams';
+import { CommunityNavigator, HomeNavigator, ProfileNavigator } from './Navigators';
 
-type RootTabParamList = {
-  Community: undefined;
-  Home: undefined;
-  Profile: undefined;
-};
-
-const Tab = createBottomTabNavigator<RootTabParamList>();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const { width } = Dimensions.get('window');
 
@@ -58,9 +50,9 @@ function Navigation() {
             }
           })}
         >
-          <Tab.Screen name="Home" component={HomeStack} />
-          <Tab.Screen name="Community" component={CommunityStack} />
-          <Tab.Screen name="Profile" component={ProfileStack} />
+          <Tab.Screen name="Home" component={HomeNavigator} />
+          <Tab.Screen name="Community" component={CommunityNavigator} />
+          <Tab.Screen name="Profile" component={ProfileNavigator} />
         </Tab.Navigator>
       </View>
     </View>

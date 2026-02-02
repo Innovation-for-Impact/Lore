@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import placeholder from '../assets/placeholder.png';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { Navigation, RootStackParamList } from '../navigation/NavigationParams';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -23,7 +23,7 @@ export type Board = {
   screen: keyof RootStackParamList;
 };
 
-const BoardCard = ({ name, screen, image }: Board ) => {
+const BoardCard = ({ name, screen, image }: Board) => {
   const navigation = useNavigation<Navigation>();
   const handlePress = () => {
     navigation.navigate(screen as never);

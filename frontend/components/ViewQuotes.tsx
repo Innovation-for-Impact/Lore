@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { components } from '../types/backend-schema';
 import { $api, infiniteQueryParams } from '../types/constants';
-import { Navigation } from '../types/navigation';
+import { Navigation } from '../navigation/NavigationParams';
 import { useUser } from '../context/UserContext';
 
 const screenWidth = Dimensions.get('window').width;
@@ -23,7 +23,7 @@ type Quote = components["schemas"]["Quote"];
 
 const ViewQuotes = () => {
   const navigation = useNavigation<Navigation>();
-  const {user} = useUser();
+  const { user } = useUser();
 
   const { mutateAsync: patchQuote } = $api.useMutation(
     "patch",
@@ -108,7 +108,7 @@ const ViewQuotes = () => {
         <Text style={styles.quoteText}>{item.text}</Text>
 
         {
-          item.context !== "" ? 
+          item.context !== "" ?
             <Text style={styles.context}> context: {item.context} </Text> : null
         }
 

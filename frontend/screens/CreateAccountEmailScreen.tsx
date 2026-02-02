@@ -1,12 +1,12 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
-import * as SecureStore from 'expo-secure-store';
+// import * as SecureStore from 'expo-secure-store';
 import { useState, } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation } from '../types/navigation';
 import { $api, setTokens } from '../types/constants';
 import { useUser } from '../context/UserContext';
+import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -20,13 +20,13 @@ const CreateAccountEmailScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<AuthNavigation>();
 
   const { setUser } = useUser();
 
   const isEmailValid = email.includes("@") && email.includes(".");
 
-  const {mutateAsync: register} = $api.useMutation(
+  const { mutateAsync: register } = $api.useMutation(
     "post",
     "/api/v1/auth/registration/",
     {
@@ -88,7 +88,7 @@ const CreateAccountEmailScreen = () => {
           email: email,
           password: password
         }
-      }     
+      }
     );
 
     // TODO: API endpoint to check email

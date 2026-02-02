@@ -4,14 +4,14 @@ import { useState, } from 'react';
 import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import profileIcon from '../assets/profile-icon.png';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation } from '../types/navigation';
 import * as SecureStore from 'expo-secure-store';
+import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const CreateAccountProfileScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<AuthNavigation>();
 
   const [image, setImage] = useState("");
 
@@ -21,7 +21,7 @@ const CreateAccountProfileScreen = () => {
 
   const handleContinue = () => {
     // Navigate to the next screen - join group
-    navigation.navigate('CreateAccountGroupScreen');
+    navigation.navigate('AuthStack', { screen: 'CreateAccountGroupScreen' })
   };
 
   const requestPermission = async () => {

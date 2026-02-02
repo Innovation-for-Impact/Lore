@@ -13,16 +13,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation } from '../types/navigation';
 import { pickImage } from '../utils/GroupUtils';
 import * as ImagePicker from 'expo-image-picker';
 import { $api } from '../types/constants';
 import { SuccessModal } from '../components/SuccessModal';
 import { FailureModal } from '../components/FailureModal';
+import { ProfileNavigation } from '../navigation/Navigators';
 
-export function ProfileEditScreen() {
+export default function ProfileEditScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<ProfileNavigation>();
   const { user, setUser } = useUser();
   const [userAvatar, setUserAvatar] = useState<ImagePicker.ImagePickerAsset | null>(null);
 

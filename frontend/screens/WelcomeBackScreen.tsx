@@ -1,43 +1,43 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+// import { Ionicons } from '@expo/vector-icons';
+// import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 // Replace with your actual logo import
 import Logo from '../assets/logo-transparent-white.png';
-import { Navigation } from '../types/navigation';
+// import { Navigation } from '../navigation/navigation';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const WelcomeBackScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  // const navigation = useNavigation<Navigation>();
 
   // Back arrow logic (if you want the arrow at the top left)
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  // const handleGoBack = () => {
+  //   navigation.goBack();
+  // };
 
   // Navigate to HomeScreen
   const handleContinue = () => {
     // TODO: fix this (auto login) with usequery or something
     // setUser(true);
-    navigation.navigate('HomeScreen');
+    // navigation.navigate('HomeStack', { screen: 'HomeScreen' })
   };
 
   return (
     <View style={styles.container}>
       {/* Back Arrow */}
-      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-        <Ionicons name="arrow-back" size={35} color="white" />
-      </TouchableOpacity>
+      {/* <TouchableOpacity style={styles.backButton} onPress={handleGoBack}> */}
+      {/*   <Ionicons name="arrow-back" size={35} color="white" /> */}
+      {/* </TouchableOpacity> */}
 
       {/* Logo */}
       <Image source={Logo} style={styles.logo} />

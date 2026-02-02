@@ -6,10 +6,11 @@ import { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LoadingModal } from '../components/LoadingModal';
 import { $api } from '../types/constants';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { HomeStackParamList } from '../navigation/NavigationParams';
 import { pickImage } from '../utils/GroupUtils';
+import { HomeNavigation } from '../navigation/Navigators';
 
-type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'GroupEditScreen'>;
+type EditGroupScreenRouteProp = RouteProp<HomeStackParamList, 'GroupEditScreen'>;
 
 type Props = {
   route: EditGroupScreenRouteProp;
@@ -17,7 +18,7 @@ type Props = {
 
 const GroupEditScreen = ({ route }: Props) => {
   const { group } = route.params;
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<HomeNavigation>();
   const queryClient = useQueryClient();
 
   const [name, setName] = useState(group.name);

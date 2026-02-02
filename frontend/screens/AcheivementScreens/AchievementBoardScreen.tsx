@@ -1,19 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, {useEffect, useState} from "react";
-import { 
-  StyleSheet, 
-  Text, 
-  TouchableOpacity, 
-  View, 
-  Image, 
-  ImageSourcePropType, 
-  useWindowDimensions 
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  ImageSourcePropType,
+  useWindowDimensions
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { $api } from '../../types/constants';
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../types/navigation";
+import { RootStackParamList } from "../../navigation/NavigationParams";
 
 type NavProp = StackNavigationProp<RootStackParamList, "AchievementBoardScreen">;
 
@@ -44,10 +44,10 @@ type BadgeIconProps = {
 
 const BadgeIcon: React.FC<BadgeIconProps> = ({ source, size }) => (
   <View style={[styles.badgeContainer, { width: size, height: size, borderRadius: size / 2 }]}>
-    <Image 
-      source={source} 
-      style={{ width: '100%', height: '100%' }} 
-      resizeMode="contain" 
+    <Image
+      source={source}
+      style={{ width: '100%', height: '100%' }}
+      resizeMode="contain"
     />
   </View>
 );
@@ -67,22 +67,22 @@ type AchievementLevelSectionProps = {
 const AchievementLevelSection: React.FC<AchievementLevelSectionProps> = ({
   level, title, badges, containerWidth, containerHeight,
 }) => (
-  <View style={[styles.achievementItemsContainer, { width: containerWidth}]}>
+  <View style={[styles.achievementItemsContainer, { width: containerWidth }]}>
     <View style={[styles.achievementItemContainer, { width: '100%', height: containerHeight, marginTop: containerHeight * 0.15 }]}>
-      <View style={[styles.achievementItemHeader, {padding: 10}]}>
-        <Text style={[styles.levelTitleText, {fontSize: containerHeight * 0.18}]}>
+      <View style={[styles.achievementItemHeader, { padding: 10 }]}>
+        <Text style={[styles.levelTitleText, { fontSize: containerHeight * 0.18 }]}>
           level {level}: {title}
         </Text>
         <TouchableOpacity onPress={() => console.log(`See more for level ${level}`)}>
-        <Text style={[styles.seeMoreText, {fontSize: containerHeight*0.12}]}>see more</Text>
+          <Text style={[styles.seeMoreText, { fontSize: containerHeight * 0.12 }]}>see more</Text>
         </TouchableOpacity>
       </View>
-      <View style={[styles.badgeRow , {gap: containerWidth * 0.05}]}>
+      <View style={[styles.badgeRow, { gap: containerWidth * 0.05 }]}>
         {badges.map((badge) => (
-          <BadgeIcon 
-            key={badge.id} 
-            source={badge.asset} 
-            size={containerHeight * 0.55} 
+          <BadgeIcon
+            key={badge.id}
+            source={badge.asset}
+            size={containerHeight * 0.55}
           />
         ))}
       </View>
@@ -96,7 +96,7 @@ const AchievementBoardScreen = () => {
 
   const containerWidth = screenWidth * 0.9;
   const horizontalPadding = screenWidth * 0.06;
-  
+
   type Achievement = {
     id: number;
     title: string;
@@ -174,7 +174,7 @@ const AchievementBoardScreen = () => {
       >
         <Ionicons name="arrow-back" size={scaleHeight(65, screenWidth)} color="white" />
       </TouchableOpacity>
-    
+
       {/* Toggle Buttons */}
       <View style={[styles.toggleButtonsContainer, { marginTop: scaleHeight(30, screenHeight) }]}>
         <TouchableOpacity onPress={() => navigation.navigate('ChallengeList')} style={[styles.challengesToggle, { width: containerWidth / 2 - 10 }]}>
@@ -189,12 +189,12 @@ const AchievementBoardScreen = () => {
       <Text style={[styles.achievementHeader, { fontSize: scaleWidth(32, screenWidth), marginLeft: horizontalPadding, marginTop: scaleHeight(30, screenHeight) }]}>
         achievements
       </Text>
-      <Text 
+      <Text
         style={[
-          styles.achievementText, 
-          { 
-            fontSize: scaleWidth(15, screenWidth), 
-            marginLeft: horizontalPadding, 
+          styles.achievementText,
+          {
+            fontSize: scaleWidth(15, screenWidth),
+            marginLeft: horizontalPadding,
             marginRight: horizontalPadding,
             marginTop: scaleHeight(10, screenHeight),
             lineHeight: scaleHeight(20, screenHeight),
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F7EEFF', 
+    backgroundColor: '#F7EEFF',
     marginRight: 10,
   },
   achievementsToggleActive: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#5F4078',
     borderWidth: 2,
-    backgroundColor: '#4D3B6B', 
+    backgroundColor: '#4D3B6B',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   },
   seeMoreText: {
     fontWeight: '700',
-    color: '#2E5E76', 
+    color: '#2E5E76',
     textDecorationLine: 'underline',
     fontFamily: 'Work Sans',
   },
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-    achievementItem: {
+  achievementItem: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-    title: {
+  title: {
     fontSize: 18,
     fontWeight: "600",
     color: "#333",
