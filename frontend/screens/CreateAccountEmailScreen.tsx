@@ -1,12 +1,12 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 // import * as SecureStore from 'expo-secure-store';
-import { useState, } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
-import Logo from '../assets/logo-transparent-white.png';
 import { useNavigation } from '@react-navigation/native';
-import { $api, setTokens } from '../types/constants';
+import { useState, } from 'react';
+import { Dimensions, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Logo from '../assets/logo-transparent-white.png';
 import { useUser } from '../context/UserContext';
 import { AuthNavigation } from '../navigation/Navigators';
+import { $api, setTokens } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -40,11 +40,11 @@ const CreateAccountEmailScreen = () => {
     "post",
     "/api/v1/auth/login/",
     {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         // redirect to user page
+        await setTokens(response.access, response.refresh);
         setUser(response.user);
-        setTokens(response.access, response.refresh);
-        navigation.navigate('CreateAccountProfileScreen');
+        // navigation.navigate('CreateAccountProfileScreen');
       },
       onError: (error) => {
         setError(error.non_field_errors);
@@ -94,9 +94,6 @@ const CreateAccountEmailScreen = () => {
     // TODO: API endpoint to check email
     // if email already exists in database - X mark
     // else check mark
-
-    // Navigate to the next screen - name
-    // navigation.navigate('CreateAccountNameScreen');
   };
 
   return (

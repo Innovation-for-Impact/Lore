@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
-import { globalStyles } from '../styles/global';
 import { CommunityNavigation } from '../navigation/Navigators';
+import { globalStyles } from '../styles/global';
 
 enum Tabs {
   viewQuotes = "viewQuotes",

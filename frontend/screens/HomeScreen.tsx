@@ -18,12 +18,12 @@ const HomeScreen = () => {
     results: []
   }];
 
-  const {groups, isLoading, isError } = useGroups();
+  const { groups, isLoading, isError } = useGroups();
 
   const groupData = groups ?? emptyGroupData;
 
   const filteredGroups = useMemo(() => {
-    return groupData.filter(group => 
+    return groupData.filter(group =>
       group.name.toLowerCase().includes(query.toLowerCase())
     )
   }, [groupData, query])

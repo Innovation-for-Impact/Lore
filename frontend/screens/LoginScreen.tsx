@@ -1,7 +1,6 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-
 import {
   Dimensions,
   Image,
@@ -45,12 +44,14 @@ const LoginScreen = () => {
     "post",
     "/api/v1/auth/login/",
     {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         // redirect to user page
+        await setTokens(response.access, response.refresh);
         setUser(response.user);
-        setTokens(response.access, response.refresh);
       },
-      onError: (error) => {
+      onError: async (error) => {
+        console.log(error)
+        await setTokens(null, null);
         setError(error.non_field_errors);
       }
     }
@@ -79,23 +80,23 @@ const LoginScreen = () => {
   };
 
   const handleSignUp = () => {
-    navigation.navigate('CreateAccountScreen')
+    navigation.navigate('CreateAccountEmailScreen')
   };
 
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity onPress={async () => { */}
-      {/*   await login( */}
-      {/*     { */}
-      {/*       body: { */}
-      {/*         email: "test@test.com", */}
-      {/*         password: "test123test123" */}
-      {/*       } */}
-      {/*     } */}
-      {/*   ); */}
-      {/* }}> */}
-      {/*   <Text> DEBUG LOG IN </Text> */}
-      {/* </TouchableOpacity> */}
+      <TouchableOpacity onPress={async () => {
+        await login(
+          {
+            body: {
+              email: "test@test.com",
+              password: "test123test123"
+            }
+          }
+        );
+      }}>
+        <Text> DEBUG LOG IN </Text>
+      </TouchableOpacity>
       {/* Back Arrow */}
       <TouchableOpacity
         style={styles.backButton}

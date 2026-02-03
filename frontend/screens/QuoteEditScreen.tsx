@@ -11,13 +11,13 @@ import {
   View
 } from 'react-native';
 import { ConfirmationModal } from '../components/ConfirmationModal';
+import { MAX_CONTEXT_LENGTH, MAX_QUOTE_LENGTH } from '../components/CreateQuote';
 import { LoadingModal } from '../components/LoadingModal';
 import { SuccessModal } from '../components/SuccessModal';
+import { CommunityStackParamList } from '../navigation/NavigationParams';
+import { CommunityNavigation } from '../navigation/Navigators';
 import { globalStyles } from '../styles/global';
 import { $api } from '../types/constants';
-import { CommunityStackParamList } from '../navigation/NavigationParams';
-import { MAX_QUOTE_LENGTH, MAX_CONTEXT_LENGTH } from '../components/CreateQuote';
-import { CommunityNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

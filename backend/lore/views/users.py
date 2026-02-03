@@ -84,6 +84,8 @@ class MutualPermission(permissions.BasePermission):
     ) -> bool:
         """Return true if accessing user shares a group with the object."""
         user: LoreUser = cast(LoreUser, request.user)
+        if user.pk == obj.pk:
+            return True
         mutual_users = user.get_mutual_users()
         return mutual_users.filter(pk=obj.pk).exists()
 
