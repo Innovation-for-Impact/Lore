@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import {
   Dimensions,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -84,93 +86,98 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={async () => {
-        await login(
-          {
-            body: {
-              email: "test@test.com",
-              password: "test123test123"
-            }
-          }
-        );
-      }}>
-        <Text> DEBUG LOG IN </Text>
-      </TouchableOpacity>
-      {/* Back Arrow */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={goBackToRegistration}
-      >
-        <Ionicons name="arrow-back" size={35} color="white" />
-      </TouchableOpacity>
+    <View style={{ flex: 1 }} >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <TouchableOpacity onPress={async () => {
+            await login(
+              {
+                body: {
+                  email: "test@test.com",
+                  password: "test123test123"
+                }
+              }
+            );
+          }}>
+            <Text> DEBUG LOG IN </Text>
+          </TouchableOpacity>
+          {/* Back Arrow */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={goBackToRegistration}
+          >
+            <Ionicons name="arrow-back" size={35} color="white" />
+          </TouchableOpacity>
 
-      {/* Logo */}
-      <Image source={Logo} style={styles.logo} />
+          {/* Logo */}
+          <Image source={Logo} style={styles.logo} />
 
-      {/* Title */}
-      <Text style={styles.title}>Log In</Text>
+          {/* Title */}
+          <Text style={styles.title}>Log In</Text>
 
-      {/* Email Input + Validation Icon */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="email address"
-          placeholderTextColor="#888"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-        {email.length > 0 && (
-          <Ionicons
-            name={isEmailValid ? "checkmark-circle" : "close-circle"}
-            size={24}
-            color={isEmailValid ? "green" : "red"}
-            style={styles.inputIcon}
-          />
-        )}
-      </View>
+          {/* Email Input + Validation Icon */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="email address"
+              placeholderTextColor="#888"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+            {email.length > 0 && (
+              <Ionicons
+                name={isEmailValid ? "checkmark-circle" : "close-circle"}
+                size={24}
+                color={isEmailValid ? "green" : "red"}
+                style={styles.inputIcon}
+              />
+            )}
+          </View>
 
-      {/* Password Input + Show/Hide Icon */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="password"
-          placeholderTextColor="#888"
-          secureTextEntry={!isPasswordVisible}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity
-          style={styles.inputIcon}
-          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-        >
-          <Feather name={isPasswordVisible ? 'eye' : 'eye-off'} size={23} color="grey" />
-        </TouchableOpacity>
-      </View>
-
-
-      {/* Forgot Password */}
-      <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.forgotPassword}>Forgot password?</Text>
-      </TouchableOpacity>
-
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-      {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>log in</Text>
-      </TouchableOpacity>
+          {/* Password Input + Show/Hide Icon */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="password"
+              placeholderTextColor="#888"
+              secureTextEntry={!isPasswordVisible}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={styles.inputIcon}
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            >
+              <Feather name={isPasswordVisible ? 'eye' : 'eye-off'} size={23} color="grey" />
+            </TouchableOpacity>
+          </View>
 
 
-      {/* Sign Up Footer */}
-      <View style={styles.signUpContainer}>
-        <Text style={styles.signUpText}>Don’t have an account?</Text>
-        <TouchableOpacity onPress={handleSignUp}>
-          <Text style={styles.signUpLink}> Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Forgot Password */}
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </TouchableOpacity>
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          {/* Login Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>log in</Text>
+          </TouchableOpacity>
+
+
+          {/* Sign Up Footer */}
+          <View style={styles.signUpContainer}>
+            <Text style={styles.signUpText}>Don’t have an account?</Text>
+            <TouchableOpacity onPress={handleSignUp}>
+              <Text style={styles.signUpLink}> Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -178,7 +185,6 @@ const LoginScreen = () => {
 // Styles
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
     backgroundColor: "#AFB0E4",
     flex: 1,
     justifyContent: "center",

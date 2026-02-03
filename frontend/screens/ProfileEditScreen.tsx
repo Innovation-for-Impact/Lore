@@ -20,7 +20,6 @@ import { ProfileNavigation } from '../navigation/Navigators';
 import { $api, setTokens } from '../types/constants';
 import { pickImage } from '../utils/GroupUtils';
 import { ConfirmationModal } from '../components/ConfirmationModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfileEditScreen() {
@@ -133,7 +132,6 @@ export default function ProfileEditScreen() {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            // paddingTop: insets.top,
             paddingBottom: insets.bottom + 100
           }}
           showsVerticalScrollIndicator={false}
