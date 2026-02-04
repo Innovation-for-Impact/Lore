@@ -6,7 +6,7 @@ charset-normalizer==3.4.1
 cryptography==44.0.2
 defusedxml==0.7.1
 dj-rest-auth==7.0.0
-Django==5.1.7
+Django==5.1.15
 django-allauth==0.61.1
 django-cors-headers==4.7.0
 django-environ==0.12.0
@@ -48,4 +48,4 @@ sqlparse==0.5.3
 types-PyYAML==6.0.12.20241230
 typing_extensions==4.12.2
 uritemplate==4.2.0
-urllib3==2.3.0
+urllib3==2.6.3
