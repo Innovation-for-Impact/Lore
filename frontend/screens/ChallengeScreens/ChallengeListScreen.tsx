@@ -1,16 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Navigation } from "../../navigation/NavigationParams";
+import { CommunityNavigation } from "../../navigation/Navigators";
 
 
-const ChallengeListScreen = () => {
-  const navigation = useNavigation<Navigation>();
+const ChallengeListComponent = () => {
+  const navigation = useNavigation<CommunityNavigation>();
 
-  const goBack = () => navigation.goBack();
-  const goToAchievements = () => navigation.navigate("AchievementBoardScreen" as never);
-  const createChallenge = () => navigation.navigate("ChallengeCreateScreen");
   const goToDetail = (id: string) =>
     navigation.navigate('ChallengeDetail', { id });
 
@@ -37,24 +33,6 @@ const ChallengeListScreen = () => {
 
   return (
     <View style={styles.fullScreenContainer}>
-      {/* Back Button */}
-      <TouchableOpacity
-        style={{ position: "absolute", top: 62, left: 15, zIndex: 10 }}
-        onPress={goBack}
-      >
-        <Ionicons name="arrow-back" size={35} color="white" />
-      </TouchableOpacity>
-
-      {/* Toggle Buttons */}
-      <View style={styles.toggleButtonsContainer}>
-        <TouchableOpacity style={styles.challengesToggleActive}>
-          <Text style={styles.toggleTextActive}>challenges</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.achievementsToggle} onPress={goToAchievements}>
-          <Text style={styles.toggleText}>achievements</Text>
-        </TouchableOpacity>
-      </View>
 
       {/* Header */}
       <Text style={styles.header}>challenges</Text>
@@ -63,17 +41,17 @@ const ChallengeListScreen = () => {
       </Text>
 
       {/* Create Challenge */}
-      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate('ChallengeCreateScreen')}>
+      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate('ChallengeCreate')}>
         <Text style={styles.createChallengeButtonText}>create challenge</Text>
       </TouchableOpacity>
 
       {/* Challenge List */}
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {challenges.map((ch) => (
           <TouchableOpacity
             key={ch.id}
             style={styles.challengeCard}
-            onPress={() => goToDetail(ch.id)}
+            onPress={() => goToDetail(String(ch.id))}
           >
             <View style={styles.cardHeaderRow}>
               <Text style={styles.challengeTitle}>
@@ -92,7 +70,7 @@ const ChallengeListScreen = () => {
   );
 };
 
-export default ChallengeListScreen;
+export default ChallengeListComponent;
 
 const styles = StyleSheet.create({
   fullScreenContainer: {
@@ -158,7 +136,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "400",
     color: "black",
-    marginTop: 54,
     marginLeft: 24,
     fontFamily: "Work Sans",
   },
@@ -174,10 +151,11 @@ const styles = StyleSheet.create({
   },
 
   createChallengeButton: {
-    backgroundColor: "#5D3B73",
+    backgroundColor: "#5F4078",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 15,
     paddingVertical: 12,
     marginHorizontal: 24,
     marginBottom: 20,

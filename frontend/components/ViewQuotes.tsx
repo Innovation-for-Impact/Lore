@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { components } from '../types/backend-schema';
 import { $api, infiniteQueryParams } from '../types/constants';
-import { Navigation } from '../navigation/NavigationParams';
 import { useUser } from '../context/UserContext';
+import { CommunityNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -22,7 +22,7 @@ const screenHeight = Dimensions.get('window').height;
 type Quote = components["schemas"]["Quote"];
 
 const ViewQuotes = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<CommunityNavigation>();
   const { user } = useUser();
 
   const { mutateAsync: patchQuote } = $api.useMutation(
@@ -30,7 +30,7 @@ const ViewQuotes = () => {
     "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
   )
 
-  const { data: quotesData, isLoading, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
+  const { data: quotesData, isError, isLoading, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
     "/api/v1/quotes/",
     {},
@@ -123,6 +123,14 @@ const ViewQuotes = () => {
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#7C57FE" />
       </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.noQuoteText}>an error occured</Text>
+      </View >
     );
   }
 

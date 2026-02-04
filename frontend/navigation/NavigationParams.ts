@@ -35,6 +35,7 @@ export type CommunityStackParamList = {
   QuoteDetailScreen: { quote: Quote };
   ChallengeList: undefined;
   ChallengeDetail: { id: string };
+  ChallengeCreate: undefined;
   CreateAchievementScreen: undefined;
 };
 

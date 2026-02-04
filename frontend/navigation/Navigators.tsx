@@ -16,10 +16,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 import ProfileEditScreen from '../screens/ProfileEditScreen';
 import QuoteBoardScreen from '../screens/QuoteBoardScreen';
 import MemoryBoardScreen from '../screens/MemoryBoardScreen';
-import AchievementBoardScreen from '../screens/AcheivementScreens/AchievementBoardScreen';
+import AchievementBoardScreen from '../screens/AchievementBoardScreen';
 import QuoteDetailScreen from '../screens/QuoteEditScreen';
 import ChallengeListScreen from '../screens/ChallengeScreens/ChallengeListScreen';
-import CreateAchievementScreen from '../screens/AcheivementScreens/CreateAchievementScreen';
+import CreateAchievementScreen from '../screens/AchievementScreens/CreateAchievementScreen';
 import ChallengeDetailScreen from '../screens/ChallengeScreens/ChallengeDetailScreen';
 
 const AuthStack = createNativeStackNavigator<RegistrationStackParamList>();
@@ -70,6 +70,7 @@ export function CommunityNavigator() {
       <CommunityStack.Screen name="AchievementBoardScreen" component={AchievementBoardScreen} />
       <CommunityStack.Screen name="QuoteDetailScreen" component={QuoteDetailScreen} />
       <CommunityStack.Screen name="ChallengeList" component={ChallengeListScreen} />
+      <CommunityStack.Screen name="ChallengeCreate" component={ChallengeCreateScreen} />
       <CommunityStack.Screen name="ChallengeDetail" component={ChallengeDetailScreen} />
       <CommunityStack.Screen name="CreateAchievementScreen" component={CreateAchievementScreen} />
     </CommunityStack.Navigator>
@@ -78,6 +79,7 @@ export function CommunityNavigator() {
 }
 
 import { NavigationProp } from "@react-navigation/native";
+import ChallengeCreateScreen from '../screens/ChallengeScreens/ChallengeCreateScreen';
 export type HomeNavigation = NavigationProp<HomeStackParamList>
 export type AuthNavigation = NavigationProp<RegistrationStackParamList>
 export type CommunityNavigation = NavigationProp<CommunityStackParamList>

@@ -1,21 +1,18 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
+  Image,
+  ImageSourcePropType,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Image,
-  ImageSourcePropType,
-  useWindowDimensions
+  useWindowDimensions,
+  View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CommunityNavigation } from '../../navigation/Navigators';
 import { $api } from '../../types/constants';
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../navigation/NavigationParams";
 
-type NavProp = StackNavigationProp<RootStackParamList, "AchievementBoardScreen">;
 
 // --- Mock Data for Achievements ---
 const BadgeAssets = {
@@ -90,8 +87,8 @@ const AchievementLevelSection: React.FC<AchievementLevelSectionProps> = ({
   </View>
 );
 
-const AchievementBoardScreen = () => {
-  const navigation = useNavigation<NavProp>();
+const AchievementBoardComponent = () => {
+  const navigation = useNavigation<CommunityNavigation>();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const containerWidth = screenWidth * 0.9;
@@ -106,16 +103,12 @@ const AchievementBoardScreen = () => {
     achieved_by?: number[];
   };
 
+  // TODO: Can get rid of these two queries and use useGroups
   const { data: currentUser } = $api.useQuery(
     "get",
     "/api/v1/auth/user/",
     {}
   )
-
-  const toggleToChallenges = () => {
-    navigation.navigate("ChallengeList");
-  };
-
 
   const { data: groups } = $api.useQuery(
     "get",
@@ -144,15 +137,13 @@ const AchievementBoardScreen = () => {
         query: {
           group_id: currentGroupId,
           achieved_by: currentUser?.id,
-        } as any,
+        }
       },
     },
     {
       enabled: !!currentUser && !!currentGroupId,
     }
   )
-
-  const goBackToCommunity = () => navigation.goBack();
 
   if (loadingAchievements) {
     return (
@@ -166,27 +157,9 @@ const AchievementBoardScreen = () => {
 
   const achievementsList = achievements?.results ?? [];
   return (
-    <SafeAreaView style={styles.fullScreenContainer}>
-      {/* Back Arrow */}
-      <TouchableOpacity
-        style={{ position: 'absolute', top: scaleHeight(30, screenHeight), left: scaleWidth(15, screenWidth), zIndex: 10 }}
-        onPress={goBackToCommunity}
-      >
-        <Ionicons name="arrow-back" size={scaleHeight(65, screenWidth)} color="white" />
-      </TouchableOpacity>
-
-      {/* Toggle Buttons */}
-      <View style={[styles.toggleButtonsContainer, { marginTop: scaleHeight(30, screenHeight) }]}>
-        <TouchableOpacity onPress={() => navigation.navigate('ChallengeList')} style={[styles.challengesToggle, { width: containerWidth / 2 - 10 }]}>
-          <Text style={styles.toggleText}>challenges</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.achievementsToggleActive, { width: containerWidth / 2 - 10 }]}>
-          <Text style={styles.toggleTextActive}>achievements</Text>
-        </TouchableOpacity>
-      </View>
-
+    <View style={styles.fullScreenContainer}>
       {/* Header */}
-      <Text style={[styles.achievementHeader, { fontSize: scaleWidth(32, screenWidth), marginLeft: horizontalPadding, marginTop: scaleHeight(30, screenHeight) }]}>
+      <Text style={[styles.achievementHeader]}>
         achievements
       </Text>
       <Text
@@ -201,7 +174,7 @@ const AchievementBoardScreen = () => {
           }
         ]}
       >
-        see all the badges you've earned & learn how you can create more.
+        see all the badges you&apos;ve earned & learn how you can create more.
       </Text>
 
       {/* Create Achievement Button */}
@@ -275,7 +248,7 @@ const AchievementBoardScreen = () => {
           </>
         ) : (
           // We have achievements from the backend – render them as a flat list
-          achievementsList.map((achievement: any) => {
+          achievementsList.map((achievement) => {
             const userId = currentUser?.id ?? -1;
             const achievedBy = achievement.achieved_by;
 
@@ -303,7 +276,7 @@ const AchievementBoardScreen = () => {
         )}
       </View>
 
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -312,46 +285,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#AFB0E4",
   },
-  toggleButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  challengesToggle: {
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderColor: '#5F4078',
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F7EEFF',
-    marginRight: 10,
-  },
-  achievementsToggleActive: {
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderColor: '#5F4078',
-    borderWidth: 2,
-    backgroundColor: '#4D3B6B',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  toggleText: {
-    color: '#5F4078',
-    fontWeight: '400',
-    fontSize: 12,
-    fontFamily: 'Work Sans',
-  },
-  toggleTextActive: {
-    color: 'white',
-    fontWeight: '400',
-    fontSize: 12,
-    fontFamily: 'Work Sans',
-  },
   achievementHeader: {
-    fontWeight: '400',
-    color: 'black',
-    fontFamily: 'Work Sans',
+    fontSize: 32,
+    fontWeight: "400",
+    color: "black",
+    marginLeft: 24,
+    fontFamily: "Work Sans",
   },
   achievementText: {
     fontWeight: '400',
@@ -423,4 +362,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AchievementBoardScreen;
+export default AchievementBoardComponent;
