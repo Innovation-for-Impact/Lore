@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Navigation } from "../../types/navigation";
+import { Navigation } from "../../navigation/NavigationParams";
 
 
 const ChallengeListScreen = () => {

@@ -1,28 +1,29 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
+
 import {
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { $api, setTokens } from '../types/constants';
 
 // Replace with your actual logo import
 import Logo from "../assets/logo-transparent-white.png";
 import { useUser } from '../context/UserContext';
-import { Navigation } from '../types/navigation';
+import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const LoginScreen = () => {
-  const {setUser} = useUser();
-  const navigation = useNavigation<Navigation>();
+  const { setUser } = useUser();
+  const navigation = useNavigation<AuthNavigation>();
 
   // State for email/password
   const [email, setEmail] = useState("");
@@ -48,7 +49,6 @@ const LoginScreen = () => {
         // redirect to user page
         setUser(response.user);
         setTokens(response.access, response.refresh);
-        navigation.navigate("HomeScreen");
       },
       onError: (error) => {
         setError(error.non_field_errors);
@@ -69,7 +69,7 @@ const LoginScreen = () => {
           email: email,
           password: password
         }
-      }     
+      }
     );
   };
 
@@ -79,8 +79,7 @@ const LoginScreen = () => {
   };
 
   const handleSignUp = () => {
-    // Navigate to your Sign Up screen
-    navigation.navigate("CreateAccountScreen");
+    navigation.navigate('CreateAccountScreen')
   };
 
   return (

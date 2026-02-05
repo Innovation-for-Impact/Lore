@@ -3,13 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
-import { Navigation } from '../types/navigation';
+import { RootNavigation } from '../navigation/RootNavigator';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const CreateAccountWelcomeScreen = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<RootNavigation>();
 
   // Back arrow logic (if you want the arrow at the top left)
   const handleGoBack = () => {
@@ -20,7 +20,7 @@ const CreateAccountWelcomeScreen = () => {
   const handleContinue = () => {
     // TODO: fix this (auto login)
     // setUser(true)
-    navigation.navigate("HomeScreen");
+    navigation.navigate('Home', { screen: 'HomeScreen' })
   };
 
   return (
@@ -33,7 +33,7 @@ const CreateAccountWelcomeScreen = () => {
       <Image source={Logo} style={styles.img} />
 
       <Text style={styles.title}>Welcome!</Text>
-      <Text style={styles.subtitle}> 
+      <Text style={styles.subtitle}>
         Connect with friends, run up challenges, & do it for the plot
       </Text>
 

@@ -5,7 +5,7 @@ import { useState, } from 'react';
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import unlockIcon from '../assets/unlock-icon.png';
-import { Navigation } from '../types/navigation';
+import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -16,9 +16,7 @@ const CreateAccountGroupScreen = () => {
   const [failureModalVisible, setFailureModalVisible] = useState(false);
   const [groupCode, setGroupCode] = useState('');
   const [isGroupJoined, setIsGroupJoined] = useState(false);
-  const navigation = useNavigation<Navigation>();
-
-  // const correctCode = '12345';
+  const navigation = useNavigation<AuthNavigation>();
 
   const goBack = () => {
     navigation.goBack();
@@ -26,7 +24,7 @@ const CreateAccountGroupScreen = () => {
 
   const handleContinue = () => {
     // Navigate to the next screen - welcome
-    navigation.navigate('CreateAccountWelcomeScreen');
+    navigation.navigate('CreateAccountWelcomeScreen')
   };
 
   // api post request using fetch 
@@ -55,15 +53,6 @@ const CreateAccountGroupScreen = () => {
 
     setModalVisible(false);
     setGroupCode('');
-
-    // testing Next button on successful join
-    // if (groupCode === correctCode) {
-    //        setIsGroupJoined(true);
-    //     setSuccessModalVisible(true);
-    // } else {
-    //     setFailureModalVisible(true);
-    // }
-
     setModalVisible(false);
     setGroupCode('');
   };

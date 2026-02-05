@@ -2,18 +2,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CommunityStack from './CommunityStack';
-import HomeStack from './HomeStack';
-import ProfileScreen from '../screens/ProfileScreen';
 import { navigationStyles } from '../styles/global';
+import { RootStackParamList } from './NavigationParams';
+import { CommunityNavigator, HomeNavigator, ProfileNavigator } from './Navigators';
 
-type RootTabParamList = {
-  Community: undefined;
-  Home: undefined;
-  Profile: undefined;
-};
-
-const Tab = createBottomTabNavigator<RootTabParamList>();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const { width } = Dimensions.get('window');
 
@@ -25,16 +18,16 @@ function Navigation() {
     <View style={navigationStyles.container}>
       <View style={navigationStyles.contentContainer}>
         <Tab.Navigator
-          screenOptions={({route}) => ({
+          screenOptions={({ route }) => ({
             tabBarIcon: ({ color, focused }) => {
               let size = 28;
               const iconName: keyof typeof Ionicons.glyphMap =
                 route.name === 'Community' ? focused ?
                   'compass' : 'compass-outline'
                   : route.name === 'Home' ? focused ?
-                      'home' : 'home-outline'
+                    'home' : 'home-outline'
                     : route.name === 'Profile' ? focused ?
-                'person' : 'person-outline' : 'compass';
+                      'person' : 'person-outline' : 'compass';
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarInactiveTintColor: '#000',
@@ -55,12 +48,11 @@ function Navigation() {
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
             }
-            // headerShown: false,
           })}
         >
-          <Tab.Screen name="Community" component={CommunityStack} />
-          <Tab.Screen name="Home" component={HomeStack} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
+          <Tab.Screen name="Home" component={HomeNavigator} />
+          <Tab.Screen name="Community" component={CommunityNavigator} />
+          <Tab.Screen name="Profile" component={ProfileNavigator} />
         </Tab.Navigator>
       </View>
     </View>

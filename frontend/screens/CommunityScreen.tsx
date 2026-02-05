@@ -8,7 +8,6 @@ const CommunityScreen = () => {
     <View style={[globalStyles.container, { justifyContent: 'flex-start', alignItems: 'center' }]}>
       <View style={styles.container}>
       </View>
-      {/* <BoardList style={styles.innerContainer} navigation={navigation}/> */}
       <BoardList />
     </View>
   );

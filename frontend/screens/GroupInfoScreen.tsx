@@ -1,15 +1,16 @@
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Platform, ToastAndroid, Alert } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { HomeStackParamList } from '../navigation/NavigationParams';
 import { useUser } from '../context/UserContext';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { $api } from '../types/constants';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import * as Clipboard from 'expo-clipboard';
+import { HomeNavigation } from '../navigation/Navigators';
 
-type GroupInfoScreenRouteProp = RouteProp<RootStackParamList, 'GroupInfoScreen'>;
+type GroupInfoScreenRouteProp = RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
 
 type Props = {
   route: GroupInfoScreenRouteProp;
@@ -20,7 +21,7 @@ const GroupInfoScreen = ({ route }: Props) => {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<HomeNavigation>();
 
   // fetch most recent group data
   const { data: group = initialGroup } = $api.useQuery(
@@ -62,7 +63,7 @@ const GroupInfoScreen = ({ route }: Props) => {
   };
 
   const handleEdit = () => {
-    navigation.navigate('EditGroupScreen', { group: group });
+    navigation.navigate('GroupEditScreen', { group: group });
   };
 
   return (
@@ -76,7 +77,7 @@ const GroupInfoScreen = ({ route }: Props) => {
           >
             <Ionicons name="arrow-back" size={35} color="white" />
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={handleEdit}
           >

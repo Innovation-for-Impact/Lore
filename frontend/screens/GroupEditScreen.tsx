@@ -6,18 +6,19 @@ import { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LoadingModal } from '../components/LoadingModal';
 import { $api } from '../types/constants';
-import { Navigation, RootStackParamList } from '../types/navigation';
+import { HomeStackParamList } from '../navigation/NavigationParams';
 import { pickImage } from '../utils/GroupUtils';
+import { HomeNavigation } from '../navigation/Navigators';
 
-type EditGroupScreenRouteProp = RouteProp<RootStackParamList, 'EditGroupScreen'>;
+type EditGroupScreenRouteProp = RouteProp<HomeStackParamList, 'GroupEditScreen'>;
 
 type Props = {
   route: EditGroupScreenRouteProp;
 };
 
-const EditGroupScreen = ({ route }: Props) => {
+const GroupEditScreen = ({ route }: Props) => {
   const { group } = route.params;
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<HomeNavigation>();
   const queryClient = useQueryClient();
 
   const [name, setName] = useState(group.name);
@@ -115,7 +116,7 @@ const EditGroupScreen = ({ route }: Props) => {
         <Text style={styles.title}>edit group</Text>
 
         <ScrollView style={styles.contentWrapper} showsVerticalScrollIndicator={false}>
-          <TouchableOpacity style={styles.avatarContainer} onPress={ async () => {
+          <TouchableOpacity style={styles.avatarContainer} onPress={async () => {
             setImage(await pickImage());
           }}>
             {currentAvatarUri ? (
@@ -303,4 +304,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditGroupScreen;
+export default GroupEditScreen;
