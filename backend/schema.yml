@@ -3762,6 +3762,9 @@ components:
           type: string
           format: uri
           readOnly: true
+        total_achievements:
+          type: string
+          readOnly: true
     Quote:
       type: object
       description: |-
@@ -3888,10 +3891,14 @@ components:
           type: string
           format: uri
           readOnly: true
+        total_achievements:
+          type: string
+          readOnly: true
       required:
       - first_name
       - id
       - last_name
+      - total_achievements
       - url
     UserRegister:
       type: object

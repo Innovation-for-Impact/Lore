@@ -20,6 +20,7 @@ class UserSerializer(
     serializers.HyperlinkedModelSerializer,
 ):
     """A serializer for exposing public information about a user."""
+    total_achievements = serializers.SerializerMethodField()
 
     class Meta:
         model = models.LoreUser
@@ -29,7 +30,11 @@ class UserSerializer(
             "last_name",
             "avatar",
             "url",
+            'total_achievements'
         ]
+
+    def get_total_achievements(self, obj):
+        return obj.achievement_set.count()
 
 
 class UserRegisterSerializer(RegisterSerializer):
