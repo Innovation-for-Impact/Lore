@@ -10,8 +10,10 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CommunityNavigation } from '../../navigation/Navigators';
-import { $api } from '../../types/constants';
+import { HomeNavigation } from '../../navigation/Navigators';
+import { $api, Group } from '../../types/constants';
+import { useUser } from '../../context/UserContext';
+import { components } from '../../types/backend-schema';
 
 
 // --- Mock Data for Achievements ---
@@ -33,6 +35,8 @@ const scaleHeight = (size: number, screenHeight: number) => (screenHeight / guid
 // ------------------------------------ //
 
 // --- Reusable Components --- //
+
+type Achievement = components["schemas"]["Achievement"];
 
 type BadgeIconProps = {
   source: ImageSourcePropType;
@@ -87,62 +91,29 @@ const AchievementLevelSection: React.FC<AchievementLevelSectionProps> = ({
   </View>
 );
 
-const AchievementBoardComponent = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+interface Props {
+  group: Group
+}
+
+const AchievementBoardComponent = ({ group }: Props) => {
+  const navigation = useNavigation<HomeNavigation>();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const { user } = useUser();
 
   const containerWidth = screenWidth * 0.9;
   const horizontalPadding = screenWidth * 0.06;
 
-  type Achievement = {
-    id: number;
-    title: string;
-    description?: string;
-    isEarned: boolean;
-    asset: ImageSourcePropType;
-    achieved_by?: number[];
-  };
-
-  // TODO: Can get rid of these two queries and use useGroups
-  const { data: currentUser } = $api.useQuery(
-    "get",
-    "/api/v1/auth/user/",
-    {}
-  )
-
-  const { data: groups } = $api.useQuery(
-    "get",
-    "/api/v1/groups/",
-    {
-      params: {
-        query: {} // you can add page/search if needed
-      },
-    },
-    {
-      enabled: !!currentUser,
-    }
-  )
-
-  const currentGroupId =
-    groups?.results.find((group) =>
-      Array.isArray(group.members) &&
-      group.members.includes(currentUser?.id ?? -1)
-    )?.id
-
+  // TODO: use infinite query and then filter by groupID because the backend only returns the list of achievements done by the user
   const { data: achievements, isLoading: loadingAchievements } = $api.useQuery(
     "get",
     "/api/v1/achievements/",
     {
       params: {
         query: {
-          group_id: currentGroupId,
-          achieved_by: currentUser?.id,
+          achieved_by: user!.id
         }
       },
     },
-    {
-      enabled: !!currentUser && !!currentGroupId,
-    }
   )
 
   if (loadingAchievements) {
@@ -188,7 +159,7 @@ const AchievementBoardComponent = () => {
             height: scaleHeight(50, screenHeight),
           },
         ]}
-        onPress={() => navigation.navigate("CreateAchievementScreen")}
+        onPress={() => navigation.navigate("CreateAchievementScreen", { group: group })}
       >
         <Text
           style={[
@@ -249,7 +220,7 @@ const AchievementBoardComponent = () => {
         ) : (
           // We have achievements from the backend – render them as a flat list
           achievementsList.map((achievement) => {
-            const userId = currentUser?.id ?? -1;
+            const userId = user!.id;
             const achievedBy = achievement.achieved_by;
 
             const isEarned =

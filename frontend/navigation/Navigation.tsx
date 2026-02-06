@@ -4,7 +4,7 @@ import { Dimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { navigationStyles } from '../styles/global';
 import { RootStackParamList } from './NavigationParams';
-import { CommunityNavigator, HomeNavigator, ProfileNavigator } from './Navigators';
+import { HomeNavigator, ProfileNavigator } from './Navigators';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -23,12 +23,10 @@ function Navigation() {
             tabBarIcon: ({ color, focused }) => {
               let size = 28;
               const iconName: keyof typeof Ionicons.glyphMap =
-                route.name === 'Community' ? focused ?
-                  'compass' : 'compass-outline'
-                  : route.name === 'Home' ? focused ?
-                    'home' : 'home-outline'
-                    : route.name === 'Profile' ? focused ?
-                      'person' : 'person-outline' : 'compass';
+                route.name === 'Home' ? focused ?
+                  'home' : 'home-outline'
+                  : route.name === 'Profile' ? focused ?
+                    'person' : 'person-outline' : 'compass';
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarInactiveTintColor: '#000',
@@ -52,7 +50,6 @@ function Navigation() {
           })}
         >
           <Tab.Screen name="Home" component={HomeNavigator} />
-          <Tab.Screen name="Community" component={CommunityNavigator} />
           <Tab.Screen name="Profile" component={ProfileNavigator} />
         </Tab.Navigator>
       </View>

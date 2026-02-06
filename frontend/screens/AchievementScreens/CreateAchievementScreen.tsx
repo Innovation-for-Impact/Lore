@@ -2,14 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from "react";
 import {
+  Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Dimensions,
-  Image,
 } from "react-native";
 import { TextInput } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 // -------------------------------
@@ -35,6 +36,8 @@ const CreateAchievementScreen = () => {
   const [submitted, setSubmitted] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
 
+  const insets = useSafeAreaInsets();
+
   // -------------------------------
   // YOUR PNG BADGES HERE
   // -------------------------------
@@ -58,8 +61,8 @@ const CreateAchievementScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+
       {/* Back Button */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={goBackToCommunity}>
@@ -90,7 +93,7 @@ const CreateAchievementScreen = () => {
         <Text style={styles.sectionTitle}>select a badge cover</Text>
 
         <View style={styles.card}>
-          
+
           {/* LEFT ARROW */}
           <TouchableOpacity onPress={prev} style={styles.chevronBtn}>
             <Ionicons name="chevron-back" size={s(36)} color="#3A3241" />
@@ -288,7 +291,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
 
-   successCard: {
+  successCard: {
     width: '85%',
     minHeight: s(76),
     backgroundColor: '#FFFFFF',
@@ -302,14 +305,14 @@ const styles = StyleSheet.create({
   },
 
   successIconCircle: {
-  width: s(44),       // bigger circle
-  height: s(44),
-  borderRadius: s(22),
-  backgroundColor: '#17990B',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginRight: 12,
-},
+    width: s(44),       // bigger circle
+    height: s(44),
+    borderRadius: s(22),
+    backgroundColor: '#17990B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
 
 
   successText: {

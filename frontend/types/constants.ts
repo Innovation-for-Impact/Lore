@@ -5,6 +5,8 @@ import * as SecureStore from "expo-secure-store";
 import { components } from "../types/backend-schema";
 
 export type User = components["schemas"]["User"];
+export type Group = components["schemas"]["Group"];
+export type Quote = components["schemas"]["Quote"];
 
 if (process.env.EXPO_PUBLIC_HOST_IP === undefined) {
   throw new Error("Backend IP Not defined in types/constants.ts");
@@ -116,7 +118,8 @@ export const infiniteQueryParams = {
   getNextPageParam: (lastPage:
     components["schemas"]["PaginatedUserList"] |
     components["schemas"]["PaginatedGroupList"] |
-    components["schemas"]["PaginatedQuoteList"]
+    components["schemas"]["PaginatedQuoteList"] |
+    components["schemas"]["PaginatedAchievementList"]
   ) => {
     if (!lastPage.next) return undefined;
     const url = new URL(lastPage.next)

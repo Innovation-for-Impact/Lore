@@ -14,8 +14,8 @@ import { ConfirmationModal } from '../components/ConfirmationModal';
 import { MAX_CONTEXT_LENGTH, MAX_QUOTE_LENGTH } from '../components/CreateQuote';
 import { LoadingModal } from '../components/LoadingModal';
 import { SuccessModal } from '../components/SuccessModal';
-import { CommunityStackParamList } from '../navigation/NavigationParams';
-import { CommunityNavigation } from '../navigation/Navigators';
+import { HomeStackParamList } from '../navigation/NavigationParams';
+import { HomeNavigation } from '../navigation/Navigators';
 import { globalStyles } from '../styles/global';
 import { $api } from '../types/constants';
 
@@ -23,13 +23,14 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const QuoteDetailScreen = () => {
-  const navigation = useNavigation<CommunityNavigation>();
-  const route = useRoute<RouteProp<CommunityStackParamList, "QuoteDetailScreen">>();
+  const navigation = useNavigation<HomeNavigation>();
   const queryClient = useQueryClient();
   const [successModal, setSuccessModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const route = useRoute<RouteProp<HomeStackParamList, "QuoteDetailScreen">>();
   const { quote } = route.params;
+
   const [quoteText, setQuoteText] = useState(quote.text);
   const [context, setContext] = useState(quote.context);
 

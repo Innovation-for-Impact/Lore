@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -7,27 +7,34 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CreateQuote from '../components/CreateQuote';
 import ViewQuotes from '../components/ViewQuotes';
-import { CommunityNavigation } from '../navigation/Navigators';
-import { globalStyles } from '../styles/global';
+import { HomeNavigation } from '../navigation/Navigators';
+import { HomeStackParamList } from '../navigation/NavigationParams';
 
 enum Tabs {
   viewQuotes = "viewQuotes",
   createQuote = "createQuote"
 };
 
-const QuoteBoardScreen = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+interface Props {
+  route: RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
+}
+const QuoteBoardScreen = ({ route }: Props) => {
+  const { group } = route.params;
+  const navigation = useNavigation<HomeNavigation>();
 
   const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
+
+  const insets = useSafeAreaInsets();
 
   const handleBack = () => {
     navigation.goBack();
   };
 
   return (
-    <View style={[globalStyles.container, styles.container]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.topBar}>
         <TouchableOpacity
@@ -77,9 +84,9 @@ const QuoteBoardScreen = () => {
       {/* Content */}
       <View style={styles.content}>
         {activeTab === Tabs.viewQuotes ? (
-          <ViewQuotes />
+          <ViewQuotes group={group} />
         ) : (
-          <CreateQuote />
+          <CreateQuote group={group} />
         )}
       </View>
     </View>

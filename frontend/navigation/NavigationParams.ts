@@ -1,9 +1,5 @@
-import { components } from '../types/backend-schema';
-
-type Group = components["schemas"]["Group"];
-type Quote = components["schemas"]["Quote"];
-
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { Group, Quote } from '../types/constants';
 
 export type RegistrationStackParamList = {
   RegistrationScreen: undefined;
@@ -20,6 +16,15 @@ export type HomeStackParamList = {
   HomeScreen: undefined;
   GroupInfoScreen: { group: Group };
   GroupEditScreen: { group: Group };
+  CommunityScreen: { group: Group };
+  QuoteBoardScreen: { group: Group };
+  MemoryBoardScreen: { group: Group };
+  AchievementBoardScreen: { group: Group };
+  QuoteDetailScreen: { group: Group, quote: Quote };
+  ChallengeList: { group: Group };
+  ChallengeDetail: { group: Group, id: string };
+  ChallengeCreate: { group: Group };
+  CreateAchievementScreen: { group: Group };
 };
 
 export type ProfileStackParamList = {
@@ -27,22 +32,9 @@ export type ProfileStackParamList = {
   ProfileEditScreen: undefined;
 }
 
-export type CommunityStackParamList = {
-  CommunityScreen: undefined;
-  QuoteBoardScreen: undefined;
-  MemoryBoardScreen: undefined;
-  AchievementBoardScreen: undefined;
-  QuoteDetailScreen: { quote: Quote };
-  ChallengeList: undefined;
-  ChallengeDetail: { id: string };
-  ChallengeCreate: undefined;
-  CreateAchievementScreen: undefined;
-};
-
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<RegistrationStackParamList>;
   Navbar: undefined;
   Home: NavigatorScreenParams<HomeStackParamList>;
-  Community: NavigatorScreenParams<CommunityStackParamList>;
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };

@@ -1,6 +1,5 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,24 +10,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { components } from '../types/backend-schema';
-import { $api, infiniteQueryParams } from '../types/constants';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
-import { CommunityNavigation } from '../navigation/Navigators';
+import { HomeNavigation } from '../navigation/Navigators';
+import { $api, Group, infiniteQueryParams, Quote } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-type Quote = components["schemas"]["Quote"];
-
-const ViewQuotes = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+interface ViewQuotesProps {
+  group: Group
+}
+const ViewQuotes = ({ group }: ViewQuotesProps) => {
+  const navigation = useNavigation<HomeNavigation>();
   const { user } = useUser();
+  const insets = useSafeAreaInsets();
 
-  const { mutateAsync: patchQuote } = $api.useMutation(
-    "patch",
-    "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
-  )
+  // const { mutateAsync: patchQuote } = $api.useMutation(
+  //   "patch",
+  //   "/api/v1/groups/{loregroup_pk}/quotes/{id}/",
+  // )
 
   const { data: quotesData, isError, isLoading, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
@@ -48,38 +49,38 @@ const ViewQuotes = () => {
     [quotesData]
   );
 
-  const [pinnedQuotes, setPinnedQuotes] = useState<Quote[]>([]);
+  // const [pinnedQuotes, setPinnedQuotes] = useState<Quote[]>([]);
 
-  useEffect(() => {
-    const serverPinned = quotes.filter(q => q.pinned);
-    setPinnedQuotes(serverPinned);
-  }, [quotes]);
-
-  const handlePinPress = async (quote: Quote) => {
-    const isPinned = pinnedQuotes.includes(quote);
-    setPinnedQuotes(prev =>
-      isPinned ? prev.filter(q => q.id !== quote.id) : [...prev, quote]
-    );
-
-    await patchQuote({
-      params: {
-        path: {
-          id: quote.id.toString(),
-          loregroup_pk: quote.group.toString()
-        }
-      },
-      body: { pinned: !isPinned }
-    });
-  };
+  // useEffect(() => {
+  //   const serverPinned = quotes.filter(q => q.pinned);
+  //   setPinnedQuotes(serverPinned);
+  // }, [quotes]);
+  //
+  // const handlePinPress = async (quote: Quote) => {
+  //   const isPinned = pinnedQuotes.includes(quote);
+  //   setPinnedQuotes(prev =>
+  //     isPinned ? prev.filter(q => q.id !== quote.id) : [...prev, quote]
+  //   );
+  //
+  //   await patchQuote({
+  //     params: {
+  //       path: {
+  //         id: quote.id.toString(),
+  //         loregroup_pk: quote.group.toString()
+  //       }
+  //     },
+  //     body: { pinned: !isPinned }
+  //   });
+  // };
 
   const renderItem = ({ item }: { item: Quote }) => {
-    const isPinned = pinnedQuotes.includes(item);
+    // const isPinned = pinnedQuotes.includes(item);
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() => {
           if (item.said_by === user!.id) {
-            navigation.navigate('QuoteDetailScreen', { quote: item })
+            navigation.navigate('QuoteDetailScreen', { group: group, quote: item })
           }
           else {
             Alert.alert(
@@ -92,15 +93,15 @@ const ViewQuotes = () => {
       >
         {/* Top row with pin icon and timestamp */}
         <View style={styles.topRow}>
-          <TouchableOpacity onPress={() => handlePinPress(item)}>
-            <Text>
-              {isPinned ?
-                <MaterialCommunityIcons name="pin" size={32} color="#44344D" />
-                :
-                <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" />
-              }
-            </Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity onPress={() => handlePinPress(item)}> */}
+          {/*   <Text> */}
+          {/*     {isPinned ? */}
+          {/*       <MaterialCommunityIcons name="pin" size={32} color="#44344D" /> */}
+          {/*       : */}
+          {/*       <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" /> */}
+          {/*     } */}
+          {/*   </Text> */}
+          {/* </TouchableOpacity> */}
           <Text style={styles.timestamp}>{new Date(item.created).toLocaleString()}</Text>
         </View>
 
@@ -134,22 +135,28 @@ const ViewQuotes = () => {
     );
   }
 
-  const orderedQuotes = [
-    ...quotes.filter(q => pinnedQuotes.includes(q)),
-    ...quotes.filter(q => !pinnedQuotes.includes(q))
-  ];
+  const groupQuotes = quotes.filter(q => q.group === group.id);
+
+  // const orderedQuotes = [
+  //   ...groupQuotes.filter(q => pinnedQuotes.includes(q)),
+  //   ...groupQuotes.filter(q => !pinnedQuotes.includes(q))
+  // ];
 
   return (
     <>
-      {orderedQuotes.length === 0 ?
+      {groupQuotes.length === 0 ?
         <View style={styles.emptyContainer}>
           <Text style={styles.noQuoteText}> no quotes to show. make some! </Text>
         </View > :
         <FlatList
-          data={orderedQuotes}
+          data={groupQuotes}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={styles.container}
+          contentContainerStyle={
+            {
+              paddingBottom: insets.bottom + 100
+            }
+          }
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         />
@@ -161,10 +168,6 @@ const ViewQuotes = () => {
 export default ViewQuotes;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 8,
-    flexGrow: 1, // ensure it takes full height
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

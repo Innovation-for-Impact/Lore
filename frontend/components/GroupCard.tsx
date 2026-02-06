@@ -1,12 +1,10 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { components } from '../types/backend-schema';
-import { RootStackParamList } from '../navigation/NavigationParams';
 import { useQueryClient } from '@tanstack/react-query';
-import { $api } from '../types/constants';
+import React from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { HomeNavigation } from '../navigation/Navigators';
+import { $api, Group } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -24,17 +22,13 @@ const fontSize = {
   location: isSmallScreen ? 13 : isMediumScreen ? 14 : 15,
 };
 
-type Group = components["schemas"]["Group"];
-
 type GroupCardProps = {
   group: Group;
 };
 
-type NavigationProp = StackNavigationProp<RootStackParamList, 'HomeScreen'>;
-
 //individual Cards
 const GroupCard = ({ group }: GroupCardProps) => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<HomeNavigation>();
   const queryClient = useQueryClient();
   // fixes created date from db
   const formatDate = (dateString: string) => {

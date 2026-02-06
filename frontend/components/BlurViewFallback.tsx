@@ -18,5 +18,3 @@ const BlurView = (props: BlurViewProps) => {
 };
 
 export default BlurView;
-
-

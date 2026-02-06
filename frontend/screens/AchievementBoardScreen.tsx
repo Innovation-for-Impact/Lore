@@ -1,19 +1,26 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { globalStyles } from "../styles/global";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { CommunityNavigation } from "../navigation/Navigators";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HomeNavigation } from "../navigation/Navigators";
 import AchievementBoardComponent from "./AchievementScreens/AchievementBoardComponent";
 import ChallengeListComponent from "./ChallengeScreens/ChallengeListScreen";
+import { HomeStackParamList } from "../navigation/NavigationParams";
 
 enum Tabs {
   achievements = "achievements",
   challenges = "challenges"
 };
 
-export const AchievementBoardScreen = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+type Props = {
+  route: RouteProp<HomeStackParamList, 'GroupEditScreen'>;
+};
+
+export const AchievementBoardScreen = ({ route }: Props) => {
+  const navigation = useNavigation<HomeNavigation>();
+  const insets = useSafeAreaInsets();
+  const { group } = route.params;
 
   const [activeTab, setActiveTab] = useState<Tabs>(Tabs.achievements);
 
@@ -22,7 +29,7 @@ export const AchievementBoardScreen = () => {
   };
 
   return (
-    <View style={[globalStyles.container, styles.container]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.topBar}>
         <TouchableOpacity
@@ -72,7 +79,7 @@ export const AchievementBoardScreen = () => {
       {/* Content */}
       <View style={styles.content}>
         {activeTab === Tabs.achievements ? (
-          <AchievementBoardComponent />
+          <AchievementBoardComponent group={group} />
         ) : (
           <ChallengeListComponent />
         )}

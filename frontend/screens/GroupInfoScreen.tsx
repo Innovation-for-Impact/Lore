@@ -3,17 +3,17 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
-import { Alert, Image, Platform, Pressable, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { ConfirmationModal } from '../components/ConfirmationModal';
 import { useUser } from '../context/UserContext';
 import { HomeStackParamList } from '../navigation/NavigationParams';
 import { HomeNavigation } from '../navigation/Navigators';
 import { $api } from '../types/constants';
-
-type GroupInfoScreenRouteProp = RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
+import BoardCard from '../components/BoardCard';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
-  route: GroupInfoScreenRouteProp;
+  route: RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
 };
 
 const GroupInfoScreen = ({ route }: Props) => {
@@ -66,25 +66,35 @@ const GroupInfoScreen = ({ route }: Props) => {
     navigation.navigate('GroupEditScreen', { group: group });
   };
 
+  const insets = useSafeAreaInsets();
   return (
     <>
       <ConfirmationModal title={"leave group?"} left={"cancel"} right={"leave"} visible={confirmationModal} setVisible={setConfirmationModal} callback={handleLeaveGroup} />
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom + 150,
+          }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={handleBack}
-            style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={35} color="white" />
           </TouchableOpacity>
 
+          <Text style={styles.name}>{group.name}</Text>
           <TouchableOpacity
             onPress={handleEdit}
           >
             <Feather name="edit" size={28} color="white" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{group.name}</Text>
         <View style={styles.contentWrapper}>
           {group.avatar ? (
             <Image source={{ uri: group.avatar }} style={styles.avatar} />
@@ -113,6 +123,10 @@ const GroupInfoScreen = ({ route }: Props) => {
           </View>
           <Text style={styles.info}>created: {new Date(group.created).toLocaleDateString()}</Text>
         </View>
+        <View style={styles.cardWrapper}>
+          <BoardCard name='quote board' screen='QuoteBoardScreen' group={group} />
+          <BoardCard name='achievement board' screen='AchievementBoardScreen' group={group} />
+        </View>
         <Pressable
           style={({ pressed }) => [
             styles.leaveButton,
@@ -122,27 +136,28 @@ const GroupInfoScreen = ({ route }: Props) => {
         >
           <Text style={{ color: "white", fontWeight: "600", fontSize: 17 }}>leave group</Text>
         </Pressable>
-      </View>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   contentWrapper: {
-    flex: 0.85,
+    marginBottom: 20,
   },
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#AFB0E4',
+  },
+  cardWrapper: {
+    width: '100%',
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  backButton: {
-    padding: 5,
+    marginBottom: 20
   },
   avatar: {
     width: '100%',
@@ -165,10 +180,9 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: '800',
     fontFamily: 'Work Sans',
     textAlign: 'center',
-    marginBottom: 20,
     color: '#44344D',
   },
   info: {
@@ -196,6 +210,10 @@ const styles = StyleSheet.create({
   },
   copyButton: {
     padding: 4,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
   },
 });
 

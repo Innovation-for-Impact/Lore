@@ -93,6 +93,7 @@ class QuoteSerializer(serializers.ModelSerializer):
     )
 
     said_by_username = serializers.SerializerMethodField();
+    context = serializers.CharField(required=False, allow_blank=True)
     def get_said_by_username(self, obj):
         return obj.said_by.get_full_name()
 
@@ -123,7 +124,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         """Create an instane of an Quote."""
         return models.Quote.quotes.create_quote(
             text=validated_data["text"],
-            context=validated_data["context"],
+            context=validated_data.get("context", ""),
             said_by_pk=validated_data["said_by"].pk,
             is_pinned=validated_data["pinned"],
             group=validated_data["group"],
