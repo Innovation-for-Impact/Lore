@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import React from "react";
 import {
   Dimensions,
@@ -11,6 +11,14 @@ import {
 } from "react-native";
 import { TextInput } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { $api } from '../../types/constants';
+import badge1 from '../../assets/achievement-badges/Badge_01_activated.png';
+import badge2 from '../../assets/achievement-badges/Badge_02_activated.png';
+import { SuccessModal } from '../../components/SuccessModal';
+import { LoadingModal } from '../../components/LoadingModal';
+import { FailureModal } from '../../components/FailureModal';
+import { HomeStackParamList } from '../../navigation/NavigationParams';
+import { HomeNavigation } from '../../navigation/Navigators';
 
 
 // -------------------------------
@@ -26,46 +34,76 @@ const s = (size: number) => Math.round(size * SCALE);
 // universal left/right page padding
 const CONTENT_PADDING = SCREEN_WIDTH * 0.06;
 
+type Props = {
+  route: RouteProp<HomeStackParamList, 'CreateAchievementScreen'>;
+};
 
-
-const CreateAchievementScreen = () => {
-  const [text, onChangeText] = React.useState('');
+const CreateAchievementScreen = ({ route }: Props) => {
+  const [title, setTitle] = React.useState('');
   const [index, setIndex] = React.useState(0);
   const [description, setDescription] = React.useState('');
-  const navigation = useNavigation();
-  const [submitted, setSubmitted] = React.useState(false);
-  const [showSuccess, setShowSuccess] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
+
+  const { group } = route.params;
+
+  const navigation = useNavigation<HomeNavigation>();
 
   const insets = useSafeAreaInsets();
+
+  const { mutateAsync: createAchievement, isPending } = $api.useMutation(
+    "post",
+    "/api/v1/groups/{loregroup_pk}/achievements/",
+    {
+      onSuccess: () => {
+        setSuccess(true);
+      },
+      onError: () => {
+        setFailed(true);
+      }
+    }
+
+  )
 
   // -------------------------------
   // YOUR PNG BADGES HERE
   // -------------------------------
   const badges = [
-    { image: require('../../assets/achievement-badges/Badge_01_activated.png') },
-    { image: require('../../assets/achievement-badges/Badge_02_activated.png') },
+    { image: badge1 },
+    { image: badge2 },
     // add more PNGs if needed
   ];
 
   const prev = () => setIndex((i) => (i === 0 ? badges.length - 1 : i - 1));
   const next = () => setIndex((i) => (i === badges.length - 1 ? 0 : i + 1));
-  const goBackToCommunity = () => navigation.goBack();
 
   const current = badges[index];
 
-  const handleCreateBadge = () => {
-    setSubmitted(true);
-    setShowSuccess(true);
+  const handleCreateAchievement = () => {
+    createAchievement({
+      params: {
+        path: {
+          loregroup_pk: String(group.id)
+        }
+      },
+      body: {
+        title: title,
+        description: description,
+        achieved_by: [],
+      }
+    })
 
-    setTimeout(() => setShowSuccess(false), 2000);
   };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <SuccessModal visible={success} setVisible={setSuccess} title='achievement created!' buttonText='close' callback={navigation.goBack} />
+      <LoadingModal visible={isPending} title='creating...' />
+      <FailureModal visible={failed} title='failed to create achievement' cancelCallback={() => setFailed(false)} tryAgainCallback={handleCreateAchievement} />
 
       {/* Back Button */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={goBackToCommunity}>
+        <TouchableOpacity onPress={navigation.goBack}>
           <Ionicons name="arrow-back" size={s(35)} color="white" />
         </TouchableOpacity>
       </View>
@@ -81,9 +119,9 @@ const CreateAchievementScreen = () => {
       <View style={styles.badgeName}>
         <TextInput
           style={styles.badgeNameInput}
-          value={text}
-          onChangeText={onChangeText}
-          placeholder="insert name for achievement badge"
+          value={title}
+          onChangeText={setTitle}
+          placeholder="insert title for achievement badge"
           placeholderTextColor="rgba(0,0,0,0.5)"
         />
       </View>
@@ -132,29 +170,27 @@ const CreateAchievementScreen = () => {
       <TouchableOpacity
         style={[
           styles.createBadgeButton,
-          submitted && styles.createBadgeButtonDisabled,
         ]}
-        onPress={handleCreateBadge}
-        disabled={submitted}
+        onPress={handleCreateAchievement}
       >
         <Text style={styles.createBadgeText}>
-          {submitted ? 'badge created' : 'create badge'}
+          create achievement
         </Text>
       </TouchableOpacity>
 
       {/* Toast */}
-      {showSuccess && (
-        <View style={styles.successOverlay}>
-          <View style={styles.successCard}>
-            <View style={styles.successIconCircle}>
-              <Ionicons name="checkmark" size={s(28)} color="#FFFFFF" />
-            </View>
-            <Text style={styles.successText}>
-              achievement badge posted!
-            </Text>
-          </View>
-        </View>
-      )}
+      {/* {showSuccess && ( */}
+      {/*   <View style={styles.successOverlay}> */}
+      {/*     <View style={styles.successCard}> */}
+      {/*       <View style={styles.successIconCircle}> */}
+      {/*         <Ionicons name="checkmark" size={s(28)} color="#FFFFFF" /> */}
+      {/*       </View> */}
+      {/*       <Text style={styles.successText}> */}
+      {/*         achievement badge posted! */}
+      {/*       </Text> */}
+      {/*     </View> */}
+      {/*   </View> */}
+      {/* )} */}
 
     </View>
   );
@@ -272,11 +308,6 @@ const styles = StyleSheet.create({
     marginHorizontal: CONTENT_PADDING,
     marginTop: 20,
   },
-
-  createBadgeButtonDisabled: {
-    opacity: 0.8,
-  },
-
   createBadgeText: {
     fontFamily: 'Work Sans',
     fontSize: s(20),

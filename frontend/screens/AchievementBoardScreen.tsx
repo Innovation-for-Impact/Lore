@@ -3,10 +3,10 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HomeStackParamList } from "../navigation/NavigationParams";
 import { HomeNavigation } from "../navigation/Navigators";
 import AchievementBoardComponent from "./AchievementScreens/AchievementBoardComponent";
 import ChallengeListComponent from "./ChallengeScreens/ChallengeListScreen";
-import { HomeStackParamList } from "../navigation/NavigationParams";
 
 enum Tabs {
   achievements = "achievements",
@@ -14,7 +14,7 @@ enum Tabs {
 };
 
 type Props = {
-  route: RouteProp<HomeStackParamList, 'GroupEditScreen'>;
+  route: RouteProp<HomeStackParamList, 'AchievementBoardScreen'>;
 };
 
 export const AchievementBoardScreen = ({ route }: Props) => {

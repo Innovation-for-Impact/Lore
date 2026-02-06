@@ -11,22 +11,26 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         get: operations["achievements_list"];
         put?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         post: operations["achievements_create"];
         delete?: never;
         options?: never;
@@ -41,16 +45,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         get: operations["achievements_achievers_list"];
         put?: never;
-        /** @description Add or delete the authenticated user to the list of achievers.
+        /**
+         * @description Add or delete the authenticated user to the list of achievers.
          *
-         *     Returns the authenticated user on success */
+         *     Returns the authenticated user on success
+         */
         post: operations["achievements_achievers_create"];
         delete?: never;
         options?: never;
@@ -65,18 +73,22 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         get: operations["achievements_achievers_retrieve"];
         put?: never;
         post?: never;
-        /** @description Remove the authenticated user from the achievement.
+        /**
+         * @description Remove the authenticated user from the achievement.
          *
          *     Returns no content on success
-         *     Raises a 404 if the membership doesn't exist. */
+         *     Raises a 404 if the membership doesn't exist.
+         */
         delete: operations["achievements_achievers_destroy"];
         options?: never;
         head?: never;
@@ -90,40 +102,48 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         get: operations["achievements_retrieve"];
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         put: operations["achievements_update"];
         post?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         delete: operations["achievements_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         patch: operations["achievements_partial_update"];
         trace?: never;
     };
@@ -136,10 +156,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Handles google AUTH.
+        /**
+         * @description Handles google AUTH.
          *
          *     Create a post request with the authentication code
-         *     provide by Google on the callback url. */
+         *     provide by Google on the callback url.
+         */
         post: operations["auth_google_create"];
         delete?: never;
         options?: never;
@@ -156,13 +178,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Check the credentials and return the REST Token
+        /**
+         * @description Check the credentials and return the REST Token
          *     if the credentials are valid and authenticated.
          *     Calls Django Auth login method to register User ID
          *     in Django session framework
          *
          *     Accept the following POST parameters: username, password
-         *     Return the REST Framework Token Object's key. */
+         *     Return the REST Framework Token Object's key.
+         */
         post: operations["auth_login_create"];
         delete?: never;
         options?: never;
@@ -179,10 +203,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Calls Django logout method and delete the Token object
+        /**
+         * @description Calls Django logout method and delete the Token object
          *     assigned to the current User object.
          *
-         *     Accepts/Returns nothing. */
+         *     Accepts/Returns nothing.
+         */
         post: operations["auth_logout_create"];
         delete?: never;
         options?: never;
@@ -199,10 +225,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Calls Django Auth SetPasswordForm save method.
+        /**
+         * @description Calls Django Auth SetPasswordForm save method.
          *
          *     Accepts the following POST parameters: new_password1, new_password2
-         *     Returns the success/fail message. */
+         *     Returns the success/fail message.
+         */
         post: operations["auth_password_change_create"];
         delete?: never;
         options?: never;
@@ -219,10 +247,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Calls Django Auth PasswordResetForm save method.
+        /**
+         * @description Calls Django Auth PasswordResetForm save method.
          *
          *     Accepts the following POST parameters: email
-         *     Returns the success/fail message. */
+         *     Returns the success/fail message.
+         */
         post: operations["auth_password_reset_create"];
         delete?: never;
         options?: never;
@@ -239,12 +269,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Password reset e-mail link is confirmed, therefore
+        /**
+         * @description Password reset e-mail link is confirmed, therefore
          *     this resets the user's password.
          *
          *     Accepts the following POST parameters: token, uid,
          *         new_password1, new_password2
-         *     Returns the success/fail message. */
+         *     Returns the success/fail message.
+         */
         post: operations["auth_password_reset_confirm_create"];
         delete?: never;
         options?: never;
@@ -261,9 +293,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Registers a new user.
+        /**
+         * @description Registers a new user.
          *
-         *     Accepts the following POST parameters: username, email, password1, password2. */
+         *     Accepts the following POST parameters: username, email, password1, password2.
+         */
         post: operations["auth_registration_create"];
         delete?: never;
         options?: never;
@@ -280,9 +314,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Resends another email to an unverified email.
+        /**
+         * @description Resends another email to an unverified email.
          *
-         *     Accepts the following POST parameter: email. */
+         *     Accepts the following POST parameter: email.
+         */
         post: operations["auth_registration_resend_email_create"];
         delete?: never;
         options?: never;
@@ -299,9 +335,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Verifies the email associated with the provided key.
+        /**
+         * @description Verifies the email associated with the provided key.
          *
-         *     Accepts the following POST parameter: key. */
+         *     Accepts the following POST parameter: key.
+         */
         post: operations["auth_registration_verify_email_create"];
         delete?: never;
         options?: never;
@@ -318,8 +356,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Takes a refresh type JSON web token and returns an access type JSON web
-         *     token if the refresh token is valid. */
+        /**
+         * @description Takes a refresh type JSON web token and returns an access type JSON web
+         *     token if the refresh token is valid.
+         */
         post: operations["auth_token_refresh_create"];
         delete?: never;
         options?: never;
@@ -336,8 +376,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Takes a token and indicates if it is valid.  This view provides no
-         *     information about a token's fitness for a particular use. */
+        /**
+         * @description Takes a token and indicates if it is valid.  This view provides no
+         *     information about a token's fitness for a particular use.
+         */
         post: operations["auth_token_verify_create"];
         delete?: never;
         options?: never;
@@ -352,37 +394,118 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Reads and updates UserModel fields
+        /**
+         * @description Reads and updates UserModel fields
          *     Accepts GET, PUT, PATCH methods.
          *
          *     Default accepted fields: username, first_name, last_name
          *     Default display fields: pk, username, email, first_name, last_name
          *     Read-only fields: pk, email
          *
-         *     Returns UserModel fields. */
+         *     Returns UserModel fields.
+         */
         get: operations["auth_user_retrieve"];
-        /** @description Reads and updates UserModel fields
+        /**
+         * @description Reads and updates UserModel fields
          *     Accepts GET, PUT, PATCH methods.
          *
          *     Default accepted fields: username, first_name, last_name
          *     Default display fields: pk, username, email, first_name, last_name
          *     Read-only fields: pk, email
          *
-         *     Returns UserModel fields. */
+         *     Returns UserModel fields.
+         */
         put: operations["auth_user_update"];
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** @description Reads and updates UserModel fields
+        /**
+         * @description Reads and updates UserModel fields
          *     Accepts GET, PUT, PATCH methods.
          *
          *     Default accepted fields: username, first_name, last_name
          *     Default display fields: pk, username, email, first_name, last_name
          *     Read-only fields: pk, email
          *
-         *     Returns UserModel fields. */
+         *     Returns UserModel fields.
+         */
         patch: operations["auth_user_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/challenges/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Viewset for challnges. */
+        get: operations["challenges_list"];
+        put?: never;
+        /** @description Viewset for challnges. */
+        post: operations["challenges_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/challenges/{challenge_pk}/participants/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["challenges_participants_list"];
+        put?: never;
+        /**
+         * @description Add or delete the authenticated user to the list of participants.
+         *
+         *     Returns the authenticated user on success
+         */
+        post: operations["challenges_participants_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/challenges/{challenge_pk}/participants/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["challenges_participants_retrieve"];
+        put: operations["challenges_participants_update"];
+        post?: never;
+        delete: operations["challenges_participants_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["challenges_participants_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/challenges/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Viewset for challnges. */
+        get: operations["challenges_retrieve"];
+        /** @description Viewset for challnges. */
+        put: operations["challenges_update"];
+        post?: never;
+        /** @description Viewset for challnges. */
+        delete: operations["challenges_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Viewset for challnges. */
+        patch: operations["challenges_partial_update"];
         trace?: never;
     };
     "/api/v1/feed/": {
@@ -392,10 +515,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Retrieve an ordererd list by timestamp of recent actions.
+        /**
+         * @description Retrieve an ordererd list by timestamp of recent actions.
          *
          *     Query can be limited to a specific group by specifying the group_id
-         *     query parameter. */
+         *     query parameter.
+         */
         get: operations["feed_retrieve"];
         put?: never;
         post?: never;
@@ -430,22 +555,26 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         get: operations["groups_achievements_list"];
         put?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         post: operations["groups_achievements_create"];
         delete?: never;
         options?: never;
@@ -460,41 +589,87 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         get: operations["groups_achievements_retrieve"];
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         put: operations["groups_achievements_update"];
         post?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         delete: operations["groups_achievements_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for achievements.
+        /**
+         * @description Viewset for achievements.
          *
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
          *     To create an achievemet, it expects an `image`, 'description', and 'title'
-         *     fields. The group is automatically set by the query parameters. */
+         *     fields. The group is automatically set by the query parameters.
+         */
         patch: operations["groups_achievements_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/groups/{loregroup_pk}/challenges/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Viewset for challnges. */
+        get: operations["groups_challenges_list"];
+        put?: never;
+        /** @description Viewset for challnges. */
+        post: operations["groups_challenges_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{loregroup_pk}/challenges/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Viewset for challnges. */
+        get: operations["groups_challenges_retrieve"];
+        /** @description Viewset for challnges. */
+        put: operations["groups_challenges_update"];
+        post?: never;
+        /** @description Viewset for challnges. */
+        delete: operations["groups_challenges_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Viewset for challnges. */
+        patch: operations["groups_challenges_partial_update"];
         trace?: never;
     };
     "/api/v1/groups/{loregroup_pk}/images/": {
@@ -504,22 +679,26 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         get: operations["groups_images_list"];
         put?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         post: operations["groups_images_create"];
         delete?: never;
         options?: never;
@@ -534,40 +713,48 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         get: operations["groups_images_retrieve"];
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         put: operations["groups_images_update"];
         post?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         delete: operations["groups_images_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         patch: operations["groups_images_partial_update"];
         trace?: never;
     };
@@ -578,9 +765,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for group members.
+        /**
+         * @description Viewset for group members.
          *
-         *     Supports listing, retrieving, and deleting members */
+         *     Supports listing, retrieving, and deleting members
+         */
         get: operations["groups_members_list"];
         put?: never;
         post?: never;
@@ -597,15 +786,19 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for group members.
+        /**
+         * @description Viewset for group members.
          *
-         *     Supports listing, retrieving, and deleting members */
+         *     Supports listing, retrieving, and deleting members
+         */
         get: operations["groups_members_retrieve"];
         put?: never;
         post?: never;
-        /** @description Remove the user from the group.
+        /**
+         * @description Remove the user from the group.
          *
-         *     Raises a 404 if the membership doesn't exist. */
+         *     Raises a 404 if the membership doesn't exist.
+         */
         delete: operations["groups_members_destroy"];
         options?: never;
         head?: never;
@@ -679,12 +872,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** @description Route for the logged in user to join a group.
+        /**
+         * @description Route for the logged in user to join a group.
          *
          *     Expects a "join_code" in the post request
          *     Raises a 401 error if the join code is missing
          *     Raises a 404 error if there is no group with the join code
-         *     Raises a 409 error if the user is already in the group */
+         *     Raises a 409 error if the user is already in the group
+         */
         post: operations["groups_join_create"];
         delete?: never;
         options?: never;
@@ -699,22 +894,26 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         get: operations["images_list"];
         put?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         post: operations["images_create"];
         delete?: never;
         options?: never;
@@ -729,40 +928,48 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         get: operations["images_retrieve"];
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         put: operations["images_update"];
         post?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         delete: operations["images_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for quotes.
+        /**
+         * @description Viewset for quotes.
          *
          *     Supports filtering by group_id and searching by description
          *     Images can only be created when querying by a specific group.
          *
          *     To create an image, it expects an `image` and optional `description` field.
-         *     The group is automatically set by the query parameters. */
+         *     The group is automatically set by the query parameters.
+         */
         patch: operations["images_partial_update"];
         trace?: never;
     };
@@ -811,11 +1018,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         get: operations["users_list"];
         put?: never;
         post?: never;
@@ -832,32 +1041,40 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         get: operations["users_retrieve"];
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         put: operations["users_update"];
         post?: never;
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         delete: operations["users_destroy"];
         options?: never;
         head?: never;
-        /** @description Viewset for all lore users.
+        /**
+         * @description Viewset for all lore users.
          *
          *     Can be searched by first and last name
          *     Filter for what group a user is in with `member_of`
-         *     Filter for who accomplished an achievement with `achievement` */
+         *     Filter for who accomplished an achievement with `achievement`
+         */
         patch: operations["users_partial_update"];
         trace?: never;
     };
@@ -865,19 +1082,21 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @description Serializer for the achievement detail.
+        /**
+         * @description Serializer for the achievement detail.
          *
-         *     Serializes the images's:
+         *     Serializes the achievement's:
          *       - id (read only)
          *       - title
          *       - image
          *       - description
-         *       - achieved_by (write only)
+         *       - achieved_by
          *       - achieved_by_url (read only)
          *       - group (read only)
          *       - group_url (read only)
          *       - created (read only)
-         *       - url (read only) */
+         *       - url (read only)
+         */
         Achievement: {
             readonly id: number;
             title: string;
@@ -899,9 +1118,11 @@ export interface components {
             /** @description Get the url for the authenticated user. */
             readonly logged_in_user_url: string | null;
         };
-        /** @description Limits what achievement fields can be updated.
+        /**
+         * @description Limits what achievement fields can be updated.
          *
-         *     Achieved_by is read only */
+         *     Achieved_by is read only
+         */
         AchievementUpdate: {
             readonly id: number;
             title: string;
@@ -922,7 +1143,63 @@ export interface components {
             /** @description Get the url for the authenticated user. */
             readonly logged_in_user_url: string | null;
         };
-        /** @description Serializes a group.
+        /** @description Serializer for the challenge detail. */
+        Challenge: {
+            readonly id: number;
+            title: string;
+            description: string;
+            level: number;
+            achievement: components["schemas"]["Achievement"];
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: uri */
+            readonly url: string;
+            /** Format: uri */
+            readonly participants_url: string;
+            /** Format: uri */
+            readonly group_url: string;
+            /** @description Get the url for the authenticated user. */
+            readonly logged_in_user_url: string | null;
+            readonly group: number;
+        };
+        /** @description Serializes the user and whether they completed a challenge. */
+        ChallengeParticipant: {
+            readonly lore_user: components["schemas"]["User"];
+            completed_challenge?: boolean;
+        };
+        /**
+         * @description Limits what achievement fields can be updated.
+         *
+         *     Participants is read only
+         */
+        ChallengeUpdate: {
+            readonly id: number;
+            title: string;
+            description: string;
+            level: number;
+            achievement: number;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            /** Format: date-time */
+            readonly created: string;
+            /** Format: uri */
+            readonly url: string;
+            /** Format: uri */
+            readonly participants_url: string;
+            /** Format: uri */
+            readonly group_url: string;
+            /** @description Get the url for the authenticated user. */
+            readonly logged_in_user_url: string | null;
+            readonly group: number;
+        };
+        /**
+         * @description Serializes a group.
          *
          *     Provides the following fields:
          *     - id (read only)
@@ -932,7 +1209,8 @@ export interface components {
          *     - avatar
          *     - created (read only)
          *     - url (read only)
-         *     - members (write only) */
+         *     - members (write only)
+         */
         Group: {
             readonly id: number;
             name: string;
@@ -950,6 +1228,8 @@ export interface components {
             /** Format: uri */
             readonly achievements_url: string;
             /** Format: uri */
+            readonly challenges_url: string;
+            /** Format: uri */
             readonly quotes_url: string;
             /** Format: uri */
             readonly images_url: string;
@@ -958,9 +1238,11 @@ export interface components {
             /** @description Get the url to leave the group. */
             readonly logged_in_member_url: string;
         };
-        /** @description Serializer that limits what group fields can be updated.
+        /**
+         * @description Serializer that limits what group fields can be updated.
          *
-         *     Members cannot be updated */
+         *     Members cannot be updated
+         */
         GroupUpdate: {
             readonly id: number;
             name: string;
@@ -977,6 +1259,8 @@ export interface components {
             /** Format: uri */
             readonly achievements_url: string;
             /** Format: uri */
+            readonly challenges_url: string;
+            /** Format: uri */
             readonly quotes_url: string;
             /** Format: uri */
             readonly images_url: string;
@@ -985,7 +1269,8 @@ export interface components {
             /** @description Get the url to leave the group. */
             readonly logged_in_member_url: string;
         };
-        /** @description Serializer for the image detail.
+        /**
+         * @description Serializer for the image detail.
          *
          *     Serializes the images's:
          *       - id
@@ -994,7 +1279,8 @@ export interface components {
          *       - group
          *       - group_url
          *       - created
-         *       - url */
+         *       - url
+         */
         Image: {
             readonly id: number;
             /** Format: uri */
@@ -1038,6 +1324,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Achievement"][];
+        };
+        PaginatedChallengeList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Challenge"][];
+        };
+        PaginatedChallengeParticipantList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ChallengeParticipant"][];
         };
         PaginatedGroupList: {
             /** @example 123 */
@@ -1115,9 +1431,11 @@ export interface components {
             uid: string;
             token: string;
         };
-        /** @description Limits what achievement fields can be updated.
+        /**
+         * @description Limits what achievement fields can be updated.
          *
-         *     Achieved_by is read only */
+         *     Achieved_by is read only
+         */
         PatchedAchievementUpdate: {
             readonly id?: number;
             title?: string;
@@ -1138,9 +1456,43 @@ export interface components {
             /** @description Get the url for the authenticated user. */
             readonly logged_in_user_url?: string | null;
         };
-        /** @description Serializer that limits what group fields can be updated.
+        /** @description Serializes the user and whether they completed a challenge. */
+        PatchedChallengeParticipant: {
+            readonly lore_user?: components["schemas"]["User"];
+            completed_challenge?: boolean;
+        };
+        /**
+         * @description Limits what achievement fields can be updated.
          *
-         *     Members cannot be updated */
+         *     Participants is read only
+         */
+        PatchedChallengeUpdate: {
+            readonly id?: number;
+            title?: string;
+            description?: string;
+            level?: number;
+            achievement?: number;
+            /** Format: date */
+            start_date?: string;
+            /** Format: date */
+            end_date?: string;
+            /** Format: date-time */
+            readonly created?: string;
+            /** Format: uri */
+            readonly url?: string;
+            /** Format: uri */
+            readonly participants_url?: string;
+            /** Format: uri */
+            readonly group_url?: string;
+            /** @description Get the url for the authenticated user. */
+            readonly logged_in_user_url?: string | null;
+            readonly group?: number;
+        };
+        /**
+         * @description Serializer that limits what group fields can be updated.
+         *
+         *     Members cannot be updated
+         */
         PatchedGroupUpdate: {
             readonly id?: number;
             name?: string;
@@ -1157,6 +1509,8 @@ export interface components {
             /** Format: uri */
             readonly achievements_url?: string;
             /** Format: uri */
+            readonly challenges_url?: string;
+            /** Format: uri */
             readonly quotes_url?: string;
             /** Format: uri */
             readonly images_url?: string;
@@ -1165,7 +1519,8 @@ export interface components {
             /** @description Get the url to leave the group. */
             readonly logged_in_member_url?: string;
         };
-        /** @description Serializer for the image detail.
+        /**
+         * @description Serializer for the image detail.
          *
          *     Serializes the images's:
          *       - id
@@ -1174,7 +1529,8 @@ export interface components {
          *       - group
          *       - group_url
          *       - created
-         *       - url */
+         *       - url
+         */
         PatchedImage: {
             readonly id?: number;
             /** Format: uri */
@@ -1188,17 +1544,20 @@ export interface components {
             /** Format: uri */
             readonly group_url?: string;
         };
-        /** @description Serializer for the quote detail.
+        /**
+         * @description Serializer for the quote detail.
          *
          *     Serializes the quote's:
          *       - id
          *       - text
+         *       - context
          *       - said_by
          *       - said_by_url
          *       - group
          *       - group_url
          *       - created
-         *       - url */
+         *       - url
+         */
         PatchedQuote: {
             readonly id?: number;
             text?: string;
@@ -1226,21 +1585,24 @@ export interface components {
             /** Format: uri */
             readonly url?: string;
         };
-        /** @description Serializer for the quote detail.
+        /**
+         * @description Serializer for the quote detail.
          *
          *     Serializes the quote's:
          *       - id
          *       - text
+         *       - context
          *       - said_by
          *       - said_by_url
          *       - group
          *       - group_url
          *       - created
-         *       - url */
+         *       - url
+         */
         Quote: {
             readonly id: number;
             text: string;
-            context: string;
+            context?: string;
             said_by: number;
             readonly said_by_username: string;
             pinned?: boolean;
@@ -1283,11 +1645,13 @@ export interface components {
             /** Format: uri */
             readonly url: string;
         };
-        /** @description Custom serializer for user registration.
+        /**
+         * @description Custom serializer for user registration.
          *
-         *     Adds the first/last name and avatar fields */
+         *     Adds the first/last name and avatar fields
+         */
         UserRegister: {
-            username?: string;
+            username: string;
             /** Format: email */
             email: string;
             password1: string;
@@ -1882,6 +2246,299 @@ export interface operations {
             };
         };
     };
+    challenges_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedChallengeList"];
+                };
+            };
+        };
+    };
+    challenges_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Challenge"];
+                "application/x-www-form-urlencoded": components["schemas"]["Challenge"];
+                "multipart/form-data": components["schemas"]["Challenge"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Challenge"];
+                };
+            };
+        };
+    };
+    challenges_participants_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                challenge_pk: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedChallengeParticipantList"];
+                };
+            };
+        };
+    };
+    challenges_participants_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challenge_pk: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    challenges_participants_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challenge_pk: number;
+                /** @description A unique integer value identifying this challenge participant. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeParticipant"];
+                };
+            };
+        };
+    };
+    challenges_participants_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challenge_pk: number;
+                /** @description A unique integer value identifying this challenge participant. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ChallengeParticipant"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChallengeParticipant"];
+                "multipart/form-data": components["schemas"]["ChallengeParticipant"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeParticipant"];
+                };
+            };
+        };
+    };
+    challenges_participants_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challenge_pk: number;
+                /** @description A unique integer value identifying this challenge participant. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    challenges_participants_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challenge_pk: number;
+                /** @description A unique integer value identifying this challenge participant. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChallengeParticipant"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChallengeParticipant"];
+                "multipart/form-data": components["schemas"]["PatchedChallengeParticipant"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeParticipant"];
+                };
+            };
+        };
+    };
+    challenges_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Challenge"];
+                };
+            };
+        };
+    };
+    challenges_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChallengeUpdate"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChallengeUpdate"];
+                "multipart/form-data": components["schemas"]["ChallengeUpdate"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeUpdate"];
+                };
+            };
+        };
+    };
+    challenges_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    challenges_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChallengeUpdate"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChallengeUpdate"];
+                "multipart/form-data": components["schemas"]["PatchedChallengeUpdate"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeUpdate"];
+                };
+            };
+        };
+    };
     feed_retrieve: {
         parameters: {
             query?: never;
@@ -2097,6 +2754,158 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AchievementUpdate"];
+                };
+            };
+        };
+    };
+    groups_challenges_list: {
+        parameters: {
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedChallengeList"];
+                };
+            };
+        };
+    };
+    groups_challenges_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Challenge"];
+                "application/x-www-form-urlencoded": components["schemas"]["Challenge"];
+                "multipart/form-data": components["schemas"]["Challenge"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Challenge"];
+                };
+            };
+        };
+    };
+    groups_challenges_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Challenge"];
+                };
+            };
+        };
+    };
+    groups_challenges_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChallengeUpdate"];
+                "application/x-www-form-urlencoded": components["schemas"]["ChallengeUpdate"];
+                "multipart/form-data": components["schemas"]["ChallengeUpdate"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeUpdate"];
+                };
+            };
+        };
+    };
+    groups_challenges_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    groups_challenges_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                loregroup_pk: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedChallengeUpdate"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChallengeUpdate"];
+                "multipart/form-data": components["schemas"]["PatchedChallengeUpdate"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChallengeUpdate"];
                 };
             };
         };

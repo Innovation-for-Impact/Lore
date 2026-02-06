@@ -757,6 +757,342 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
           description: ''
+  /api/v1/challenges/:
+    get:
+      operationId: challenges_list
+      description: Viewset for challnges.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChallengeList'
+          description: ''
+    post:
+      operationId: challenges_create
+      description: Viewset for challnges.
+      tags:
+      - challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Challenge'
+          description: ''
+  /api/v1/challenges/{challenge_pk}/participants/:
+    get:
+      operationId: challenges_participants_list
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChallengeParticipantList'
+          description: ''
+    post:
+      operationId: challenges_participants_create
+      description: |-
+        Add or delete the authenticated user to the list of participants.
+
+        Returns the authenticated user on success
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/challenges/{challenge_pk}/participants/{id}/:
+    get:
+      operationId: challenges_participants_retrieve
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this challenge participant.
+        required: true
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeParticipant'
+          description: ''
+    put:
+      operationId: challenges_participants_update
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this challenge participant.
+        required: true
+      tags:
+      - challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeParticipant'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChallengeParticipant'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChallengeParticipant'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeParticipant'
+          description: ''
+    patch:
+      operationId: challenges_participants_partial_update
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this challenge participant.
+        required: true
+      tags:
+      - challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeParticipant'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeParticipant'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeParticipant'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeParticipant'
+          description: ''
+    delete:
+      operationId: challenges_participants_destroy
+      parameters:
+      - in: path
+        name: challenge_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this challenge participant.
+        required: true
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/challenges/{id}/:
+    get:
+      operationId: challenges_retrieve
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Challenge'
+          description: ''
+    put:
+      operationId: challenges_update
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeUpdate'
+          description: ''
+    patch:
+      operationId: challenges_partial_update
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - challenges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeUpdate'
+          description: ''
+    delete:
+      operationId: challenges_destroy
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - challenges
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/feed/:
     get:
       operationId: feed_retrieve
@@ -1043,6 +1379,197 @@ paths:
 
         To create an achievemet, it expects an `image`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/groups/{loregroup_pk}/challenges/:
+    get:
+      operationId: groups_challenges_list
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChallengeList'
+          description: ''
+    post:
+      operationId: groups_challenges_create
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Challenge'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Challenge'
+          description: ''
+  /api/v1/groups/{loregroup_pk}/challenges/{id}/:
+    get:
+      operationId: groups_challenges_retrieve
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Challenge'
+          description: ''
+    put:
+      operationId: groups_challenges_update
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChallengeUpdate'
+        required: true
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeUpdate'
+          description: ''
+    patch:
+      operationId: groups_challenges_partial_update
+      description: Viewset for challnges.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: loregroup_pk
+        schema:
+          type: string
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChallengeUpdate'
+      security:
+      - jwtHeaderAuth: []
+      - jwtCookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeUpdate'
+          description: ''
+    delete:
+      operationId: groups_challenges_destroy
+      description: Viewset for challnges.
       parameters:
       - in: path
         name: id
@@ -1392,14 +1919,7 @@ paths:
   /api/v1/groups/{loregroup_pk}/quotes/:
     get:
       operationId: groups_quotes_list
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: loregroup_pk
@@ -1410,14 +1930,6 @@ paths:
         required: false
         in: query
         description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - in: query
-        name: pinned
-        schema:
-          type: boolean
-      - in: query
-        name: said_by_id
         schema:
           type: integer
       - name: search
@@ -1440,14 +1952,7 @@ paths:
           description: ''
     post:
       operationId: groups_quotes_create
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: loregroup_pk
@@ -1481,20 +1986,12 @@ paths:
   /api/v1/groups/{loregroup_pk}/quotes/{id}/:
     get:
       operationId: groups_quotes_retrieve
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       - in: path
         name: loregroup_pk
@@ -1515,20 +2012,12 @@ paths:
           description: ''
     put:
       operationId: groups_quotes_update
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       - in: path
         name: loregroup_pk
@@ -1561,20 +2050,12 @@ paths:
           description: ''
     patch:
       operationId: groups_quotes_partial_update
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       - in: path
         name: loregroup_pk
@@ -1606,20 +2087,12 @@ paths:
           description: ''
     delete:
       operationId: groups_quotes_destroy
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for a specific group.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       - in: path
         name: loregroup_pk
@@ -1977,27 +2450,12 @@ paths:
   /api/v1/quotes/:
     get:
       operationId: quotes_list
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       parameters:
       - name: page
         required: false
         in: query
         description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - in: query
-        name: pinned
-        schema:
-          type: boolean
-      - in: query
-        name: said_by_id
         schema:
           type: integer
       - name: search
@@ -2020,14 +2478,7 @@ paths:
           description: ''
     post:
       operationId: quotes_create
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       tags:
       - quotes
       requestBody:
@@ -2055,20 +2506,12 @@ paths:
   /api/v1/quotes/{id}/:
     get:
       operationId: quotes_retrieve
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       tags:
       - quotes
@@ -2084,20 +2527,12 @@ paths:
           description: ''
     put:
       operationId: quotes_update
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       tags:
       - quotes
@@ -2125,20 +2560,12 @@ paths:
           description: ''
     patch:
       operationId: quotes_partial_update
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       tags:
       - quotes
@@ -2165,20 +2592,12 @@ paths:
           description: ''
     delete:
       operationId: quotes_destroy
-      description: |-
-        Viewset for quotes.
-
-        Supports filtering by group_id and said_by_id, and also searching by text
-        Quotes can only be created when querying by a specific group.
-
-        To create a quote, it expects a `text` and `said_by` field. The group
-        is automatically set by the query parameters.
+      description: Displays the quotes for all groups the user is in.
       parameters:
       - in: path
         name: id
         schema:
-          type: integer
-        description: A unique integer value identifying this quote.
+          type: string
         required: true
       tags:
       - quotes
@@ -2357,12 +2776,12 @@ components:
       description: |-
         Serializer for the achievement detail.
 
-        Serializes the images's:
+        Serializes the achievement's:
           - id (read only)
           - title
           - image
           - description
-          - achieved_by (write only)
+          - achieved_by
           - achieved_by_url (read only)
           - group (read only)
           - group_url (read only)
@@ -2385,8 +2804,6 @@ components:
           type: array
           items:
             type: integer
-            writeOnly: true
-          writeOnly: true
         num_achieved:
           type: integer
           description: Get the number of users that achieved this.
@@ -2485,6 +2902,147 @@ components:
       - num_achieved
       - title
       - url
+    Challenge:
+      type: object
+      description: Serializer for the challenge detail.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 1024
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        achievement:
+          $ref: '#/components/schemas/Achievement'
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        participants_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
+      required:
+      - achievement
+      - created
+      - description
+      - end_date
+      - group
+      - group_url
+      - id
+      - level
+      - logged_in_user_url
+      - participants_url
+      - start_date
+      - title
+      - url
+    ChallengeParticipant:
+      type: object
+      description: Serializes the user and whether they completed a challenge.
+      properties:
+        lore_user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        completed_challenge:
+          type: boolean
+      required:
+      - lore_user
+    ChallengeUpdate:
+      type: object
+      description: |-
+        Limits what achievement fields can be updated.
+
+        Participants is read only
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 1024
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        achievement:
+          type: integer
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        participants_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
+      required:
+      - achievement
+      - created
+      - description
+      - end_date
+      - group
+      - group_url
+      - id
+      - level
+      - logged_in_user_url
+      - participants_url
+      - start_date
+      - title
+      - url
     Group:
       type: object
       description: |-
@@ -2539,6 +3097,10 @@ components:
           type: string
           format: uri
           readOnly: true
+        challenges_url:
+          type: string
+          format: uri
+          readOnly: true
         quotes_url:
           type: string
           format: uri
@@ -2557,6 +3119,7 @@ components:
           readOnly: true
       required:
       - achievements_url
+      - challenges_url
       - created
       - id
       - images_url
@@ -2609,6 +3172,10 @@ components:
           type: string
           format: uri
           readOnly: true
+        challenges_url:
+          type: string
+          format: uri
+          readOnly: true
         quotes_url:
           type: string
           format: uri
@@ -2627,6 +3194,7 @@ components:
           readOnly: true
       required:
       - achievements_url
+      - challenges_url
       - created
       - id
       - images_url
@@ -2739,6 +3307,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Achievement'
+    PaginatedChallengeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Challenge'
+    PaginatedChallengeParticipantList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeParticipant'
     PaginatedGroupList:
       type: object
       required:
@@ -2918,6 +3532,68 @@ components:
           nullable: true
           description: Get the url for the authenticated user.
           readOnly: true
+    PatchedChallengeParticipant:
+      type: object
+      description: Serializes the user and whether they completed a challenge.
+      properties:
+        lore_user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        completed_challenge:
+          type: boolean
+    PatchedChallengeUpdate:
+      type: object
+      description: |-
+        Limits what achievement fields can be updated.
+
+        Participants is read only
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 128
+        description:
+          type: string
+          maxLength: 1024
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        achievement:
+          type: integer
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        url:
+          type: string
+          format: uri
+          readOnly: true
+        participants_url:
+          type: string
+          format: uri
+          readOnly: true
+        group_url:
+          type: string
+          format: uri
+          readOnly: true
+        logged_in_user_url:
+          type: string
+          nullable: true
+          description: Get the url for the authenticated user.
+          readOnly: true
+        group:
+          type: integer
+          readOnly: true
     PatchedGroupUpdate:
       type: object
       description: |-
@@ -2955,6 +3631,10 @@ components:
           format: uri
           readOnly: true
         achievements_url:
+          type: string
+          format: uri
+          readOnly: true
+        challenges_url:
           type: string
           format: uri
           readOnly: true
@@ -3019,6 +3699,7 @@ components:
         Serializes the quote's:
           - id
           - text
+          - context
           - said_by
           - said_by_url
           - group
@@ -3033,8 +3714,13 @@ components:
           type: string
           minLength: 1
           maxLength: 2048
+        context:
+          type: string
         said_by:
           type: integer
+        said_by_username:
+          type: string
+          readOnly: true
         pinned:
           type: boolean
         group:
@@ -3084,6 +3770,7 @@ components:
         Serializes the quote's:
           - id
           - text
+          - context
           - said_by
           - said_by_url
           - group
@@ -3098,8 +3785,13 @@ components:
           type: string
           minLength: 1
           maxLength: 2048
+        context:
+          type: string
         said_by:
           type: integer
+        said_by_username:
+          type: string
+          readOnly: true
         pinned:
           type: boolean
         group:
@@ -3127,6 +3819,7 @@ components:
       - id
       - said_by
       - said_by_url
+      - said_by_username
       - text
       - url
     ResendEmailVerification:
@@ -3234,6 +3927,7 @@ components:
       - last_name
       - password1
       - password2
+      - username
     VerifyEmail:
       type: object
       properties:

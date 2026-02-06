@@ -1,25 +1,25 @@
 import { useNavigation } from '@react-navigation/native';
-import React from "react";
+import React, { useEffect } from "react";
 import {
+  ActivityIndicator,
   Image,
   ImageSourcePropType,
   StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
+  View,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { HomeNavigation } from '../../navigation/Navigators';
-import { $api, Group } from '../../types/constants';
+import badge1 from '../../assets/achievement-badges/Badge_01_activated.png';
+import badge2 from '../../assets/achievement-badges/Badge_02_activated.png';
 import { useUser } from '../../context/UserContext';
-import { components } from '../../types/backend-schema';
-
+import { HomeNavigation } from '../../navigation/Navigators';
+import { $api, Group, infiniteQueryParams } from '../../types/constants';
 
 // --- Mock Data for Achievements ---
 const BadgeAssets = {
-  ACTIVE: require('../../assets/achievement-badges/Badge_01_activated.png'),
-  INACTIVE: require('../../assets/achievement-badges/Badge_01_deactivated.png'),
+  ACTIVE: badge1,
+  INACTIVE: badge2
 };
 
 
@@ -35,8 +35,6 @@ const scaleHeight = (size: number, screenHeight: number) => (screenHeight / guid
 // ------------------------------------ //
 
 // --- Reusable Components --- //
-
-type Achievement = components["schemas"]["Achievement"];
 
 type BadgeIconProps = {
   source: ImageSourcePropType;
@@ -103,34 +101,50 @@ const AchievementBoardComponent = ({ group }: Props) => {
   const containerWidth = screenWidth * 0.9;
   const horizontalPadding = screenWidth * 0.06;
 
-  // TODO: use infinite query and then filter by groupID because the backend only returns the list of achievements done by the user
-  const { data: achievements, isLoading: loadingAchievements } = $api.useQuery(
+  const { data: achievements, isLoading: loadingAchievements, hasNextPage, isFetching, fetchNextPage } = $api.useInfiniteQuery(
     "get",
-    "/api/v1/achievements/",
+    "/api/v1/groups/{loregroup_pk}/achievements/",
     {
       params: {
-        query: {
-          achieved_by: user!.id
+        path: {
+          loregroup_pk: String(group.id)
         }
-      },
+      }
     },
+    infiniteQueryParams
   )
+
+  useEffect(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetching])
+
+  $api.useMutation(
+    "post",
+    "/api/v1/achievements/{achievement_pk}/achievers/"
+  )
+
+  const achievementsList = achievements?.pages.flatMap(page => page.results) || [];
+  useEffect(() => {
+    console.log(achievementsList)
+  }, [achievementsList])
 
   if (loadingAchievements) {
     return (
-      <SafeAreaView style={styles.fullScreenContainer}>
-        <Text style={{ color: "white", textAlign: "center", marginTop: 100 }}>
-          Loading achievements...
+      <View style={styles.emptyContainer}>
+        <Text style={styles.noAchievementsText}>
+          Loading achivements...
         </Text>
-      </SafeAreaView>
+        <ActivityIndicator size="large" color="purple" />
+      </View>
     );
   }
 
-  const achievementsList = achievements?.results ?? [];
   return (
     <View style={styles.fullScreenContainer}>
       {/* Header */}
-      <Text style={[styles.achievementHeader]}>
+      <Text style={styles.achievementHeader}>
         achievements
       </Text>
       <Text
@@ -171,83 +185,41 @@ const AchievementBoardComponent = ({ group }: Props) => {
         </Text>
       </TouchableOpacity>
 
+
+      {/* TODO: gonna have to redesign the active / inactive stuff */}
+
       {/* Achievement List */}
-      <View style={{ marginTop: scaleHeight(10, screenHeight) }}>
-        {achievementsList.length === 0 ? (
-          <>
-            {/* Level 1 – all inactive */}
-            <AchievementLevelSection
-              level={1}
-              title="starter"
-              badges={[
-                { id: 1, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 2, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 3, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 4, isEarned: false, asset: BadgeAssets.INACTIVE },
-              ]}
-              containerWidth={containerWidth}
-              containerHeight={scaleHeight(110, screenHeight)}
-            />
+      <View style={{ flex: 1, marginTop: scaleHeight(10, screenHeight) }}>
+        {
+          achievementsList.length === 0 ?
+            <View style={styles.emptyContainer}>
+              <Text style={styles.noAchievementsText}>
+                no achievements
+              </Text>
+            </View>
+            :
+            achievementsList.map((achievement) => {
+              const asset = achievement.achieved_by.includes(user!.id) ? BadgeAssets.ACTIVE : BadgeAssets.INACTIVE;
 
-            {/* Level 2 – all inactive */}
-            <AchievementLevelSection
-              level={2}
-              title="intermediate"
-              badges={[
-                { id: 5, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 6, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 7, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 8, isEarned: false, asset: BadgeAssets.INACTIVE },
-              ]}
-              containerWidth={containerWidth}
-              containerHeight={scaleHeight(110, screenHeight)}
-            />
-
-            {/* Level 3 – all inactive */}
-            <AchievementLevelSection
-              level={3}
-              title="expert"
-              badges={[
-                { id: 9, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 10, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 11, isEarned: false, asset: BadgeAssets.INACTIVE },
-                { id: 12, isEarned: false, asset: BadgeAssets.INACTIVE },
-              ]}
-              containerWidth={containerWidth}
-              containerHeight={scaleHeight(110, screenHeight)}
-            />
-          </>
-        ) : (
-          // We have achievements from the backend – render them as a flat list
-          achievementsList.map((achievement) => {
-            const userId = user!.id;
-            const achievedBy = achievement.achieved_by;
-
-            const isEarned =
-              userId !== -1 &&
-              Array.isArray(achievedBy) &&
-              achievedBy.includes(userId);
-
-            const asset = isEarned ? BadgeAssets.ACTIVE : BadgeAssets.INACTIVE;
-
-            return (
-              <View key={achievement.id} style={styles.achievementItem}>
-                <Image
-                  source={asset}
-                  style={{ width: 60, height: 60, marginRight: 10 }}
-                  resizeMode="contain"
-                />
-                <View style={{ flexShrink: 1 }}>
-                  <Text style={styles.title}>{achievement.title}</Text>
-                  <Text style={styles.desc}>{achievement.description}</Text>
+              return (
+                <View key={achievement.id} style={styles.achievementItem}>
+                  <Image
+                    source={asset}
+                    style={{ width: 60, height: 60, marginRight: 10 }}
+                    resizeMode="contain"
+                  />
+                  <View style={{ flexShrink: 1 }}>
+                    <Text style={styles.title}>{achievement.title}</Text>
+                    <Text style={styles.desc}>{achievement.description}</Text>
+                  </View>
                 </View>
-              </View>
-            );
-          })
-        )}
+              );
+            })
+        }
       </View>
 
     </View>
+
   );
 };
 
@@ -330,6 +302,19 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 14,
     color: "#666",
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noAchievementsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#5F4078',
+    marginBottom: 150,
+    fontFamily: 'Work Sans'
   },
 });
 
