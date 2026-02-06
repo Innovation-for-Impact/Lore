@@ -207,7 +207,7 @@ class AchievementSerializer(serializers.ModelSerializer):
       - title
       - image
       - description
-      - achieved_by (write only)
+      - achieved_by
       - achieved_by_url (read only)
       - group (read only)
       - group_url (read only)
@@ -279,9 +279,6 @@ class AchievementSerializer(serializers.ModelSerializer):
             "group_url",
             "logged_in_user_url",
         ]
-        extra_kwargs: ClassVar[dict[str, dict[str, Any]]] = {
-            "achieved_by": {"write_only": True, "allow_empty": True},
-        }
 
 
 class AchievementUpdateSerializer(AchievementSerializer):
