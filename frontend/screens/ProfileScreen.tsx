@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
@@ -22,13 +23,19 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <TouchableOpacity onPress={() => {
+          navigation.navigate('ProfileEditScreen');
+        }}>
+          <Ionicons name="settings-sharp" size={26} color="#333" />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollBody,
           {
-            paddingTop: insets.top,
             paddingBottom: insets.bottom + 150
           }
         ]}
@@ -46,17 +53,7 @@ const ProfileScreen = () => {
           </Text>
         </View>
 
-        {/* Action Buttons */}
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.capsuleButton} onPress={() => {
-            navigation.navigate('ProfileEditScreen')
-          }}>
-            <Text style={styles.capsuleText}>edit profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.capsuleButton}>
-            <Text style={styles.capsuleText}>friend list</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={styles.separator} />
 
         {/* Statistics */}
         <View style={styles.statsRow}>
@@ -144,25 +141,6 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     marginTop: 10,
   },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 12,
-    marginTop: 20,
-  },
-  capsuleButton: {
-    borderWidth: 1.5,
-    borderColor: '#FFF',
-    borderRadius: 25,
-    backgroundColor: '#5F4078',
-    paddingVertical: 10,
-    width: width * 0.4,
-    alignItems: 'center',
-  },
-  capsuleText: {
-    color: '#FFF',
-    fontSize: 14,
-  },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -173,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNum: {
-    fontSize: 60,
+    fontSize: 50,
     fontWeight: '300',
   },
   statLabel: {
@@ -229,6 +207,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }
   },
   buttonText: { color: '#FFF', fontSize: 18, fontWeight: '400' },
+
+  header: {
+    paddingHorizontal: 20,
+    alignItems: 'flex-end',
+    height: 50,
+    marginTop: 10,
+  },
+  separator: {
+    height: 1,               // Thickness of the line
+    backgroundColor: '#000', // Black color
+    marginHorizontal: 40,    // Spacing from the left and right edges
+    marginTop: 20,           // Space between the name and the line
+    opacity: 0.8,            // Optional: makes the black a bit softer if desired
+  },
 });
 
 export default ProfileScreen;

@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import placeholder from '../assets/placeholder.png';
-import { CommunityNavigation } from '../navigation/Navigators';
-import { CommunityStackParamList } from '../navigation/NavigationParams';
+import { HomeStackParamList } from '../navigation/NavigationParams';
+import { HomeNavigation } from '../navigation/Navigators';
+import { Group } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -16,18 +17,17 @@ const fontSize = {
   title: isSmallScreen ? 23 : isMediumScreen ? 24 : 25,
 };
 
-// TODO: change this to be inline with API
 export type Board = {
-  id: string;
   name: string;
   image?: string;
-  screen: keyof CommunityStackParamList;
+  screen: keyof HomeStackParamList;
+  group: Group
 };
 
-const BoardCard = ({ name, screen, image }: Board) => {
-  const navigation = useNavigation<CommunityNavigation>();
+const BoardCard = ({ name, screen, image, group }: Board) => {
+  const navigation = useNavigation<HomeNavigation>();
   const handlePress = () => {
-    navigation.navigate(screen as never);
+    navigation.navigate(screen, { group } as never);
   };
 
   return (

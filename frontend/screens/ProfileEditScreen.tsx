@@ -129,7 +129,7 @@ export default function ProfileEditScreen() {
           }
         })
       }} />
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
         <ScrollView
           contentContainerStyle={{
             paddingBottom: insets.bottom + 100

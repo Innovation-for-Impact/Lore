@@ -8,16 +8,12 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { SuccessModal } from './SuccessModal';
-import { ScrollView } from 'react-native-gesture-handler';
-import { $api } from '../types/constants';
-import { LoadingModal } from './LoadingModal';
-import { useGroups } from '../utils/GroupUtils';
-import { components } from '../types/backend-schema';
 import { useUser } from '../context/UserContext';
+import { $api, Group } from '../types/constants';
 import { FailureModal } from './FailureModal';
+import { LoadingModal } from './LoadingModal';
+import { SuccessModal } from './SuccessModal';
 
-type Group = components["schemas"]["Group"];
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -28,10 +24,13 @@ export const MAX_CONTEXT_LENGTH = 200;
 enum Step {
   quote = "quote",
   context = "context",
-  group = "group",
 }
 
-const CreateQuote = () => {
+interface Props {
+  group: Group
+}
+
+const CreateQuote = ({ group }: Props) => {
   const { user } = useUser();
   const [step, setStep] = useState<Step>(Step.quote);
   const [quoteText, setQuoteText] = useState('');
@@ -40,23 +39,13 @@ const CreateQuote = () => {
   const [quoteBoxHeight, setQuoteBoxHeight] = useState<number | null>(null);
   const [isMultiline, setIsMultiline] = useState(false);
 
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [sucessModal, setSuccessModal] = useState(false);
   const [failureModal, setFailureModal] = useState(false);
-
-  const { groups } = useGroups();
 
   // Step 1: Quote
   const handleQuoteContinue = () => {
     if (!quoteText.trim()) return;
     setStep(Step.context);
-  };
-
-  const handleSelectGroup = (group: Group) => {
-    setSelectedGroup(group);
-    setIsDropdownOpen(false);
   };
 
   const { mutateAsync: createQuote, isPending: loadingCreate } = $api.useMutation(
@@ -87,17 +76,15 @@ const CreateQuote = () => {
         text: quoteText,
         said_by: user!.id,
         pinned: false,
-        group: selectedGroup!.id,
+        group: group.id,
         context: contextText
       },
       params: {
         path: {
-          loregroup_pk: String(selectedGroup!.id)
+          loregroup_pk: String(group.id)
         }
       }
     })
-
-
   };
 
   return (
@@ -106,8 +93,6 @@ const CreateQuote = () => {
       <LoadingModal title={'creating quote...'} visible={loadingCreate} />
       <SuccessModal title={"quote creatad"} visible={sucessModal} setVisible={setSuccessModal} buttonText='close' />
       <View style={styles.container}>
-        {/* STEP 1: QUOTE */}
-
         {step === Step.quote ?
           <View style={styles.stepContainer}>
             <View style={styles.whiteBox}>
@@ -150,7 +135,6 @@ const CreateQuote = () => {
               <Text style={styles.btnText}>Continue</Text>
             </TouchableOpacity>
           </View>
-
           : null
         }
 
@@ -183,84 +167,19 @@ const CreateQuote = () => {
 
             <TouchableOpacity
               style={[styles.button, !contextText.trim() && styles.disabledButton]}
-              onPress={() => setStep(Step.group)}
+              onPress={finishAndNavigate}
               disabled={!contextText.trim()}
             >
-              <Text style={styles.btnText}>Continue</Text>
+              <Text style={styles.btnText}>create</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, { marginTop: 10 }]}
-              onPress={() => setStep(Step.group)}
+              onPress={finishAndNavigate}
             >
-              <Text style={styles.btnText}>Skip</Text>
+              <Text style={styles.btnText}>skip and create</Text>
             </TouchableOpacity>
           </View> : null
-        }
-
-        {
-          step === Step.group ?
-            <View style={styles.container}>
-              <View style={styles.stepContainer}>
-                <View style={styles.whiteBox}>
-                  <TouchableOpacity
-                    onPress={() => setStep(Step.context)}
-                  >
-                    <Ionicons name="arrow-back" size={30} color="#44344D" />
-                  </TouchableOpacity>
-                  <Text style={styles.label}>select a group</Text>
-                  <TouchableOpacity
-                    style={styles.dropdownButton}
-                    onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-                  >
-                    <Text style={[styles.dropdownText, !selectedGroup && styles.placeholderText]}>
-                      {selectedGroup?.name || 'choose group'}
-                    </Text>
-                    <Ionicons
-                      name={isDropdownOpen ? "chevron-up" : "chevron-down"}
-                      size={24}
-                      color="#44344D"
-                    />
-                  </TouchableOpacity>
-
-                  {isDropdownOpen && (
-                    <View style={styles.dropdownList}>
-                      <ScrollView style={styles.scrollView} nestedScrollEnabled>
-                        {groups.map((group) => (
-                          <TouchableOpacity
-                            key={group.id}
-                            style={[
-                              styles.dropdownItem,
-                              selectedGroup === group && styles.selectedItem
-                            ]}
-                            onPress={() => handleSelectGroup(group)}
-                          >
-                            <Text style={[
-                              styles.dropdownItemText,
-                              selectedGroup === group && styles.selectedItemText
-                            ]}>
-                              {group.name}
-                            </Text>
-                            {selectedGroup === group && (
-                              <Ionicons name="checkmark" size={20} color="#5F4078" />
-                            )}
-                          </TouchableOpacity>
-                        ))}
-                      </ScrollView>
-                    </View>
-                  )}
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.button, !selectedGroup && styles.disabledButton]}
-                  onPress={finishAndNavigate}
-                  disabled={!selectedGroup}
-                >
-                  <Text style={styles.btnText}>Continue</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            : null
         }
       </View>
     </>
@@ -334,7 +253,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
     paddingVertical: screenHeight * 0.015,
-    paddingHorizontal: screenWidth * 0.25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
