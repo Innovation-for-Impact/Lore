@@ -19,6 +19,7 @@ function Navigation() {
       <View style={navigationStyles.contentContainer}>
         <Tab.Navigator
           screenOptions={({ route }) => ({
+            headerShown: false,
             tabBarIcon: ({ color, focused }) => {
               let size = 28;
               const iconName: keyof typeof Ionicons.glyphMap =
