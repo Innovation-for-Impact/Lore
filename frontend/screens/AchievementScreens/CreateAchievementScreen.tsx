@@ -177,21 +177,6 @@ const CreateAchievementScreen = ({ route }: Props) => {
           create achievement
         </Text>
       </TouchableOpacity>
-
-      {/* Toast */}
-      {/* {showSuccess && ( */}
-      {/*   <View style={styles.successOverlay}> */}
-      {/*     <View style={styles.successCard}> */}
-      {/*       <View style={styles.successIconCircle}> */}
-      {/*         <Ionicons name="checkmark" size={s(28)} color="#FFFFFF" /> */}
-      {/*       </View> */}
-      {/*       <Text style={styles.successText}> */}
-      {/*         achievement badge posted! */}
-      {/*       </Text> */}
-      {/*     </View> */}
-      {/*   </View> */}
-      {/* )} */}
-
     </View>
   );
 };

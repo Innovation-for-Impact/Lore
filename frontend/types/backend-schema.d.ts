@@ -1584,6 +1584,7 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url?: string;
+            readonly total_achievements?: string;
         };
         /**
          * @description Serializer for the quote detail.
@@ -1644,6 +1645,7 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url: string;
+            readonly total_achievements: string;
         };
         /**
          * @description Custom serializer for user registration.
