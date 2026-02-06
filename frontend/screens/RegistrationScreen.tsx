@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Logo from '../assets/logo-transparent-white.png';
 import { AuthNavigation } from '../navigation/Navigators';
+import { setTokens } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -57,6 +58,7 @@ const RegistrationScreen = () => {
         Connect with friends, run up challenges, & do it for the plot
       </Text>
       <TouchableOpacity style={styles.login} onPress={() => {
+        setTokens(null, null)
         navigation.navigate('LoginScreen')
       }}>
         <Text style={styles.buttonText}>log in</Text>

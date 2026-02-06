@@ -20,9 +20,20 @@ async function getRefreshToken() {
   return await SecureStore.getItemAsync("refresh_token");
 }
 
-export async function setTokens(access: string, refresh: string) {
-  await SecureStore.setItemAsync("access_token", access);
-  await SecureStore.setItemAsync("refresh_token", refresh);
+export async function setTokens(access: string | null, refresh: string | null) {
+  if (access) {
+    await SecureStore.setItemAsync("access_token", access);
+  }
+  else {
+    await SecureStore.deleteItemAsync("access_token")
+  }
+
+  if (refresh) {
+    await SecureStore.setItemAsync("refresh_token", refresh);
+  }
+  else {
+    await SecureStore.deleteItemAsync("refresh_token")
+  }
 }
 
 // let isRefreshing = false;
@@ -83,8 +94,20 @@ export async function setTokens(access: string, refresh: string) {
 
 const fetchClient = createFetchClient<paths>({
   baseUrl: BACKEND_URL,
-  // fetch: authFetch
+  credentials: "omit"
 })
+fetchClient.use(
+  {
+    async onRequest({ request }) {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        // console.log(accessToken);
+        request.headers.set("Authorization", `Bearer ${accessToken}`);
+      }
+      return request;
+    }
+  }
+)
 
 export const $api = createClient(fetchClient);
 
@@ -92,7 +115,7 @@ export const infiniteQueryParams = {
   pageParamName: "page",
   getNextPageParam: (lastPage:
     components["schemas"]["PaginatedUserList"] |
-    components["schemas"]["PaginatedGroupList"]|
+    components["schemas"]["PaginatedGroupList"] |
     components["schemas"]["PaginatedQuoteList"]
   ) => {
     if (!lastPage.next) return undefined;

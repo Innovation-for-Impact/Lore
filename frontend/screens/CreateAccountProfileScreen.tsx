@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import * as SecureStore from 'expo-secure-store';
 import { useState, } from 'react';
 import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import profileIcon from '../assets/profile-icon.png';
-import { useNavigation } from '@react-navigation/native';
-import * as SecureStore from 'expo-secure-store';
 import { AuthNavigation } from '../navigation/Navigators';
 
 const screenWidth = Dimensions.get('window').width;

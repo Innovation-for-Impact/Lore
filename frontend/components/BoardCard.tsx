@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import placeholder from '../assets/placeholder.png';
 import { useNavigation } from '@react-navigation/native';
-import { Navigation, RootStackParamList } from '../navigation/NavigationParams';
+import React from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import placeholder from '../assets/placeholder.png';
+import { CommunityNavigation } from '../navigation/Navigators';
+import { CommunityStackParamList } from '../navigation/NavigationParams';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -20,11 +21,11 @@ export type Board = {
   id: string;
   name: string;
   image?: string;
-  screen: keyof RootStackParamList;
+  screen: keyof CommunityStackParamList;
 };
 
 const BoardCard = ({ name, screen, image }: Board) => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation<CommunityNavigation>();
   const handlePress = () => {
     navigation.navigate(screen as never);
   };

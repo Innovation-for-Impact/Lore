@@ -1,29 +1,29 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import BoardCard, { Board } from './BoardCard';
- 
- //contains the data about each Board in the list
- const BoardData: Board[] = [
-    {
-      id: '1',
-      name: 'quote board',
-      image: '',
-      screen: 'QuoteBoardScreen',
-    },
-    {
-      id: '2',
-      name: 'memory board',
-      image: '',
-      screen: 'MemoryBoardScreen',
-    },
-    {
-      id: '3',
-      name: 'achievement board',
-      image: '',
-      screen: 'AchievementBoardScreen',
-    },
- ];
- 
+
+//contains the data about each Board in the list
+const BoardData: Board[] = [
+  {
+    id: '1',
+    name: 'quote board',
+    image: '',
+    screen: 'QuoteBoardScreen',
+  },
+  {
+    id: '2',
+    name: 'memory board',
+    image: '',
+    screen: 'MemoryBoardScreen',
+  },
+  {
+    id: '3',
+    name: 'achievement board',
+    image: '',
+    screen: 'AchievementBoardScreen',
+  },
+];
+
 const BoardList = () => {
   return (
     <View style={styles.container}>
@@ -44,15 +44,15 @@ const BoardList = () => {
     </View>
   );
 };
- 
- const styles = StyleSheet.create({
-   container: {
-     flex: 1, // allows the component to expand
-   },
-   listContainer: {
-     paddingHorizontal: 20,
-     paddingBottom: 120,
-   },
- });
- 
- export default BoardList;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, // allows the component to expand
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 120,
+  },
+});
+
+export default BoardList;

@@ -1,12 +1,12 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 // import * as SecureStore from 'expo-secure-store';
-import { useState, } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
-import Logo from '../assets/logo-transparent-white.png';
 import { useNavigation } from '@react-navigation/native';
-import { $api, setTokens } from '../types/constants';
+import { useState, } from 'react';
+import { Dimensions, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Logo from '../assets/logo-transparent-white.png';
 import { useUser } from '../context/UserContext';
 import { AuthNavigation } from '../navigation/Navigators';
+import { $api, setTokens } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -40,11 +40,11 @@ const CreateAccountEmailScreen = () => {
     "post",
     "/api/v1/auth/login/",
     {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         // redirect to user page
+        await setTokens(response.access, response.refresh);
         setUser(response.user);
-        setTokens(response.access, response.refresh);
-        navigation.navigate('CreateAccountProfileScreen');
+        // navigation.navigate('CreateAccountProfileScreen');
       },
       onError: (error) => {
         setError(error.non_field_errors);
@@ -94,90 +94,95 @@ const CreateAccountEmailScreen = () => {
     // TODO: API endpoint to check email
     // if email already exists in database - X mark
     // else check mark
-
-    // Navigate to the next screen - name
-    // navigation.navigate('CreateAccountNameScreen');
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={{ position: 'absolute', top: 60, left: 15, zIndex: 10 }}
-          onPress={goBack}
-        >
-          <Ionicons name="arrow-back" size={35} color="white" />
-        </TouchableOpacity>
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <View style={styles.container}>
-          <Image source={Logo} style={styles.img} />
-          <Text style={styles.title}>Create Account</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="first name"
-            placeholderTextColor="#555"
-            value={first_name}
-            onChangeText={setFirstName}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="last name"
-            placeholderTextColor="#555"
-            value={last_name}
-            onChangeText={setLastName}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="email address"
-            placeholderTextColor="#555"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.inputPasswords}
-              placeholder="password"
-              placeholderTextColor="#555"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Feather name={showPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.inputPasswords}
-              placeholder="confirm password"
-              placeholderTextColor="#555"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showConfirmPassword}
-            />
-            <TouchableOpacity
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              <Feather name={showConfirmPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
-            </TouchableOpacity>
-          </View>
-
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-          <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText} numberOfLines={1}>create account</Text>
+          <TouchableOpacity
+            style={{ position: 'absolute', top: 60, left: 15, zIndex: 10 }}
+            onPress={goBack}
+          >
+            <Ionicons name="arrow-back" size={35} color="white" />
           </TouchableOpacity>
-        </View>
-      </View>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.container}>
+              <Image source={Logo} style={styles.img} />
+              <Text style={styles.title}>Create Account</Text>
 
+              <TextInput
+                style={styles.input}
+                placeholder="first name"
+                placeholderTextColor="#555"
+                value={first_name}
+                onChangeText={setFirstName}
+                autoCapitalize="none"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="last name"
+                placeholderTextColor="#555"
+                value={last_name}
+                onChangeText={setLastName}
+                autoCapitalize="none"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="email address"
+                placeholderTextColor="#555"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputPasswords}
+                  placeholder="password"
+                  placeholderTextColor="#555"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Feather name={showPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputPasswords}
+                  placeholder="confirm password"
+                  placeholderTextColor="#555"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <Feather name={showConfirmPassword ? 'eye' : 'eye-off'} size={23} color="grey" />
+                </TouchableOpacity>
+              </View>
+
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                <Text style={styles.buttonText} numberOfLines={1}>create account</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+
+      </KeyboardAvoidingView>
       <View style={styles.footerTextContainer}>
         <View style={styles.textRow}>
           <Text style={styles.linkText}>By creating an account, you agree to our</Text>
@@ -186,7 +191,7 @@ const CreateAccountEmailScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

@@ -1,24 +1,26 @@
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
-  TouchableOpacity,
-  TextInput,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
   TextInputProps,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useUser } from '../context/UserContext';
-import { useNavigation } from '@react-navigation/native';
-import { pickImage } from '../utils/GroupUtils';
-import * as ImagePicker from 'expo-image-picker';
-import { $api } from '../types/constants';
-import { SuccessModal } from '../components/SuccessModal';
 import { FailureModal } from '../components/FailureModal';
+import { SuccessModal } from '../components/SuccessModal';
+import { useUser } from '../context/UserContext';
 import { ProfileNavigation } from '../navigation/Navigators';
+import { $api, setTokens } from '../types/constants';
+import { pickImage } from '../utils/GroupUtils';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfileEditScreen() {
   const insets = useSafeAreaInsets();
@@ -34,6 +36,7 @@ export default function ProfileEditScreen() {
   const [lastName, setLastName] = useState(user.last_name)
   const [successModal, setSuccessModal] = useState(false)
   const [failureModal, setFailureModal] = useState(false)
+  const [confirmation, setConfirmation] = useState(false)
 
   // State for form fields
   // const [email, setEmail] = useState('admin@lore.com');
@@ -42,7 +45,7 @@ export default function ProfileEditScreen() {
   // const [pushNotif, setPushNotif] = useState(true);
 
   const { mutateAsync: updateUser } = $api.useMutation(
-    "put",
+    "patch",
     "/api/v1/users/{id}/",
     {
       onSuccess: () => {
@@ -58,6 +61,20 @@ export default function ProfileEditScreen() {
       onError: (e) => {
         setFailureModal(true)
         console.log(e)
+      }
+    }
+  )
+
+  const queryClient = useQueryClient();
+  const { mutateAsync: deleteUser } = $api.useMutation(
+    "delete",
+    "/api/v1/users/{id}/",
+    {
+      onSuccess: async () => {
+        // Log out
+        setUser(null)
+        setTokens(null, null);
+        queryClient.clear()
       }
     }
   )
@@ -103,10 +120,18 @@ export default function ProfileEditScreen() {
     <>
       <SuccessModal buttonText='back' setVisible={setSuccessModal} title='profile updated!' visible={successModal} />
       <FailureModal visible={failureModal} title='failed to update profile' tryAgainCallback={saveProfile} cancelCallback={() => setFailureModal(false)} />
+      <ConfirmationModal visible={confirmation} setVisible={setConfirmation} title='are you sure you want to delete?' left='cancel' right='delete' callback={async () => {
+        deleteUser({
+          params: {
+            path: {
+              id: user.id
+            }
+          }
+        })
+      }} />
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            // paddingTop: insets.top,
             paddingBottom: insets.bottom + 100
           }}
           showsVerticalScrollIndicator={false}
@@ -165,7 +190,9 @@ export default function ProfileEditScreen() {
               <Text style={styles.buttonText}>save</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#A18DBF', marginTop: 15 }]}>
+            <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#A18DBF', marginTop: 15 }]} onPress={() => {
+              setConfirmation(true);
+            }}>
               <Text style={styles.buttonText}>delete account</Text>
             </TouchableOpacity>
           </View>

@@ -1,14 +1,14 @@
-import { Ionicons, Feather } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Pressable, Platform, ToastAndroid, Alert } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation } from '@react-navigation/native';
-import { HomeStackParamList } from '../navigation/NavigationParams';
-import { useUser } from '../context/UserContext';
-import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { $api } from '../types/constants';
-import { ConfirmationModal } from '../components/ConfirmationModal';
 import * as Clipboard from 'expo-clipboard';
+import { useState } from 'react';
+import { Alert, Image, Platform, Pressable, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ConfirmationModal } from '../components/ConfirmationModal';
+import { useUser } from '../context/UserContext';
+import { HomeStackParamList } from '../navigation/NavigationParams';
 import { HomeNavigation } from '../navigation/Navigators';
+import { $api } from '../types/constants';
 
 type GroupInfoScreenRouteProp = RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
 

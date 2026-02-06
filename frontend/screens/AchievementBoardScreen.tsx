@@ -1,26 +1,21 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import CreateQuote from '../components/CreateQuote';
-import ViewQuotes from '../components/ViewQuotes';
-import { CommunityNavigation } from '../navigation/Navigators';
-import { globalStyles } from '../styles/global';
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { globalStyles } from "../styles/global";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { CommunityNavigation } from "../navigation/Navigators";
+import { useState } from "react";
+import AchievementBoardComponent from "./AchievementScreens/AchievementBoardComponent";
+import ChallengeListComponent from "./ChallengeScreens/ChallengeListScreen";
 
 enum Tabs {
-  viewQuotes = "viewQuotes",
-  createQuote = "createQuote"
+  achievements = "achievements",
+  challenges = "challenges"
 };
 
-const QuoteBoardScreen = () => {
+export const AchievementBoardScreen = () => {
   const navigation = useNavigation<CommunityNavigation>();
 
-  const [activeTab, setActiveTab] = useState<Tabs>(Tabs.viewQuotes);
+  const [activeTab, setActiveTab] = useState<Tabs>(Tabs.achievements);
 
   const handleBack = () => {
     navigation.goBack();
@@ -42,51 +37,51 @@ const QuoteBoardScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === Tabs.viewQuotes && styles.activeTabItem,
+            activeTab === Tabs.achievements && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab(Tabs.viewQuotes)}
+          onPress={() => setActiveTab(Tabs.achievements)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === Tabs.viewQuotes && styles.activeTabText,
+              activeTab === Tabs.achievements && styles.activeTabText,
             ]}
           >
-            view quotes
+            achievements
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
             styles.tabItem,
-            activeTab === Tabs.createQuote && styles.activeTabItem,
+            activeTab === Tabs.challenges && styles.activeTabItem,
           ]}
-          onPress={() => setActiveTab(Tabs.createQuote)}
+          onPress={() => setActiveTab(Tabs.challenges)}
         >
           <Text
             style={[
               styles.tabText,
-              activeTab === Tabs.createQuote && styles.activeTabText,
+              activeTab === Tabs.challenges && styles.activeTabText,
             ]}
           >
-            create quotes
+            challenges
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Content */}
       <View style={styles.content}>
-        {activeTab === Tabs.viewQuotes ? (
-          <ViewQuotes />
+        {activeTab === Tabs.achievements ? (
+          <AchievementBoardComponent />
         ) : (
-          <CreateQuote />
+          <ChallengeListComponent />
         )}
       </View>
     </View>
   );
 };
 
-export default QuoteBoardScreen;
+export default AchievementBoardScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -129,4 +124,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 });
-

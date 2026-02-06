@@ -1,16 +1,16 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
+  Dimensions,
   Image,
-  TouchableOpacity,
   ScrollView,
-  Dimensions
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
-import { useNavigation } from '@react-navigation/native';
 import { ProfileNavigation } from '../navigation/Navigators';
 
 const { width } = Dimensions.get('window');
@@ -37,7 +37,7 @@ const ProfileScreen = () => {
         <View style={styles.profileContainer}>
           <View style={styles.avatarBorder}>
             <Image
-              source={{ uri: user?.avatar ?? `https://ui-avatars.com/api/?name=${user?.first_name} ${user?.last_name}` }}
+              source={{ uri: user?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.first_name ?? '')}+${encodeURIComponent(user?.last_name ?? '')}` }}
               style={styles.avatar}
             />
           </View>

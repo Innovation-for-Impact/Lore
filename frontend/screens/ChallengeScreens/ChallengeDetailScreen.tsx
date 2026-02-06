@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { CommunityNavigation } from "../../navigation/Navigators";
 
 export default function ChallengeDetailScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<CommunityNavigation>();
   const [hasJoined, setHasJoined] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -17,15 +18,16 @@ export default function ChallengeDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+
         {/* Back button */}
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Ionicons name="chevron-back" size={28} color="#2A1E3E" />
-        </TouchableOpacity>
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={navigation.goBack}
+          >
+            <Ionicons name="arrow-back" size={35} color="white" />
+          </TouchableOpacity>
+        </View>
 
         {/* Header */}
         <Text style={styles.header}>challenge details</Text>
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#AFB0E4",
     paddingHorizontal: 20,
-    paddingTop: 50,
   },
 
   backBtn: {
@@ -220,5 +221,11 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",
+  },
+
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
   },
 });

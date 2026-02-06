@@ -8,8 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { CommunityNavigation } from "../../navigation/Navigators";
 
-const ChallengeCreateScreen = ({ navigation }) => {
+const ChallengeCreateScreen = () => {
+  const navigation = useNavigation<CommunityNavigation>();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [maker, setMaker] = useState("");
@@ -178,15 +181,14 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    position: "absolute",
-    top: 62,
-    left: 15,
-    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
 
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 110,
     paddingBottom: 100,
   },
 

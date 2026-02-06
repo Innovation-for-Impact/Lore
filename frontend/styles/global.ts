@@ -1,6 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
-
-const { width } = Dimensions.get('window');
+import { StyleSheet } from 'react-native';
 
 // Background Color
 const globalStyles = StyleSheet.create({
@@ -17,7 +15,7 @@ const navigationStyles = StyleSheet.create({
     position: 'relative',
   },
   contentContainer: {
-      flex: 1,
+    flex: 1,
   },
 });
 

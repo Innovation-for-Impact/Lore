@@ -5,10 +5,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { LoadingModal } from '../components/LoadingModal';
-import { $api } from '../types/constants';
 import { HomeStackParamList } from '../navigation/NavigationParams';
-import { pickImage } from '../utils/GroupUtils';
 import { HomeNavigation } from '../navigation/Navigators';
+import { $api } from '../types/constants';
+import { pickImage } from '../utils/GroupUtils';
 
 type EditGroupScreenRouteProp = RouteProp<HomeStackParamList, 'GroupEditScreen'>;
 
