@@ -68,7 +68,7 @@ function Achievement({ groupID, achievement }: AchievementProps) {
     }
   )
 
-  const { mutate: deleteAchievement, isPending: deleteAchievementPending } = $api.useMutation(
+  const { mutateAsync: deleteAchievement, isPending: deleteAchievementPending } = $api.useMutation(
     "delete",
     "/api/v1/achievements/{achievement_pk}/achievers/{id}/",
     {
