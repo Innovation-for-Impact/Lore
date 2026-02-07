@@ -1,7 +1,8 @@
+import * as SecureStore from "expo-secure-store";
 import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
+import { DeviceEventEmitter } from "react-native";
 import type { paths } from "../types/backend-schema";
-import * as SecureStore from "expo-secure-store";
 import { components } from "../types/backend-schema";
 
 export type User = components["schemas"]["User"];
@@ -38,62 +39,6 @@ export async function setTokens(access: string | null, refresh: string | null) {
   }
 }
 
-// let isRefreshing = false;
-// let refreshPromise: Promise<void> | null = null;
-//
-// const authFetch: typeof fetch = async(input, init = {}) => {
-//
-//   const urlStr = input instanceof Request ? input.url : input;
-//   const isAuthEndpoint = urlStr.includes('/auth/');
-//
-//   if (input instanceof Request && !isAuthEndpoint) {
-//     const access = await getAccessToken();
-//     input.headers.map['authorization'] = `Bearer ${access}`;
-//   }
-//
-//   let response = await fetch(input, init);
-//
-//   if (response.status != 401) {
-//     return response;
-//   }
-//   console.log("Attempting refresh...");
-//   if (isRefreshing && refreshPromise) {
-//     await refreshPromise;
-//   }
-//   else {
-//     isRefreshing = true;
-//     refreshPromise = (async () => {
-//       const refreshToken = await getRefreshToken();
-//       if (!refreshToken) throw new Error("No refresh token");
-//
-//       const refreshResponse = await fetch(`${BACKEND_URL}/api/v1/auth/token/refresh/`, {
-//         method: 'POST',
-//         headers: { "Content-Type": "application/json"},
-//         body: JSON.stringify({ refresh: refreshToken })
-//       })
-//       console.log(refreshResponse);
-//       if (!refreshResponse.ok) {
-//         console.log("Refresh failed");
-//         isRefreshing = false;
-//         refreshPromise = null;
-//         throw new Error("Refresh failed");
-//       }
-//       const data = await refreshResponse.json();
-//       await setTokens(data.access, data.refresh);
-//       console.log("Token refreshed");
-//       isRefreshing = false;
-//       refreshPromise = null;
-//     })()
-//     await refreshPromise;
-//   }
-//
-//   if (input instanceof Request) {
-//     const newAccess = await getAccessToken();
-//     input.headers.map['authorization'] = `Bearer ${newAccess}`;
-//   }
-//   return fetch(input, init);
-// }
-
 const fetchClient = createFetchClient<paths>({
   baseUrl: BACKEND_URL,
   credentials: "omit"
@@ -103,10 +48,40 @@ fetchClient.use(
     async onRequest({ request }) {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        // console.log(accessToken);
         request.headers.set("Authorization", `Bearer ${accessToken}`);
       }
       return request;
+    },
+    async onResponse({ request, response }) {
+      const isRefreshPath = request.url.includes("/api/v1/auth/token/refresh");
+
+      if (response.status === 401 && !isRefreshPath) {
+        try {
+          const [accessToken, refreshToken] = await Promise.all([getAccessToken(), getRefreshToken()]);
+          if (!accessToken || !refreshToken) {
+            return response;
+          }
+          const { data, error } = await fetchClient.POST("/api/v1/auth/token/refresh/", {
+            body: {
+              access: accessToken,
+              refresh: refreshToken
+            }
+          })
+          if (error) {
+            throw new Error("Refresh failed, clearing tokens")
+          }
+
+          await setTokens(data.access, data.refresh);
+          request.headers.set("Authorization", `Bearer ${data.access}`)
+          return fetch(request)
+        } catch (e) {
+          if (e instanceof Error) {
+            setTokens(null, null);
+            DeviceEventEmitter.emit("REFRESH_FAILED");
+          }
+        }
+      }
+      return response;
     }
   }
 )
