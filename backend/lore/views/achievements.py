@@ -48,7 +48,7 @@ class AchievementViewSet(viewsets.ModelViewSet):
         return serializers.AchievementSerializer
 
     def get_queryset(self):
-        """Get all achievements for the user's groups or the route's group."""
+        """Get all achievements that the user completed or all the achievements in the group. """
         user: LoreUser = cast(LoreUser, self.request.user)
         queryset = Achievement.achievements
         if self.kwargs.get("loregroup_pk") is not None:
@@ -57,8 +57,7 @@ class AchievementViewSet(viewsets.ModelViewSet):
             )
         else:
             user_groups = LoreGroup.groups.get_groups_with_user(user)
-            queryset = queryset.filter(group__in=user_groups)
-
+            queryset = queryset.filter(group__in=user_groups).filter(achieved_by=user)
         return queryset.order_by("pk")
 
     def perform_create(
