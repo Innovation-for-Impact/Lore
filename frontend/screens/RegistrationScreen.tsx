@@ -18,38 +18,6 @@ const screenHeight = Dimensions.get('window').height;
 const RegistrationScreen = () => {
   const navigation = useNavigation<AuthNavigation>();
 
-  // Check if user is already logged in
-  // useEffect(() => {
-  //   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-  //   let stale = false;
-  //   SecureStore.getItemAsync('jwt_token').then((token) => {
-  //     fetch(`${apiUrl}/api/v1/auth/token/verify/`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         token: token,
-  //       }),
-  //     })
-  //       .then((res) => {
-  //         if (!res.ok) {
-  //           throw new Error('Not logged in.');
-  //         }
-  //
-  //         if (!stale) {
-  //           navigation.navigate("WelcomeBack");
-  //         }
-  //       })
-  //     // .catch((err) => {
-  //     //   console.log(err);
-  //     // });
-  //   });
-  //   return () => {
-  //     stale = true;
-  //   };
-  // }, []);
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>What&apos;s Your</Text>
