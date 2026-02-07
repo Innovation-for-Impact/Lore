@@ -2804,6 +2804,8 @@ components:
           type: array
           items:
             type: integer
+            default: []
+          default: []
         num_achieved:
           type: integer
           description: Get the number of users that achieved this.
@@ -2833,7 +2835,6 @@ components:
           description: Get the url for the authenticated user.
           readOnly: true
       required:
-      - achieved_by
       - achievers_url
       - created
       - description
@@ -3762,9 +3763,6 @@ components:
           type: string
           format: uri
           readOnly: true
-        total_achievements:
-          type: string
-          readOnly: true
     Quote:
       type: object
       description: |-
@@ -3891,14 +3889,10 @@ components:
           type: string
           format: uri
           readOnly: true
-        total_achievements:
-          type: string
-          readOnly: true
       required:
       - first_name
       - id
       - last_name
-      - total_achievements
       - url
     UserRegister:
       type: object

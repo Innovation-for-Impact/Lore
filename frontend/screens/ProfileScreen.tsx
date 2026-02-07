@@ -38,6 +38,26 @@ const ProfileScreen = () => {
 
   const numQuotes = quotes?.pages.flatMap(page => page.results).length || 0;
 
+  const { data: achievements, hasNextPage: achievementsNextPage, isFetching: achievemtnFetching, fetchNextPage: fetchNextAchievementPage } = $api.useInfiniteQuery(
+    "get",
+    "/api/v1/achievements/",
+    {},
+    infiniteQueryParams
+  )
+
+  useEffect(() => {
+    if (achievementsNextPage && !achievemtnFetching) {
+      fetchNextAchievementPage();
+    }
+  }, [achievementsNextPage, achievemtnFetching])
+
+  const numAchievements = achievements?.pages.flatMap(page => page.results).length || 0;
+
+  const { mutateAsync: logout } = $api.useMutation(
+    "post",
+    "/api/v1/auth/logout/"
+  )
+
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top }]}>
@@ -57,7 +77,6 @@ const ProfileScreen = () => {
           }
         ]}
       >
-
         <View style={styles.profileContainer}>
           <View style={styles.avatarBorder}>
             <Image
@@ -79,7 +98,7 @@ const ProfileScreen = () => {
             <Text style={styles.statLabel}>quotes</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>{user!.total_achievements}</Text>
+            <Text style={styles.statNum}>{numAchievements}</Text>
             <Text style={styles.statLabel}>achievements</Text>
           </View>
         </View>
@@ -97,7 +116,8 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.actionSection}>
-          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={() => {
+          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
+            await logout({});
             setUser(null)
           }}>
             <Text style={styles.buttonText}>log out</Text>

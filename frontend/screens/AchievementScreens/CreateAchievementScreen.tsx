@@ -19,6 +19,7 @@ import { LoadingModal } from '../../components/LoadingModal';
 import { FailureModal } from '../../components/FailureModal';
 import { HomeStackParamList } from '../../navigation/NavigationParams';
 import { HomeNavigation } from '../../navigation/Navigators';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 // -------------------------------
@@ -51,11 +52,13 @@ const CreateAchievementScreen = ({ route }: Props) => {
 
   const insets = useSafeAreaInsets();
 
+  const queryClient = useQueryClient();
   const { mutateAsync: createAchievement, isPending } = $api.useMutation(
     "post",
     "/api/v1/groups/{loregroup_pk}/achievements/",
     {
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/achievements/", { params: { path: { loregroup_pk: String(group.id) } } }).queryKey });
         setSuccess(true);
       },
       onError: () => {

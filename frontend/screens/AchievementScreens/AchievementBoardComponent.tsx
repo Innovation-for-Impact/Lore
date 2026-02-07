@@ -37,15 +37,9 @@ const scaleHeight = (size: number, screenHeight: number) => (screenHeight / guid
 
 function useRefreshData(groupID: string) {
   const queryClient = useQueryClient();
-  const { setUser } = useUser();
   return async () => {
     queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/achievements/", { params: { path: { loregroup_pk: groupID } } }).queryKey });
-    await queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/auth/user/").queryKey })
-    const options = queryOptions($api.queryOptions("get", "/api/v1/auth/user/"));
-    const freshUser = await queryClient.fetchQuery(options);
-    if (freshUser) {
-      setUser(freshUser);
-    }
+    queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/achievements/").queryKey });
   }
 }
 

@@ -1103,6 +1103,7 @@ export interface components {
             /** Format: uri */
             image?: string;
             description: string;
+            /** @default [] */
             achieved_by: number[];
             /** @description Get the number of users that achieved this. */
             readonly num_achieved: number;
@@ -1584,7 +1585,6 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url?: string;
-            readonly total_achievements?: string;
         };
         /**
          * @description Serializer for the quote detail.
@@ -1645,7 +1645,6 @@ export interface components {
             avatar?: string | null;
             /** Format: uri */
             readonly url: string;
-            readonly total_achievements: string;
         };
         /**
          * @description Custom serializer for user registration.
