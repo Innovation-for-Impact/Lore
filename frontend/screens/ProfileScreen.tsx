@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dimensions,
   Image,
@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
 import { ProfileNavigation } from '../navigation/Navigators';
+import { $api, infiniteQueryParams } from '../types/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +21,42 @@ const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<ProfileNavigation>();
   const { user, setUser } = useUser();
+
+  // Get num quotes and num achievements
+  const { data: quotes, hasNextPage: quoteNextPage, isFetching: quoteFetching, fetchNextPage: fetchNextQuotePage } = $api.useInfiniteQuery(
+    "get",
+    "/api/v1/quotes/",
+    {},
+    infiniteQueryParams
+  )
+
+  useEffect(() => {
+    if (quoteNextPage && !quoteFetching) {
+      fetchNextQuotePage();
+    }
+  }, [quoteNextPage, quoteFetching])
+
+  const numQuotes = quotes?.pages.flatMap(page => page.results).length || 0;
+
+  const { data: achievements, hasNextPage: achievementsNextPage, isFetching: achievemtnFetching, fetchNextPage: fetchNextAchievementPage } = $api.useInfiniteQuery(
+    "get",
+    "/api/v1/achievements/",
+    {},
+    infiniteQueryParams
+  )
+
+  useEffect(() => {
+    if (achievementsNextPage && !achievemtnFetching) {
+      fetchNextAchievementPage();
+    }
+  }, [achievementsNextPage, achievemtnFetching])
+
+  const numAchievements = achievements?.pages.flatMap(page => page.results).length || 0;
+
+  const { mutateAsync: logout } = $api.useMutation(
+    "post",
+    "/api/v1/auth/logout/"
+  )
 
   return (
     <View style={styles.container}>
@@ -40,7 +77,6 @@ const ProfileScreen = () => {
           }
         ]}
       >
-
         <View style={styles.profileContainer}>
           <View style={styles.avatarBorder}>
             <Image
@@ -58,15 +94,11 @@ const ProfileScreen = () => {
         {/* Statistics */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>15</Text>
+            <Text style={styles.statNum}>{numQuotes}</Text>
             <Text style={styles.statLabel}>quotes</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>150</Text>
-            <Text style={styles.statLabel}>memories</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>2</Text>
+            <Text style={styles.statNum}>{numAchievements}</Text>
             <Text style={styles.statLabel}>achievements</Text>
           </View>
         </View>
@@ -79,18 +111,13 @@ const ProfileScreen = () => {
           </View>
           <View style={styles.card}>
             <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
-            <Text style={styles.cardLabel}>your memories</Text>
+            <Text style={styles.cardLabel}>your achievements</Text>
           </View>
         </View>
 
-        {/* Full Width Card */}
-        <View style={[styles.card, styles.fullCard]}>
-          <Image source={{ uri: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600' }} style={styles.fullCardImg} />
-          <Text style={styles.cardLabel}>your achievements</Text>
-        </View>
-
         <View style={styles.actionSection}>
-          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={() => {
+          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
+            await logout({});
             setUser(null)
           }}>
             <Text style={styles.buttonText}>log out</Text>
@@ -173,19 +200,9 @@ const styles = StyleSheet.create({
     width: width * 0.42,
     alignItems: 'center',
   },
-  fullCard: {
-    width: width - 40,
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
   cardImg: {
     width: '100%',
     height: 110,
-    borderRadius: 10,
-  },
-  fullCardImg: {
-    width: '100%',
-    height: 130,
     borderRadius: 10,
   },
   cardLabel: {

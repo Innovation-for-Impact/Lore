@@ -1103,6 +1103,7 @@ export interface components {
             /** Format: uri */
             image?: string;
             description: string;
+            /** @default [] */
             achieved_by: number[];
             /** @description Get the number of users that achieved this. */
             readonly num_achieved: number;

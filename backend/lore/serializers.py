@@ -20,7 +20,6 @@ class UserSerializer(
     serializers.HyperlinkedModelSerializer,
 ):
     """A serializer for exposing public information about a user."""
-
     class Meta:
         model = models.LoreUser
         fields: typing.ClassVar[list[str]] = [
@@ -279,6 +278,13 @@ class AchievementSerializer(serializers.ModelSerializer):
             "group_url",
             "logged_in_user_url",
         ]
+        extra_kwargs = {
+                "achieved_by": {
+                    "required": False,
+                    "allow_empty": True,
+                    "default": []
+                }
+            }
 
 
 class AchievementUpdateSerializer(AchievementSerializer):
