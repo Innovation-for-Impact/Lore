@@ -10,10 +10,8 @@ import { HomeNavigation } from '../navigation/Navigators';
 import { $api } from '../types/constants';
 import { pickImage } from '../utils/GroupUtils';
 
-type EditGroupScreenRouteProp = RouteProp<HomeStackParamList, 'GroupEditScreen'>;
-
 type Props = {
-  route: EditGroupScreenRouteProp;
+  route: RouteProp<HomeStackParamList, 'GroupEditScreen'>;
 };
 
 const GroupEditScreen = ({ route }: Props) => {
