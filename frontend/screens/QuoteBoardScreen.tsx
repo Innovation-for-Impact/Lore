@@ -19,7 +19,7 @@ enum Tabs {
 };
 
 interface Props {
-  route: RouteProp<HomeStackParamList, 'GroupInfoScreen'>;
+  route: RouteProp<HomeStackParamList, 'QuoteBoardScreen'>;
 }
 const QuoteBoardScreen = ({ route }: Props) => {
   const { group } = route.params;
