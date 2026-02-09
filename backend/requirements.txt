@@ -7,7 +7,7 @@ cryptography==44.0.2
 defusedxml==0.7.1
 dj-rest-auth==7.0.0
 Django==5.1.15
-django-allauth==0.61.1
+django-allauth==65.13.0
 django-cors-headers==4.7.0
 django-environ==0.12.0
 django-filter==25.1
@@ -37,12 +37,12 @@ PySocks==1.7.1
 python3-openid==3.2.0
 PyYAML==6.0.3
 referencing==0.36.2
-requests==2.32.3
+requests==2.32.4
 requests-oauthlib==2.0.0
 requests-toolbelt==1.0.0
 rich==13.9.4
 rpds-py==0.27.1
-setuptools==75.8.0
+setuptools==78.1.1
 six==1.17.0
 sqlparse==0.5.3
 types-PyYAML==6.0.12.20241230
