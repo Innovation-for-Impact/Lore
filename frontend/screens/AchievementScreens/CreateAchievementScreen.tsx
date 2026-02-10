@@ -59,8 +59,7 @@ const CreateAchievementScreen = ({ route }: Props) => {
         queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/achievements/", { params: { path: { loregroup_pk: String(group.id) } } }).queryKey });
         setSuccess(true);
       },
-      onError: (e) => {
-        console.log(e)
+      onError: () => {
         setFailed(true);
       }
     }
