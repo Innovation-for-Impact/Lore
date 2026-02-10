@@ -21,7 +21,7 @@ class AchievementViewSet(viewsets.ModelViewSet):
     Supports filtering by group_id and searching by description and title
     Achievements can only be created when querying by a specific group.
 
-    To create an achievemet, it expects an `image`, 'description', and 'title'
+    To create an achievemet, it expects `difficulty`, 'description', and 'title'
     fields. The group is automatically set by the query parameters.
     """
 

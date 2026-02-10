@@ -1,25 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import React from "react";
 import {
   Dimensions,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { TextInput } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { $api } from '../../types/constants';
-import badge1 from '../../assets/achievement-badges/Badge_01_activated.png';
-import badge2 from '../../assets/achievement-badges/Badge_02_activated.png';
-import { SuccessModal } from '../../components/SuccessModal';
-import { LoadingModal } from '../../components/LoadingModal';
 import { FailureModal } from '../../components/FailureModal';
+import { LoadingModal } from '../../components/LoadingModal';
+import { SuccessModal } from '../../components/SuccessModal';
 import { HomeStackParamList } from '../../navigation/NavigationParams';
 import { HomeNavigation } from '../../navigation/Navigators';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { components } from '../../types/backend-schema';
+import { $api } from '../../types/constants';
 
 
 // -------------------------------
@@ -41,10 +39,10 @@ type Props = {
 
 const CreateAchievementScreen = ({ route }: Props) => {
   const [title, setTitle] = React.useState('');
-  const [index, setIndex] = React.useState(0);
   const [description, setDescription] = React.useState('');
   const [success, setSuccess] = React.useState(false);
   const [failed, setFailed] = React.useState(false);
+  const [difficulty, setDifficulty] = React.useState<components["schemas"]["DifficultyEnum"]>(1);
 
   const { group } = route.params;
 
@@ -61,26 +59,12 @@ const CreateAchievementScreen = ({ route }: Props) => {
         queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/achievements/", { params: { path: { loregroup_pk: String(group.id) } } }).queryKey });
         setSuccess(true);
       },
-      onError: () => {
+      onError: (e) => {
+        console.log(e)
         setFailed(true);
       }
     }
-
   )
-
-  // -------------------------------
-  // YOUR PNG BADGES HERE
-  // -------------------------------
-  const badges = [
-    { image: badge1 },
-    { image: badge2 },
-    // add more PNGs if needed
-  ];
-
-  const prev = () => setIndex((i) => (i === 0 ? badges.length - 1 : i - 1));
-  const next = () => setIndex((i) => (i === badges.length - 1 ? 0 : i + 1));
-
-  const current = badges[index];
 
   const handleCreateAchievement = () => {
     createAchievement({
@@ -92,6 +76,7 @@ const CreateAchievementScreen = ({ route }: Props) => {
       body: {
         title: title,
         description: description,
+        difficulty: difficulty,
         achieved_by: [],
       }
     })
@@ -129,30 +114,26 @@ const CreateAchievementScreen = ({ route }: Props) => {
         />
       </View>
 
-      {/* BADGE SELECTOR */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>select a badge cover</Text>
-
-        <View style={styles.card}>
-
-          {/* LEFT ARROW */}
-          <TouchableOpacity onPress={prev} style={styles.chevronBtn}>
-            <Ionicons name="chevron-back" size={s(36)} color="#3A3241" />
-          </TouchableOpacity>
-
-          {/* PNG BADGE */}
-          <View style={styles.previewWrap}>
-            <Image
-              source={current.image}
-              style={styles.badgeImage}
-            />
-          </View>
-
-          {/* RIGHT ARROW */}
-          <TouchableOpacity onPress={next} style={styles.chevronBtn}>
-            <Ionicons name="chevron-forward" size={s(36)} color="#3A3241" />
-          </TouchableOpacity>
-
+        <Text style={styles.sectionTitle}>select a difficulty</Text>
+        <View style={styles.selectorContainer}>
+          {([1, 2, 3] as const).map((level) => (
+            <TouchableOpacity
+              key={level}
+              onPress={() => setDifficulty(level)}
+              style={[
+                styles.square,
+                difficulty === level && styles.difficultyCircleActive
+              ]}
+            >
+              <Text style={[
+                styles.difficultyText,
+                difficulty === level && styles.difficultyTextActive
+              ]}>
+                {level === 1 ? 'EASY' : level === 2 ? 'MED' : 'HARD'}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
@@ -236,38 +217,7 @@ const styles = StyleSheet.create({
     fontSize: s(16),
     fontWeight: '500',
     color: '#44344D',
-    marginBottom: 5,
-  },
-
-  card: {
-    width: '100%',
-    height: s(250),
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 3,
-  },
-
-  chevronBtn: {
-    paddingHorizontal: s(12),
-    paddingVertical: s(8),
-  },
-
-  previewWrap: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  badgeImage: {
-    width: s(160),
-    height: s(160),
-    resizeMode: 'contain',
+    marginBottom: 10,
   },
 
   descriptionWrapper: {
@@ -302,42 +252,40 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-  successOverlay: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-  },
-
-  successCard: {
-    width: '85%',
-    minHeight: s(76),
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#9680B6',   // <-- purple border
+  selectorContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    transform: [{ translateY: -40 }],
-  },
-
-  successIconCircle: {
-    width: s(44),       // bigger circle
-    height: s(44),
-    borderRadius: s(22),
-    backgroundColor: '#17990B',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    gap: s(16), // Consistent spacing between squares
   },
 
+  square: {
+    width: s(100),
+    height: s(100),
+    backgroundColor: '#F0F0F3',
+    borderRadius: s(16),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#D1D1D6',
+    // Neumorphic/Flat elevation
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+  },
 
-  successText: {
-    fontFamily: 'Work Sans',
-    fontSize: s(16),
-    color: '#17990B', // <-- green text
+  difficultyCircleActive: {
+    backgroundColor: '#5A3E7A',
+  },
+  difficultyText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#3A3241',
+  },
+  difficultyTextActive: {
+    color: '#FFF',
   },
 });
 
