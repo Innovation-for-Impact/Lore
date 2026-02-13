@@ -204,7 +204,7 @@ class AchievementSerializer(serializers.ModelSerializer):
     Serializes the achievement's:
       - id (read only)
       - title
-      - image
+      - difficulty
       - description
       - achieved_by
       - achieved_by_url (read only)
@@ -221,7 +221,10 @@ class AchievementSerializer(serializers.ModelSerializer):
         read_only=True,
         source="group",
     )
-    image = serializers.ImageField(required=False)
+    difficulty = serializers.ChoiceField(
+        choices=[1, 2, 3],
+        help_text="1=Easy, 2=Medium, 3=Hard"
+    )
     achievers_url = serializers.HyperlinkedIdentityField(
         view_name="achievement-loreuser-list",
         lookup_field="pk",
@@ -244,7 +247,7 @@ class AchievementSerializer(serializers.ModelSerializer):
         """Create an instane of an Image."""
         return models.Achievement.achievements.create_achievement(
             title=validated_data["title"],
-            image=validated_data.get("image"),
+            difficulty=validated_data["difficulty"],
             description=validated_data["description"],
             achieved_by=validated_data.get("achieved_by", []),
             group=validated_data["group"],
@@ -267,7 +270,7 @@ class AchievementSerializer(serializers.ModelSerializer):
         fields: ClassVar[list[str]] = [
             "id",
             "title",
-            "image",
+            "difficulty",
             "description",
             "achieved_by",
             "num_achieved",

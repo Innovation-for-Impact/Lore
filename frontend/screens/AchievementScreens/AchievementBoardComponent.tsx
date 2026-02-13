@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { queryOptions, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -18,6 +19,7 @@ import { useUser } from '../../context/UserContext';
 import { HomeNavigation } from '../../navigation/Navigators';
 import { components } from '../../types/backend-schema';
 import { $api, Group, infiniteQueryParams } from '../../types/constants';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // --- Mock Data for Achievements ---
 const BadgeAssets = {
@@ -109,7 +111,8 @@ function Achievement({ groupID, achievement }: AchievementProps) {
       />
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <Text style={styles.title}>{achievement.title}</Text>
-        <Text style={styles.desc}>{achievement.description}</Text>
+        <Text style={styles.desc}>Description: {achievement.description}</Text>
+        <Text style={styles.desc}>Difficulty: {achievement.difficulty}</Text>
       </View>
       {
         isItemLoading ?
@@ -131,6 +134,7 @@ const AchievementBoardComponent = ({ group }: Props) => {
   const navigation = useNavigation<HomeNavigation>();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const horizontalPadding = screenWidth * 0.06;
+  const insets = useSafeAreaInsets();
 
   const { data: achievements, isLoading: loadingAchievements, hasNextPage, isFetching, fetchNextPage, isError: errorAchievements } = $api.useInfiniteQuery(
     "get",
@@ -232,11 +236,18 @@ const AchievementBoardComponent = ({ group }: Props) => {
               </Text>
             </View>
             :
-            achievementsList.map((achievement) => {
-              return (
-                <Achievement key={achievement.id} groupID={String(group.id)} achievement={achievement} />
-              )
-            })
+            <FlatList
+              data={achievementsList}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => (
+                <Achievement
+                  groupID={String(group.id)}
+                  achievement={item}
+                />
+              )}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
+            />
         }
       </View>
     </View>
