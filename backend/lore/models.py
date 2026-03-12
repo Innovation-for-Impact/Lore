@@ -11,6 +11,7 @@ from django.forms import ValidationError
 from django.http import Http404
 from django.utils.deconstruct import deconstructible
 from rest_framework.fields import MinLengthValidator, ObjectDoesNotExist
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Http409Error(Exception):
@@ -402,7 +403,7 @@ class AchievementManager(models.Manager):
         self,
         title: str,
         description: str,
-        image: File | None,
+        difficulty: int,
         achieved_by: list[LoreUser],
         group: LoreGroup,
     ) -> "Achievement":
@@ -412,7 +413,7 @@ class AchievementManager(models.Manager):
         """
         achievement_model = self.model(
             title=title,
-            image=image,
+            difficulty = difficulty,
             description=description,
             group=group,
         )
@@ -434,16 +435,13 @@ class Achievement(GroupItem):
 
     Requires a title with max length 128,
     a description with max length 1024,
-    an image url with max length 128,
+    an difficulty integer 1, 2, or 3,
     and a group foreign key
     """
 
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=1024)
-    image = models.ImageField(
-        upload_to=PathAndRename("achievement_images"),
-        null=True,
-    )
+    difficulty = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(3)])
     group = models.ForeignKey(LoreGroup, on_delete=models.CASCADE)
     achieved_by = models.ManyToManyField(LoreUser)
     created = models.DateTimeField(auto_now_add=True)
@@ -454,8 +452,8 @@ class Achievement(GroupItem):
         return self.achieved_by.count()
 
     REQUIRED_FIELDS: ClassVar[list[str]] = [
-        "image",
-        "descrption",
+        "difficulty",
+        "description",
         "title",
     ]
 

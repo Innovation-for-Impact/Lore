@@ -13,7 +13,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - name: page
@@ -48,7 +48,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       tags:
       - achievements
@@ -202,7 +202,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -230,7 +230,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -270,7 +270,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -309,7 +309,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1174,7 +1174,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1214,7 +1214,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1255,7 +1255,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1288,7 +1288,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1333,7 +1333,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -1377,7 +1377,7 @@ paths:
         Supports filtering by group_id and searching by description and title
         Achievements can only be created when querying by a specific group.
 
-        To create an achievemet, it expects an `image`, 'description', and 'title'
+        To create an achievemet, it expects `difficulty`, 'description', and 'title'
         fields. The group is automatically set by the query parameters.
       parameters:
       - in: path
@@ -2779,7 +2779,7 @@ components:
         Serializes the achievement's:
           - id (read only)
           - title
-          - image
+          - difficulty
           - description
           - achieved_by
           - achieved_by_url (read only)
@@ -2794,9 +2794,15 @@ components:
         title:
           type: string
           maxLength: 128
-        image:
-          type: string
-          format: uri
+        difficulty:
+          allOf:
+          - $ref: '#/components/schemas/DifficultyEnum'
+          description: |-
+            1=Easy, 2=Medium, 3=Hard
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
         description:
           type: string
           maxLength: 1024
@@ -2838,6 +2844,7 @@ components:
       - achievers_url
       - created
       - description
+      - difficulty
       - group
       - group_url
       - id
@@ -2858,9 +2865,15 @@ components:
         title:
           type: string
           maxLength: 128
-        image:
-          type: string
-          format: uri
+        difficulty:
+          allOf:
+          - $ref: '#/components/schemas/DifficultyEnum'
+          description: |-
+            1=Easy, 2=Medium, 3=Hard
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
         description:
           type: string
           maxLength: 1024
@@ -2896,6 +2909,7 @@ components:
       - achievers_url
       - created
       - description
+      - difficulty
       - group
       - group_url
       - id
@@ -3044,6 +3058,16 @@ components:
       - start_date
       - title
       - url
+    DifficultyEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
     Group:
       type: object
       description: |-
@@ -3499,9 +3523,15 @@ components:
         title:
           type: string
           maxLength: 128
-        image:
-          type: string
-          format: uri
+        difficulty:
+          allOf:
+          - $ref: '#/components/schemas/DifficultyEnum'
+          description: |-
+            1=Easy, 2=Medium, 3=Hard
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
         description:
           type: string
           maxLength: 1024

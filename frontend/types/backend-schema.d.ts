@@ -17,7 +17,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         get: operations["achievements_list"];
@@ -28,7 +28,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         post: operations["achievements_create"];
@@ -108,7 +108,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         get: operations["achievements_retrieve"];
@@ -118,7 +118,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         put: operations["achievements_update"];
@@ -129,7 +129,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         delete: operations["achievements_destroy"];
@@ -141,7 +141,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         patch: operations["achievements_partial_update"];
@@ -561,7 +561,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         get: operations["groups_achievements_list"];
@@ -572,7 +572,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         post: operations["groups_achievements_create"];
@@ -595,7 +595,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         get: operations["groups_achievements_retrieve"];
@@ -605,7 +605,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         put: operations["groups_achievements_update"];
@@ -616,7 +616,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         delete: operations["groups_achievements_destroy"];
@@ -628,7 +628,7 @@ export interface paths {
          *     Supports filtering by group_id and searching by description and title
          *     Achievements can only be created when querying by a specific group.
          *
-         *     To create an achievemet, it expects an `image`, 'description', and 'title'
+         *     To create an achievemet, it expects `difficulty`, 'description', and 'title'
          *     fields. The group is automatically set by the query parameters.
          */
         patch: operations["groups_achievements_partial_update"];
@@ -1088,7 +1088,7 @@ export interface components {
          *     Serializes the achievement's:
          *       - id (read only)
          *       - title
-         *       - image
+         *       - difficulty
          *       - description
          *       - achieved_by
          *       - achieved_by_url (read only)
@@ -1100,8 +1100,14 @@ export interface components {
         Achievement: {
             readonly id: number;
             title: string;
-            /** Format: uri */
-            image?: string;
+            /**
+             * @description 1=Easy, 2=Medium, 3=Hard
+             *
+             *     * `1` - 1
+             *     * `2` - 2
+             *     * `3` - 3
+             */
+            difficulty: components["schemas"]["DifficultyEnum"];
             description: string;
             /** @default [] */
             achieved_by: number[];
@@ -1127,8 +1133,14 @@ export interface components {
         AchievementUpdate: {
             readonly id: number;
             title: string;
-            /** Format: uri */
-            image?: string;
+            /**
+             * @description 1=Easy, 2=Medium, 3=Hard
+             *
+             *     * `1` - 1
+             *     * `2` - 2
+             *     * `3` - 3
+             */
+            difficulty: components["schemas"]["DifficultyEnum"];
             description: string;
             /** @description Get the number of users that achieved this. */
             readonly num_achieved: number;
@@ -1199,6 +1211,13 @@ export interface components {
             readonly logged_in_user_url: string | null;
             readonly group: number;
         };
+        /**
+         * @description * `1` - 1
+         *     * `2` - 2
+         *     * `3` - 3
+         * @enum {integer}
+         */
+        DifficultyEnum: 1 | 2 | 3;
         /**
          * @description Serializes a group.
          *
@@ -1440,8 +1459,14 @@ export interface components {
         PatchedAchievementUpdate: {
             readonly id?: number;
             title?: string;
-            /** Format: uri */
-            image?: string;
+            /**
+             * @description 1=Easy, 2=Medium, 3=Hard
+             *
+             *     * `1` - 1
+             *     * `2` - 2
+             *     * `3` - 3
+             */
+            difficulty?: components["schemas"]["DifficultyEnum"];
             description?: string;
             /** @description Get the number of users that achieved this. */
             readonly num_achieved?: number;

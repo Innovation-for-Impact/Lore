@@ -7,6 +7,7 @@ import GroupCard from '../components/GroupCard';
 import JoinGroup from '../components/JoinGroup';
 import { globalStyles } from '../styles/global';
 import { useGroups } from '../utils/GroupUtils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
   const [query, setQuery] = useState('');
@@ -21,6 +22,7 @@ const HomeScreen = () => {
   const { groups, isLoading, isError } = useGroups();
 
   const groupData = groups ?? emptyGroupData;
+  const insets = useSafeAreaInsets();
 
   const filteredGroups = useMemo(() => {
     return groupData.filter(group =>
@@ -30,60 +32,66 @@ const HomeScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.noGroupsText}>
-          Loading groups...
-        </Text>
-        <ActivityIndicator size="large" color="purple" />
+      <View style={[styles.emptyContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.noGroupsText}>
+            Loading groups...
+          </Text>
+          <ActivityIndicator size="large" color="purple" />
+        </View>
       </View>
     );
   }
 
   if (isError) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.noGroupsText}>
-          Error loading groups
-        </Text>
+      <View style={[styles.emptyContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.noGroupsText}>
+            Error loading groups
+          </Text>
+        </View>
       </View>
     )
   }
 
   return (
     <>
-      <View style={[globalStyles.container, styles.mainContainer]}>
-        <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color="#FFF" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="search friend groups"
-            placeholderTextColor="#FFF"
-            value={query}
-            onChangeText={setQuery}
-          />
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <JoinGroup />
-          <CreateGroup />
-        </View>
-        {
-          filteredGroups.length === 0 ?
-            <View style={styles.emptyContainer}>
-              <Text style={styles.noGroupsText}>
-                no groups to show
-              </Text>
-            </View> :
-            <FlatList
-              data={filteredGroups}
-              keyExtractor={(item) => String(item.id)}
-              renderItem={({ item }) => <GroupCard group={item} />}
-              contentContainerStyle={styles.listContainer} // ensures even spacing
-              keyboardShouldPersistTaps="handled" // allows smooth scrolling
-              showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+      <View style={[styles.emptyContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View style={[globalStyles.container, styles.mainContainer]}>
+          <View style={styles.searchContainer}>
+            <Ionicons name="search-outline" size={20} color="#FFF" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="search friend groups"
+              placeholderTextColor="#FFF"
+              value={query}
+              onChangeText={setQuery}
             />
-        }
+          </View>
 
+          <View style={styles.buttonContainer}>
+            <JoinGroup />
+            <CreateGroup />
+          </View>
+          {
+            filteredGroups.length === 0 ?
+              <View style={styles.emptyContainer}>
+                <Text style={styles.noGroupsText}>
+                  no groups to show
+                </Text>
+              </View> :
+              <FlatList
+                data={filteredGroups}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={({ item }) => <GroupCard group={item} />}
+                contentContainerStyle={styles.listContainer} // ensures even spacing
+                keyboardShouldPersistTaps="handled" // allows smooth scrolling
+                showsVerticalScrollIndicator={false} // this hides the scrollbar for cleaner UI
+              />
+          }
+
+        </View>
       </View>
     </>
   );
