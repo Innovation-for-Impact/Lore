@@ -90,10 +90,11 @@ const LoginScreen = () => {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <View style={styles.container}>
           <TouchableOpacity onPress={async () => {
+            setTokens(null, null)
             await login(
               {
                 body: {
-                  email: "test@test.com",
+                  email: "test2@test.com",
                   password: "test123test123"
                 }
               }
