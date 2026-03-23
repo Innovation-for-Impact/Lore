@@ -16,6 +16,8 @@ fi) <<EOF
 \x
 CREATE DATABASE lore;
 CREATE USER myuser WITH ENCRYPTED PASSWORD 'mypass';
+ALTER DATABASE lore OWNER TO myuser;
+ALTER SCHEMA public OWNER TO myuser;
 ALTER ROLE myuser SET client_encoding TO 'utf8';
 ALTER ROLE myuser SET default_transaction_isolation TO 'read committed';
 ALTER ROLE myuser SET timezone TO 'UTC';

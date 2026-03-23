@@ -83,12 +83,23 @@ const QuoteBoardScreen = ({ route }: Props) => {
 
       {/* Content */}
       <View style={styles.content}>
-        {activeTab === Tabs.viewQuotes ? (
-          <ViewQuotes group={group} />
-        ) : (
+        {activeTab === Tabs.viewQuotes && (
+          <>
+            <Text style={styles.headerText}>
+              quotes
+            </Text>
+            <Text style={styles.descriptionText}>
+              {"check out your group quotes and pin your favorites, or create a revolutionary quote yourself!"}
+            </Text>
+            <ViewQuotes group={group} />
+          </>
+        )}
+
+        {activeTab === Tabs.createQuote && (
           <CreateQuote group={group} />
         )}
       </View>
+
     </View>
   );
 };
@@ -135,5 +146,21 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 16,
   },
+  headerText: {
+    fontFamily: 'Work Sans',
+    fontSize: 32,
+    marginLeft: 18,
+    fontWeight: '400',
+    color: '#000000ff',
+  },
+  descriptionText: {
+    marginTop: 8,
+    marginBottom: 18,
+    marginLeft: 18,
+    fontFamily: 'Work Sans',
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#000000ff',
+  }
 });
 
