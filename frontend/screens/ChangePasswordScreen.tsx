@@ -24,7 +24,8 @@ export default function ChangePasswordScreen() {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [error, setError] = useState(false);
 
@@ -71,7 +72,7 @@ export default function ChangePasswordScreen() {
             <TouchableOpacity onPress={navigation.goBack}>
               <Ionicons name="arrow-back" size={30} color="#FFF" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Change Password</Text>
+            <Text style={styles.headerTitle}>change password</Text>
             <View style={{ width: 30 }} />
           </View>
 
@@ -80,14 +81,14 @@ export default function ChangePasswordScreen() {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                secureTextEntry={!showPassword}
+                secureTextEntry={!showPassword1}
                 value={newPassword}
                 onChangeText={setNewPassword}
                 placeholderTextColor="#999"
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <TouchableOpacity onPress={() => setShowPassword1(!showPassword1)}>
                 <Ionicons
-                  name={showPassword ? "eye-off" : "eye"}
+                  name={showPassword1 ? "eye-off" : "eye"}
                   size={20}
                   color="#5E4B81"
                 />
@@ -99,11 +100,18 @@ export default function ChangePasswordScreen() {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                secureTextEntry={!showPassword}
+                secureTextEntry={!showPassword2}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholderTextColor="#999"
               />
+              <TouchableOpacity onPress={() => setShowPassword2(!showPassword2)}>
+                <Ionicons
+                  name={showPassword2 ? "eye-off" : "eye"}
+                  size={20}
+                  color="#5E4B81"
+                />
+              </TouchableOpacity>
             </View>
 
             {/* Action Button */}
@@ -147,7 +155,6 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   headerTitle: {
-    color: '#FFF',
     fontSize: 20,
     fontWeight: 'bold',
     fontFamily: 'Work Sans'
