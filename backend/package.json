@@ -1,0 +1,12 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "``` python3 -m venv env pip install -r requirements.txt source env/bin/activate ./bin/init_test_db python3 manage.py createsuperuser python3 manage.py runserver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,35 +1,63 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CommunityNavigation } from "../../navigation/Navigators";
+import { $api } from "../../types/constants";
+import { useMutation, useMutationState } from "@tanstack/react-query";
+import { HomeNavigation } from "../../navigation/Navigators";
+import { HomeStackParamList } from "../../navigation/NavigationParams";
 
 
-const ChallengeListComponent = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+type Props = {
+  route: RouteProp<HomeStackParamList, 'ChallengeList'>;
+};
+
+const ChallengeListComponent = ({ route } : Props) => {
+  const navigation = useNavigation<HomeNavigation>();
+  const { group } = route.params;
 
   const goToDetail = (id: string) =>
-    navigation.navigate('ChallengeDetail', { id });
+    navigation.navigate('ChallengeDetail', { id, group });
 
-  const challenges = [
-    {
-      id: 1,
-      title: "romeo & juliet",
-      description:
-        "capture a picture of you belting to a love song or carrying a speaker to somebody.",
-    },
-    {
-      id: 2,
-      title: "sniped",
-      description:
-        "capture a picture of a friend when they're least expecting it & get their reaction.",
-    },
-    {
-      id: 3,
-      title: "find the M",
-      description:
-        "capture a picture of the hidden M on campus before your friends get to it.",
-    },
-  ];
+
+  const { data, error, isLoading } = $api.useQuery("get", "/api/v1/challenges/");
+
+  if (!data || isLoading) {
+    return (<Text>
+      Loading... Placeholder!
+    </Text>);
+  }
+
+  if (error) {
+    throw new Error(`An error occurred: ${error}`);
+  }
+
+
+  
+  
+  
+
+  // const challenges = [
+    // {
+    //   id: 1,
+    //   title: "romeo & juliet",
+    //   description:
+    //     "capture a picture of you belting to a love song or carrying a speaker to somebody.",
+    // },
+    // {
+    //   id: 2,
+    //   title: "sniped",
+    //   description:
+    //     "capture a picture of a friend when they're least expecting it & get their reaction.",
+    // },
+    // {
+    //   id: 3,
+    //   title: "find the M",
+    //   description:
+    //     "capture a picture of the hidden M on campus before your friends get to it.",
+    // },
+  // ];
+
+
 
   return (
     <View style={styles.fullScreenContainer}>
@@ -41,13 +69,13 @@ const ChallengeListComponent = () => {
       </Text>
 
       {/* Create Challenge */}
-      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate('ChallengeCreate')}>
+      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate("ChallengeCreate", { group })}>
         <Text style={styles.createChallengeButtonText}>create challenge</Text>
       </TouchableOpacity>
 
       {/* Challenge List */}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {challenges.map((ch) => (
+        {data["results"].map((ch) => (
           <TouchableOpacity
             key={ch.id}
             style={styles.challengeCard}

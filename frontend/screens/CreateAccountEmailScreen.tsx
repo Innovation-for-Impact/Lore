@@ -31,6 +31,7 @@ const CreateAccountEmailScreen = () => {
     "/api/v1/auth/registration/",
     {
       onError: (error) => {
+        console.log(`An error has occurred! Error: ${error}`);
         setError(error.password1[0]); // TODO: Get openAPI spec to generate this
       }
     }
@@ -71,6 +72,8 @@ const CreateAccountEmailScreen = () => {
       setError("Passwords do not match.");
       return;
     }
+
+    console.log("Created account!");
 
     await register({
       body: {

@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { CommunityNavigation } from "../../navigation/Navigators";
+// import { CommunityNavigation } from "../../navigation/Navigators";
 
 const ChallengeCreateScreen = () => {
-  const navigation = useNavigation<CommunityNavigation>();
+  // const navigation = useNavigation<CommunityNavigation>();
+  const navigation = useNavigation();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [maker, setMaker] = useState("");
@@ -40,6 +41,8 @@ const ChallengeCreateScreen = () => {
       setPosted(false);
       navigation.goBack();
     }, 1500);
+
+    
   };
 
   const goBack = () => navigation.goBack();

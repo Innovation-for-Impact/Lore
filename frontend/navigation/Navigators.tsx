@@ -72,4 +72,3 @@ import ChallengeCreateScreen from '../screens/ChallengeScreens/ChallengeCreateSc
 export type HomeNavigation = NavigationProp<HomeStackParamList>
 export type AuthNavigation = NavigationProp<RegistrationStackParamList>
 export type ProfileNavigation = NavigationProp<ProfileStackParamList>
-
