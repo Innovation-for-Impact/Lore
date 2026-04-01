@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import dj_database_url
 import environ
 
 env = environ.Env(
@@ -70,6 +70,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
@@ -118,14 +119,10 @@ WSGI_APPLICATION = "api.wsgi.application"
 #     raise NotImplementedError("No production database server for ")
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": env("DATABASE_NAME"),
-        "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
-        "HOST": env("DATABASE_HOST"),
-        "PORT": env("DATABASE_PORT"),
-    },
+    "default":  dj_database_url.config(
+        default = 'postgresql://myuser:mypass@localhost:5432/lore',
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -187,6 +184,11 @@ USE_TZ = True
 
 STATIC_ROOT = ""
 STATIC_URL = "static/"
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = "media"
 
