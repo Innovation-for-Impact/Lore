@@ -9,7 +9,7 @@ services:
     plan: free
     name: mysite
     runtime: python
-    rootDir: './backend'
+    rootDir: backend
     buildCommand: './build.sh'
     startCommand: 'python -m gunicorn api.asgi:application -k uvicorn.workers.UvicornWorker'
     envVars:
