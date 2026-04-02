@@ -105,14 +105,14 @@ const ProfileScreen = () => {
 
         {/* Content Cards */}
         <View style={styles.grid}>
-          <View style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("ProfileQuoteScreen")}>
             <Image source={{ uri: 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your quotes</Text>
-          </View>
-          <View style={styles.card}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.card} >
             <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your achievements</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.actionSection}>

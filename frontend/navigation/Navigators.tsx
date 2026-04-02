@@ -64,6 +64,7 @@ export function ProfileNavigator() {
       <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen} />
       <ProfileStack.Screen name="ProfileEditScreen" component={ProfileEditScreen} />
       <ProfileStack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+      <ProfileStack.Screen name="ProfileQuoteScreen" component={ProfileQuoteScreen} />
     </ProfileStack.Navigator>
   );
 }
@@ -71,6 +72,7 @@ export function ProfileNavigator() {
 import { NavigationProp } from "@react-navigation/native";
 import ChallengeCreateScreen from '../screens/ChallengeScreens/ChallengeCreateScreen';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
+import ProfileQuoteScreen from '../screens/ProfileQuoteScreen';
 export type HomeNavigation = NavigationProp<HomeStackParamList>
 export type AuthNavigation = NavigationProp<RegistrationStackParamList>
 export type ProfileNavigation = NavigationProp<ProfileStackParamList>

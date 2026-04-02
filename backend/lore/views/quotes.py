@@ -56,11 +56,11 @@ class AllUserGroupsQuoteViewSet(BaseQuoteViewSet):
     ]
 
     def get_queryset(self):
-        """Get all the quotes for the user's groups or the route's group."""
+        """Get all quotes from the user"""
         user: LoreUser = cast("LoreUser", self.request.user)
         queryset = Quote.quotes
         user_groups = LoreGroup.groups.get_groups_with_user(user)
-        queryset = queryset.filter(group__in=user_groups)
+        queryset = queryset.filter(group__in=user_groups, said_by=user)
 
         return queryset.order_by("pk")
 

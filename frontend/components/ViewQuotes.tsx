@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUser } from '../context/UserContext';
-import { HomeNavigation } from '../navigation/Navigators';
+import { RootNavigation } from '../navigation/RootNavigator';
 import { $api, Group, infiniteQueryParams, Quote } from '../types/constants';
 
 const screenWidth = Dimensions.get('window').width;
@@ -21,9 +21,70 @@ const screenHeight = Dimensions.get('window').height;
 interface ViewQuotesProps {
   group: Group
 }
-const ViewQuotes = ({ group }: ViewQuotesProps) => {
-  const navigation = useNavigation<HomeNavigation>();
+
+export const RenderQuote = ({ item, onGoBack }: { item: Quote, onGoBack?: () => void }) => {
+  // const isPinned = pinnedQuotes.includes(item);
+  const navigation = useNavigation<RootNavigation>()
   const { user } = useUser();
+
+  const { data: group } = $api.useQuery("get", "/api/v1/groups/{id}/", {
+    params: { path: { id: item.group } }
+  })
+
+  if (!group) return null;
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => {
+        if (item.said_by === user!.id) {
+          navigation.navigate('Home', {
+            screen: "QuoteDetailScreen",
+            params: {
+              group: group,
+              quote: item,
+              onGoBack
+            }
+          })
+        }
+        else {
+          Alert.alert(
+            "Cannot Edit",
+            "You can only edit quotes that you created.",
+            [{ text: "OK" }]
+          );
+        }
+      }}
+    >
+      {/* Top row with pin icon and timestamp */}
+      <View style={styles.topRow}>
+        {/* <TouchableOpacity onPress={() => handlePinPress(item)}> */}
+        {/*   <Text> */}
+        {/*     {isPinned ? */}
+        {/*       <MaterialCommunityIcons name="pin" size={32} color="#44344D" /> */}
+        {/*       : */}
+        {/*       <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" /> */}
+        {/*     } */}
+        {/*   </Text> */}
+        {/* </TouchableOpacity> */}
+        <Text style={styles.timestamp}>{new Date(item.created).toLocaleString()}</Text>
+      </View>
+
+      {/* Quote text in the middle */}
+      <Text style={styles.quoteText}>{item.text}</Text>
+
+      {
+        item.context !== "" ?
+          <Text style={styles.context}> context: {item.context} </Text> : null
+      }
+
+      {/* Author at the bottom center */}
+      <Text style={styles.author}>{item.said_by_username}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const ViewQuotes = ({ group }: ViewQuotesProps) => {
   const insets = useSafeAreaInsets();
 
   // const { mutateAsync: patchQuote } = $api.useMutation(
@@ -73,51 +134,6 @@ const ViewQuotes = ({ group }: ViewQuotesProps) => {
   //   });
   // };
 
-  const renderItem = ({ item }: { item: Quote }) => {
-    // const isPinned = pinnedQuotes.includes(item);
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => {
-          if (item.said_by === user!.id) {
-            navigation.navigate('QuoteDetailScreen', { group: group, quote: item })
-          }
-          else {
-            Alert.alert(
-              "Cannot Edit",
-              "You can only edit quotes that you created.",
-              [{ text: "OK" }]
-            );
-          }
-        }}
-      >
-        {/* Top row with pin icon and timestamp */}
-        <View style={styles.topRow}>
-          {/* <TouchableOpacity onPress={() => handlePinPress(item)}> */}
-          {/*   <Text> */}
-          {/*     {isPinned ? */}
-          {/*       <MaterialCommunityIcons name="pin" size={32} color="#44344D" /> */}
-          {/*       : */}
-          {/*       <MaterialCommunityIcons name="pin-outline" size={32} color="#44344D" /> */}
-          {/*     } */}
-          {/*   </Text> */}
-          {/* </TouchableOpacity> */}
-          <Text style={styles.timestamp}>{new Date(item.created).toLocaleString()}</Text>
-        </View>
-
-        {/* Quote text in the middle */}
-        <Text style={styles.quoteText}>{item.text}</Text>
-
-        {
-          item.context !== "" ?
-            <Text style={styles.context}> context: {item.context} </Text> : null
-        }
-
-        {/* Author at the bottom center */}
-        <Text style={styles.author}>{item.said_by_username}</Text>
-      </TouchableOpacity>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -151,7 +167,7 @@ const ViewQuotes = ({ group }: ViewQuotesProps) => {
         <FlatList
           data={groupQuotes}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
+          renderItem={({ item }) => <RenderQuote item={item} />}
           contentContainerStyle={
             {
               paddingBottom: insets.bottom + 100
