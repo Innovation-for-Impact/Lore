@@ -1,19 +1,19 @@
-import { RouteProp, useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { $api } from "../../types/constants";
 import { useMutation, useMutationState } from "@tanstack/react-query";
 import { HomeNavigation } from "../../navigation/Navigators";
 import { HomeStackParamList } from "../../navigation/NavigationParams";
-
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 
 type Props = {
   route: RouteProp<HomeStackParamList, 'ChallengeList'>;
 };
 
-const ChallengeListComponent = ({ route } : Props) => {
+const ChallengeListComponent = () => {
   const navigation = useNavigation<HomeNavigation>();
-  const { group } = route.params;
+  const route = useRoute<RouteProp<HomeStackParamList, 'ChallengeList'>>();
+  const group = route.params?.group;
 
   const goToDetail = (id: string) =>
     navigation.navigate('ChallengeDetail', { id, group });
