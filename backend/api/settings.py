@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "drf_spectacular",
+    "storages",
 ]
 
 SITE_ID = 1
@@ -190,7 +191,18 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = "media/"
+AWS_ACCESS_KEY_ID = os.environ.get('B2_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('B2_APP_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL')  # e.g. https://s3.us-west-004.backblazeb2.com
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_QUERYSTRING_AUTH = True
+AWS_QUERYSTRING_EXPIRE = 3600  # URL expiration time in seconds
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/'
 MEDIA_ROOT = "media"
 
 # Default primary key field type
