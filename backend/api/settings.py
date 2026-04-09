@@ -191,12 +191,12 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-AWS_ACCESS_KEY_ID = os.environ.get('B2_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('B2_APP_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('B2_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = os.environ.get('B2_ENDPOINT_URL')  # e.g. https://s3.us-west-004.backblazeb2.com
+AWS_ACCESS_KEY_ID = env('B2_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('B2_APP_KEY')
+AWS_STORAGE_BUCKET_NAME = env('B2_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = env('B2_ENDPOINT_URL')
 AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'public-read'
+AWS_DEFAULT_ACL = None
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_QUERYSTRING_AUTH = True
 AWS_QUERYSTRING_EXPIRE = 3600  # URL expiration time in seconds

@@ -94,7 +94,7 @@ const LoginScreen = () => {
             await login(
               {
                 body: {
-                  email: "test2@test.com",
+                  email: "test@test.com",
                   password: "test123test123"
                 }
               }
