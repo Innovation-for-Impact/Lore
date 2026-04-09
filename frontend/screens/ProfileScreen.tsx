@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -104,25 +105,31 @@ const ProfileScreen = () => {
         </View>
 
         {/* Content Cards */}
-        <View style={styles.grid}>
-          <View style={styles.card}>
-            <Image source={{ uri: 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=300' }} style={styles.cardImg} />
-            <Text style={styles.cardLabel}>your quotes</Text>
-          </View>
-          <View style={styles.card}>
-            <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
-            <Text style={styles.cardLabel}>your achievements</Text>
-          </View>
-        </View>
 
-        <View style={styles.actionSection}>
-          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
-            await logout({});
-            setUser(null)
-          }}>
-            <Text style={styles.buttonText}>log out</Text>
-          </TouchableOpacity>
+        
+          <View style={styles.grid}>
+            <View style={styles.card}>
+              <Image source={{ uri: 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=300' }} style={styles.cardImg} />
+              <Text style={styles.cardLabel}>your quotes</Text>
+            </View>
 
+            <TouchableOpacity onPress={() => navigation.navigate('MyAchievementsScreen')}>
+              <View style={styles.card}>
+                <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
+                <Text style={styles.cardLabel}>your achievements</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+
+          <View style={styles.actionSection}>
+            <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
+              await logout({});
+              setUser(null)
+            }}>
+              <Text style={styles.buttonText}>log out</Text>
+            </TouchableOpacity>
+        
         </View>
       </ScrollView >
     </View >

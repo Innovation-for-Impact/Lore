@@ -63,12 +63,14 @@ export function ProfileNavigator() {
     <ProfileStack.Navigator screenOptions={{ headerShown: false, animation: 'default' }}>
       <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen} />
       <ProfileStack.Screen name="ProfileEditScreen" component={ProfileEditScreen} />
+      <ProfileStack.Screen name="MyAchievementsScreen" component={MyAchievementsScreen}/>
     </ProfileStack.Navigator>
   );
 }
 
 import { NavigationProp } from "@react-navigation/native";
 import ChallengeCreateScreen from '../screens/ChallengeScreens/ChallengeCreateScreen';
+import { MyAchievementsScreen } from '../screens/MyAchievementsScreen';
 export type HomeNavigation = NavigationProp<HomeStackParamList>
 export type AuthNavigation = NavigationProp<RegistrationStackParamList>
 export type ProfileNavigation = NavigationProp<ProfileStackParamList>

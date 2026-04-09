@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import dj-database-url
 import environ
 
 env = environ.Env(
@@ -70,6 +70,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
@@ -118,16 +119,11 @@ WSGI_APPLICATION = "api.wsgi.application"
 #     raise NotImplementedError("No production database server for ")
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": env("DATABASE_NAME"),
-        "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
-        "HOST": env("DATABASE_HOST"),
-        "PORT": env("DATABASE_PORT"),
-    },
+    'default': dj_database_url.config(
+        default='postgresql://lore_backend_database_user:v73eNAEEwfFYz8XSQdgQlYfDyuWd3xpm@dpg-d72s3hvkijhs73d5lfr0-a/lore_backend_database',
+        conn_max_age=600
+    )
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

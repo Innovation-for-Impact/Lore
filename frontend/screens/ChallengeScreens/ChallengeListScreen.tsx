@@ -11,7 +11,7 @@ type Props = {
   route: RouteProp<HomeStackParamList, 'ChallengeList'>;
 };
 
-const ChallengeListComponent = ({ route } : Props) => {
+export const ChallengeListComponent = ({ route } : Props) => {
   const navigation = useNavigation<HomeNavigation>();
   const { group } = route.params;
 
