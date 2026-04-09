@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query/build/legacy/QueryClientProvider";
+import { $api } from "../../types/constants";
 // import { CommunityNavigation } from "../../navigation/Navigators";
 
 const ChallengeCreateScreen = () => {
@@ -21,11 +23,28 @@ const ChallengeCreateScreen = () => {
 
   const [challengeTypeOpen, setChallengeTypeOpen] = useState(false);
   const [achievementOpen, setAchievementOpen] = useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
 
   const [challengeType, setChallengeType] = useState("");
   const [achievementBadge, setAchievementBadge] = useState("");
 
   const [posted, setPosted] = useState(false);
+
+  const queryClient = useQueryClient();
+  const { mutateAsync: createAchievement, isPending } = $api.useMutation(
+    "post",
+    "/api/v1/groups/{loregroup_pk}/challenges/",
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/challenges/", { params: { path: { loregroup_pk: String(group.id) } } }).queryKey });
+        setSuccess(true);
+      },
+      onError: () => {
+        setFailed(true);
+      }
+    }
+  )
 
   const challengeLevels = [
     "level 1 - starter",
