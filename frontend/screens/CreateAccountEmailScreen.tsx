@@ -79,7 +79,8 @@ const CreateAccountEmailScreen = () => {
         password1: password,
         password2: password,
         first_name: first_name,
-        last_name: last_name
+        last_name: last_name,
+        username: `${first_name}${last_name}`
       }
     })
 
