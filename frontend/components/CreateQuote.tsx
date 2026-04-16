@@ -99,14 +99,8 @@ const CreateQuote = ({ group }: Props) => {
     <>
       <SuccessModal title={"quote created"} visible={successModal} setVisible={setSuccessModal} buttonText='close' />
       <FailureModal title={"quote creation failed"} visible={failureModal} tryAgainCallback={finishAndNavigate} cancelCallback={() => setFailureModal(false)} />
-      <LoadingModal title={'creating quote...'} visible={loadingCreate} />
-      <TouchableOpacity 
-  style={{ height: 50, backgroundColor: 'red', marginTop: 50 }} 
-  onPress={() => setSuccessModal(true)}
->
-  <Text>FORCE OPEN MODAL</Text>
-</TouchableOpacity>
-      <View style={styles.container}>
+<LoadingModal title={'creating quote...'} visible={loadingCreate} />
+<View style={styles.container}>
         {step === Step.quote ?
           <View style={styles.stepContainer}>
             <View style={styles.whiteBox}>
