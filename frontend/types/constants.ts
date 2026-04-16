@@ -9,11 +9,7 @@ export type User = components["schemas"]["User"];
 export type Group = components["schemas"]["Group"];
 export type Quote = components["schemas"]["Quote"];
 
-if (process.env.EXPO_PUBLIC_HOST_IP === undefined) {
-  throw new Error("Backend IP Not defined in types/constants.ts");
-}
-
-export const BACKEND_URL = `http://${process.env.EXPO_PUBLIC_HOST_IP}:8000`;
+export const BACKEND_URL = `https://mysite-jqvq.onrender.com`;
 
 async function getAccessToken() {
   return await SecureStore.getItemAsync("access_token");

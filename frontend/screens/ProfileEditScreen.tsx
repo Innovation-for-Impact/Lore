@@ -190,6 +190,12 @@ export default function ProfileEditScreen() {
               <Text style={styles.buttonText}>save</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81', marginTop: 15 }]} onPress={() => {
+              navigation.navigate("ChangePasswordScreen")
+            }}>
+              <Text style={styles.buttonText}>change password</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#A18DBF', marginTop: 15 }]} onPress={() => {
               setConfirmation(true);
             }}>

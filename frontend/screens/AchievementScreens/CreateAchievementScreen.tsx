@@ -56,6 +56,7 @@ const CreateAchievementScreen = ({ route }: Props) => {
     "/api/v1/groups/{loregroup_pk}/achievements/",
     {
       onSuccess: () => {
+        console.log("SUCCESS FIRED");
         queryClient.invalidateQueries({ queryKey: $api.queryOptions("get", "/api/v1/groups/{loregroup_pk}/achievements/", { params: { path: { loregroup_pk: String(group.id) } } }).queryKey });
         setSuccess(true);
       },
@@ -85,9 +86,24 @@ const CreateAchievementScreen = ({ route }: Props) => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <SuccessModal visible={success} setVisible={setSuccess} title='achievement created!' buttonText='close' callback={navigation.goBack} />
-      <LoadingModal visible={isPending} title='creating...' />
-      <FailureModal visible={failed} title='failed to create achievement' cancelCallback={() => setFailed(false)} tryAgainCallback={handleCreateAchievement} />
+      {isPending ? (
+        <LoadingModal visible title="creating..." />
+      ) : success ? (
+        <SuccessModal
+          visible
+          setVisible={setSuccess}
+          title="achievement created!"
+          buttonText="close"
+          callback={navigation.goBack}
+        />
+      ) : failed ? (
+        <FailureModal
+          visible
+          title="failed to create achievement"
+          cancelCallback={() => setFailed(false)}
+          tryAgainCallback={handleCreateAchievement}
+        />
+      ) : null}
 
       {/* Back Button */}
       <View style={styles.topBar}>
