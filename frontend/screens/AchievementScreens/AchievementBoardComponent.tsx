@@ -13,18 +13,32 @@ import {
   useWindowDimensions,
   View
 } from "react-native";
-import badge1 from '../../assets/achievement-badges/Badge_01_activated.png';
-import badge2 from '../../assets/achievement-badges/Badge_02_activated.png';
+import easyBadge from '../../assets/achievement-badges/Badge_01_activated.png';
+import easyBadgeDeactive from '../../assets/achievement-badges/Badge_01_deactivated.png';
+import mediumBadge from '../../assets/achievement-badges/Badge_02_activated.png';
+import mediumBadgeDeactive from '../../assets/achievement-badges/Badge_02_deactivated.png';
+import hardBadge from '../../assets/achievement-badges/Badge_03_activated.png';
+import hardBadgeDeactive from '../../assets/achievement-badges/Badge_03_deactivated.png';
+
 import { useUser } from '../../context/UserContext';
 import { HomeNavigation } from '../../navigation/Navigators';
 import { components } from '../../types/backend-schema';
 import { $api, Group, infiniteQueryParams } from '../../types/constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-// --- Mock Data for Achievements ---
 const BadgeAssets = {
-  ACTIVE: badge1,
-  INACTIVE: badge2
+  1: {
+    ACTIVE: easyBadge,
+    INACTIVE: easyBadgeDeactive
+  },
+  2: {
+    ACTIVE: mediumBadge,
+    INACTIVE: mediumBadgeDeactive
+  },
+  3: {
+    ACTIVE: hardBadge,
+    INACTIVE: hardBadgeDeactive
+  }
 };
 
 // --- Helper for scaling (Updated) --- //
@@ -105,8 +119,7 @@ function Achievement({ groupID, achievement }: AchievementProps) {
       }
       }>
       <Image
-        source={achieved ? BadgeAssets.ACTIVE : BadgeAssets.INACTIVE}
-        style={{ width: 60, height: 60, marginRight: 10 }}
+        source={achieved ? BadgeAssets[achievement.difficulty].ACTIVE : BadgeAssets[achievement.difficulty].INACTIVE} style={{ width: 60, height: 60, marginRight: 10 }}
         resizeMode="contain"
       />
       <View style={{ flex: 1, justifyContent: 'center' }}>

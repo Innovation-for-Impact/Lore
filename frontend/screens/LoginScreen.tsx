@@ -2,6 +2,7 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -42,7 +43,7 @@ const LoginScreen = () => {
     navigation.goBack();
   };
 
-  const { mutateAsync: login } = $api.useMutation(
+  const { mutateAsync: login, isPending: loginLoading } = $api.useMutation(
     "post",
     "/api/v1/auth/login/",
     {
@@ -164,8 +165,12 @@ const LoginScreen = () => {
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           {/* Login Button */}
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>log in</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loginLoading}>
+            {loginLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.loginButtonText}>log in</Text>
+            )}
           </TouchableOpacity>
 
 
