@@ -110,7 +110,7 @@ const ProfileScreen = () => {
             <Image source={{ uri: 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your quotes</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.card} >
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("MyAchievementsScreen")}>
             <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your achievements</Text>
           </TouchableOpacity>
