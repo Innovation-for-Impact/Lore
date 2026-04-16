@@ -73,6 +73,8 @@ const CreateAccountEmailScreen = () => {
       return;
     }
 
+    console.log("Created account!");
+
     await register({
       body: {
         email: email,

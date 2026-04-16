@@ -30,6 +30,8 @@ export type HomeStackParamList = {
 export type ProfileStackParamList = {
   ProfileScreen: undefined;
   ProfileEditScreen: undefined;
+  MyAchievementsScreen : undefined
+  SingleAchievementScreen : { id : number }
   ChangePasswordScreen: undefined;
   ProfileQuoteScreen: undefined
 }

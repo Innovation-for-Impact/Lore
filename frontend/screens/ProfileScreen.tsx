@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   ScrollView,
@@ -109,20 +110,21 @@ const ProfileScreen = () => {
             <Image source={{ uri: 'https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your quotes</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.card} >
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("MyAchievementsScreen")}>
             <Image source={{ uri: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=300' }} style={styles.cardImg} />
             <Text style={styles.cardLabel}>your achievements</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.actionSection}>
-          <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
-            await logout({});
-            setUser(null)
-          }}>
-            <Text style={styles.buttonText}>log out</Text>
-          </TouchableOpacity>
 
+          <View style={styles.actionSection}>
+            <TouchableOpacity style={[styles.solidButton, { backgroundColor: '#5E4B81' }]} onPress={async () => {
+              await logout({});
+              setUser(null)
+            }}>
+              <Text style={styles.buttonText}>log out</Text>
+            </TouchableOpacity>
+        
         </View>
       </ScrollView >
     </View >

@@ -54,7 +54,7 @@ export const AchievementBoardScreen = ({ route }: Props) => {
               activeTab === Tabs.achievements && styles.activeTabText,
             ]}
           >
-            achievements
+            my achievements
           </Text>
         </TouchableOpacity>
 
@@ -81,7 +81,7 @@ export const AchievementBoardScreen = ({ route }: Props) => {
         {activeTab === Tabs.achievements ? (
           <AchievementBoardComponent group={group} />
         ) : (
-          <ChallengeListComponent />
+          <ChallengeListComponent route={route}/>
         )}
       </View>
     </View>

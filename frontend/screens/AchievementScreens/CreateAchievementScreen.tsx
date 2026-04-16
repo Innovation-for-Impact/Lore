@@ -67,6 +67,7 @@ const CreateAchievementScreen = ({ route }: Props) => {
   )
 
   const handleCreateAchievement = () => {
+    console.log("Submitting with:", { title, description, difficulty });
     createAchievement({
       params: {
         path: {

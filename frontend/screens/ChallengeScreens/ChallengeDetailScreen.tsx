@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { CommunityNavigation } from "../../navigation/Navigators";
+import { HomeNavigation } from "../../navigation/Navigators";
 
 export default function ChallengeDetailScreen() {
-  const navigation = useNavigation<CommunityNavigation>();
+  const navigation = useNavigation<HomeNavigation>();
   const [hasJoined, setHasJoined] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
