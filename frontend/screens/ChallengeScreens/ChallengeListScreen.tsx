@@ -1,40 +1,61 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { $api } from "../../types/constants";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { $api, Group } from "../../types/constants";
 import { useMutation, useMutationState } from "@tanstack/react-query";
 import { HomeNavigation } from "../../navigation/Navigators";
 import { HomeStackParamList } from "../../navigation/NavigationParams";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 type Props = {
-  route: RouteProp<HomeStackParamList, 'ChallengeList'>;
+  route?: RouteProp<HomeStackParamList, 'ChallengeList'>;
 };
 
-const ChallengeListComponent = () => {
+const ChallengeListComponent = ({ route: passedRoute }: Props = {}) => {
   const navigation = useNavigation<HomeNavigation>();
-  const route = useRoute<RouteProp<HomeStackParamList, 'ChallengeList'>>();
+  const route = passedRoute ?? useRoute<RouteProp<HomeStackParamList, 'ChallengeList'>>();
   const group = route.params?.group;
+
+  const [success, setSuccess] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const goToDetail = (id: string) =>
     navigation.navigate('ChallengeDetail', { id, group });
 
 
-  const { data, error, isLoading } = $api.useQuery("get", "/api/v1/challenges/");
-
-  if (!data || isLoading) {
-    return (<Text>
-      Loading... Placeholder!
-    </Text>);
-  }
+  const { data, isLoading, error } = $api.useQuery(
+    "get",
+    "/api/v1/groups/{loregroup_pk}/challenges/",
+    {
+      params: {
+        path: {
+          loregroup_pk: String(group?.id)
+        }
+      }
+    }
+  );
+  
+  console.log(`${data?.count} found!`); 
+  
 
   if (error) {
     throw new Error(`An error occurred: ${error}`);
   }
 
+  if (isLoading) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.noAchievementsText}>
+          loading challenges...
+        </Text>
+        <ActivityIndicator size="large" color="purple" />
+      </View>
+    );
+  }
 
-  
-  
-  
+
 
   // const challenges = [
     // {
@@ -58,6 +79,7 @@ const ChallengeListComponent = () => {
   // ];
 
 
+  
 
   return (
     <View style={styles.fullScreenContainer}>
@@ -69,28 +91,38 @@ const ChallengeListComponent = () => {
       </Text>
 
       {/* Create Challenge */}
-      <TouchableOpacity style={styles.createChallengeButton} onPress={() => navigation.navigate("ChallengeCreate", { group })}>
+      <TouchableOpacity
+        style={styles.createChallengeButton}
+        onPress={() => navigation.navigate("ChallengeCreate", { group })}
+      >
         <Text style={styles.createChallengeButtonText}>create challenge</Text>
       </TouchableOpacity>
 
       {/* Challenge List */}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {data["results"].map((ch) => (
-          <TouchableOpacity
-            key={ch.id}
-            style={styles.challengeCard}
-            onPress={() => goToDetail(String(ch.id))}
-          >
-            <View style={styles.cardHeaderRow}>
-              <Text style={styles.challengeTitle}>
-                level {ch.id}: {ch.title}
-              </Text>
-              <Text style={styles.seeMore}>see more</Text>
-            </View>
 
-            <Text style={styles.challengeDescription}>{ch.description}</Text>
-          </TouchableOpacity>
-        ))}
+        {/* {isLoading && <ActivityIndicator size={"large"} />} */}
+
+        {data?.results && data.results.length > 0 ? (
+          data.results.map(({ id, title, description }) => (
+            <TouchableOpacity
+              key={id}
+              style={styles.challengeCard}
+              onPress={() => goToDetail(String(id))}
+            >
+              <View style={styles.cardHeaderRow}>
+                <Text style={styles.challengeTitle}>
+                  level {id}: {title}
+                </Text>
+                <Text style={styles.seeMore}>see more</Text>
+              </View>
+
+              <Text style={styles.challengeDescription}>{description}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noAchievementsText}>no challenges found</Text>
+        )}
 
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -227,4 +259,20 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     fontFamily: "Work Sans",
   },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noAchievementsText: {
+    alignSelf : 'center',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#5F4078',
+    marginTop : 150, 
+    marginBottom: 150,
+    fontFamily: 'Work Sans'
+  }
+
 });

@@ -31,6 +31,7 @@ export type ProfileStackParamList = {
   ProfileScreen: undefined;
   ProfileEditScreen: undefined;
   MyAchievementsScreen : undefined
+  SingleAchievementScreen : { id : number }
 }
 
 export type RootStackParamList = {
