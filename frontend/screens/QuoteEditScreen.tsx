@@ -29,7 +29,7 @@ const QuoteDetailScreen = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const route = useRoute<RouteProp<HomeStackParamList, "QuoteDetailScreen">>();
-  const { quote } = route.params;
+  const { quote, onGoBack } = route.params;
 
   const [quoteText, setQuoteText] = useState(quote.text);
   const [context, setContext] = useState(quote.context);
@@ -62,10 +62,6 @@ const QuoteDetailScreen = () => {
     }
 
   )
-
-  const handleBack = () => {
-    navigation.goBack();
-  };
 
   const handleSave = async () => {
     await saveQuote({
@@ -102,7 +98,14 @@ const QuoteDetailScreen = () => {
       <View style={[globalStyles.container, styles.container]}>
         <View style={styles.topBar}>
           <TouchableOpacity
-            onPress={handleBack}
+            onPress={() => {
+              if (onGoBack) {
+                onGoBack()
+                return
+              }
+              navigation.goBack()
+              return
+            }}
           >
             <Ionicons name="arrow-back" size={35} color="white" />
           </TouchableOpacity>
@@ -139,7 +142,7 @@ const QuoteDetailScreen = () => {
               maxLength={MAX_CONTEXT_LENGTH}
             />
             <Text style={styles.counter}>
-              {MAX_CONTEXT_LENGTH - context.length} characters remaining
+              {MAX_CONTEXT_LENGTH - (!context ? 0 : context.length)} characters remaining
             </Text>
           </View>
 

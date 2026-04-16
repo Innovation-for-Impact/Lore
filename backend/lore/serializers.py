@@ -37,6 +37,7 @@ class UserRegisterSerializer(RegisterSerializer):
     Adds the first/last name and avatar fields
     """
 
+    username = None
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     avatar = serializers.ImageField(allow_null=True, required=False)
@@ -50,6 +51,11 @@ class UserRegisterSerializer(RegisterSerializer):
             "password1",
             "password2",
         ]
+
+    def get_cleaned_data(self):
+        data = super().get_cleaned_data()
+        data.pop('username', None)  # Remove it so the parent class doesn't look for it
+        return data
 
     def save(self, request: HttpRequest) -> models.LoreUser:
         """Manually handle saving of additional registration fields."""

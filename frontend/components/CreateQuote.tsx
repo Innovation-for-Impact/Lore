@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   Dimensions,
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -39,7 +40,7 @@ const CreateQuote = ({ group }: Props) => {
   const [quoteBoxHeight, setQuoteBoxHeight] = useState<number | null>(null);
   const [isMultiline, setIsMultiline] = useState(false);
 
-  const [sucessModal, setSuccessModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
   const [failureModal, setFailureModal] = useState(false);
 
   // Step 1: Quote
@@ -53,15 +54,22 @@ const CreateQuote = ({ group }: Props) => {
     "/api/v1/groups/{loregroup_pk}/quotes/",
     {
       onSuccess: () => {
-        setSuccessModal(true);
+        console.log("MUTATION SUCCESSFUL 1");
+        Keyboard.dismiss();
         // Reset local state
         setQuoteText('');
         setContextText('');
         setStep(Step.quote);
+        
+        setTimeout(() => {
+          console.log("MUTATION SUCCESSFUL 2");
+          setSuccessModal(true);
+          console.log("MUTATION SUCCESSFUL 3");
+      }, 1000);
       },
       onError: () => {
         setFailureModal(true);
-        // console.log(JSON.stringify(error))
+        console.log("MUTATION FAILED");
       }
     }
   )
@@ -89,9 +97,15 @@ const CreateQuote = ({ group }: Props) => {
 
   return (
     <>
+      <SuccessModal title={"quote created"} visible={successModal} setVisible={setSuccessModal} buttonText='close' />
       <FailureModal title={"quote creation failed"} visible={failureModal} tryAgainCallback={finishAndNavigate} cancelCallback={() => setFailureModal(false)} />
       <LoadingModal title={'creating quote...'} visible={loadingCreate} />
-      <SuccessModal title={"quote creatad"} visible={sucessModal} setVisible={setSuccessModal} buttonText='close' />
+      <TouchableOpacity 
+  style={{ height: 50, backgroundColor: 'red', marginTop: 50 }} 
+  onPress={() => setSuccessModal(true)}
+>
+  <Text>FORCE OPEN MODAL</Text>
+</TouchableOpacity>
       <View style={styles.container}>
         {step === Step.quote ?
           <View style={styles.stepContainer}>

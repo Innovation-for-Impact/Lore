@@ -31,7 +31,7 @@ const CreateAccountEmailScreen = () => {
     "/api/v1/auth/registration/",
     {
       onError: (error) => {
-        console.log(`An error has occurred! Error: ${error}`);
+        console.log(error)
         setError(error.password1[0]); // TODO: Get openAPI spec to generate this
       }
     }
@@ -81,7 +81,8 @@ const CreateAccountEmailScreen = () => {
         password1: password,
         password2: password,
         first_name: first_name,
-        last_name: last_name
+        last_name: last_name,
+        username: `${first_name}${last_name}`
       }
     })
 

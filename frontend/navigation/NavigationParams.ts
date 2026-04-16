@@ -20,7 +20,7 @@ export type HomeStackParamList = {
   QuoteBoardScreen: { group: Group };
   MemoryBoardScreen: { group: Group };
   AchievementBoardScreen: { group: Group };
-  QuoteDetailScreen: { group: Group, quote: Quote };
+  QuoteDetailScreen: { group: Group, quote: Quote, onGoBack?: () => void };
   ChallengeList: { group: Group };
   ChallengeDetail: { group: Group, id: string };
   ChallengeCreate: { group: Group };
@@ -32,6 +32,8 @@ export type ProfileStackParamList = {
   ProfileEditScreen: undefined;
   MyAchievementsScreen : undefined
   SingleAchievementScreen : { id : number }
+  ChangePasswordScreen: undefined;
+  ProfileQuoteScreen: undefined
 }
 
 export type RootStackParamList = {
